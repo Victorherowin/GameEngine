@@ -1,0 +1,48 @@
+#include "Camera.hpp"
+
+namespace Kedama
+{
+  Camera::Camera(const string& name):GameObject(name)
+  {
+  }
+
+  void Camera::LookAt(const glm::vec3 &position)
+  {
+    m_look_target=nullptr;
+    m_target_position=position;
+  }
+
+  void Camera::LookAt(GameObject *target)
+  {
+    m_look_target=target;
+  }
+
+  void Camera::LookDirect(const glm::vec3 &direction)
+  {
+    m_look_target=nullptr;
+    m_target_position=glm::normalize(direction)+GetTansform().GetWorldPosition();
+  }
+
+  void Camera::SetPerspective(float fov, float aspect, float near, float far)
+  {
+    m_projection_matrix=glm::perspective(fov,aspect,near,far);
+  }
+
+  void Camera::SetOrtho(float left,float right,float buttom,float top)
+  {
+    m_projection_matrix=glm::ortho(left,right,buttom,top);
+  }
+
+  glm::mat4 Camera::GetVPMatrix()
+  {
+    if(m_look_target==nullptr)
+    {
+      m_view_matrix=glm::lookAt(GetTansform().GetWorldPosition(),m_target_position,glm::vec3(0.0f,1.0f,0.0f));
+    }
+    else
+    {
+      m_view_matrix=glm::lookAt(GetTansform().GetWorldPosition(),m_look_target->GetTansform().GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
+    }
+    return m_projection_matrix*m_view_matrix;
+  }
+}
