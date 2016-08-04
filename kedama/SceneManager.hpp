@@ -1,7 +1,7 @@
 #ifndef SCENEMANAGER
 #define SCENEMANAGER
 
-#include "RenderSystem/IRenderSystem.hpp"
+#include "RenderSystem/RenderSystem.hpp"
 #include "utility/Singleton.hpp"
 #include <memory>
 
@@ -12,11 +12,11 @@ namespace Kedama
   class SceneManager:public Singleton<SceneManager>
   {
   public:
-    SceneManager(IRenderSystem* irfs);
+    SceneManager(RenderSystem* irfs);
     GameObject& GetRoot();
 
   private:
-    IRenderSystem* m_render_system;
+    RenderSystem* m_render_system;
     GameObject m_object_root;
   };
 }

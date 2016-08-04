@@ -18,23 +18,27 @@ namespace Kedama
 
     using MeshBuffer = pair<IVertexBufferPtr,IIndexBufferPtr>;
 
+    struct MaterialInfo
+    {
+      MeshBuffer mb;
+      uint32_t offset;
+      uint32_t vertex_size;
+
+      MaterialPtr tex;
+    };
+
+    public:
     uint32_t AddMeshBuffer(MeshBuffer mb);
     void BindMaterial(uint32_t mesh_id,MaterialPtr& tex,uint32_t offset,uint32_t size);
 
+    void Clear();
 
-    inline vector<MeshBuffer>& GetMeshBuffers()
+    inline vector<MaterialInfo>& GetDrawInfo()
     {
-      return m_meshbuffers;
+      return m_texs;
     }
 
-    private:
-
-    struct MaterialInfo
-    {
-      uint32_t offset;
-      uint32_t vertex_size;
-      MaterialPtr tex;
-    };
+    static RenderStreamPtr CreateRenderStream();
 
     vector<MeshBuffer> m_meshbuffers;
     vector<MaterialInfo> m_texs;

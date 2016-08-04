@@ -5,7 +5,7 @@
 #include "Config.hpp"
 
 namespace Kedama{
-  DEFINE_SHARED_PTR(Camera)
+  DEFINE_RAW_PTR(Camera)
 
   class Camera:public GameObject
   {
@@ -13,15 +13,18 @@ namespace Kedama{
     explicit Camera(const string& name="camera");
     glm::mat4 GetVPMatrix();
 
-    void LookAt(GameObject* target);
+    void LookAt(GameObjectPtr target);
     void LookAt(const glm::vec3& target);
     void LookDirect(const glm::vec3& direction);
 
     void SetPerspective(float fov,float aspect,float near,float far);
     void SetOrtho(float left,float right,float buttom,float top);
+
+
+    static CameraPtr CreateCamera(const string& name);
   protected:
     glm::vec3 m_target_position;
-    GameObject* m_look_target=nullptr;
+    GameObjectPtr m_look_target=nullptr;
 
 
     glm::mat4 m_projection_matrix;

@@ -7,6 +7,14 @@ namespace Kedama
 
   }
 
+  GameObject::~GameObject()
+  {
+    for(GameObjectPtr ptr:m_children)
+    {
+      delete ptr;
+    }
+  }
+
   void GameObject::AddNode(GameObject *node)
   {
     node->m_parent=this;

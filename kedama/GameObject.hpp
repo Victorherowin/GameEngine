@@ -4,32 +4,37 @@
 #include <vector>
 
 #include "Transform.hpp"
+#include "Config.hpp"
 
 namespace Kedama
 {
-    using std::vector;
-    class GameObject
-    {
-    public:
-        GameObject(const string& name="");
-        inline Transform& GetTansform(){return m_transform;}
-        inline const string& GetName(){return m_name;}
+  DEFINE_RAW_PTR(GameObject)
 
-        void AddNode(GameObject* node);
+  using std::vector;
 
-    private:
-        void UpdateSelf();
-        void UpdateChildren();
+  class GameObject
+  {
+  public:
+    GameObject(const string& name="");
+    virtual ~GameObject();
+    inline Transform& GetTansform(){return m_transform;}
+    inline const string& GetName(){return m_name;}
 
-    protected:
-        string m_name;
-    private:
-        Transform m_transform;
-        GameObject* m_parent=nullptr;
-        std::list<GameObject*> m_children;
+    void AddNode(GameObjectPtr node);
 
-        friend class Transform;
-    };
+  private:
+    void UpdateSelf();
+    void UpdateChildren();
+
+  protected:
+    string m_name;
+  private:
+    Transform m_transform;
+    GameObjectPtr m_parent=nullptr;
+    std::list<GameObjectPtr> m_children;
+
+    friend class Transform;
+  };
 }
 
 #endif

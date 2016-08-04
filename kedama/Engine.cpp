@@ -20,7 +20,7 @@ namespace Kedama
     delete m_asset_manager;
   }
 
-  IRenderSystem* Engine::GetRenderSystem()
+  RenderSystem* Engine::GetRenderSystem()
   {
     return m_render_system;
   }

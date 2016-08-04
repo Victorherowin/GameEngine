@@ -8,14 +8,14 @@
 
 namespace Kedama
 {
-  IRenderSystem* GLRenderSystemFactory::CreateRenderSystem()
+  RenderSystem* GLRenderSystemFactory::CreateRenderSystem()
   {
-    IRenderSystem* irs=static_cast<IRenderSystem*>(new GLRenderSystem());
+    RenderSystem* irs=static_cast<RenderSystem*>(new GLRenderSystem());
     irs->Init();
     return irs;
   }
 
-  void GLRenderSystemFactory::DeleteRenderSystem(IRenderSystem* render_system)
+  void GLRenderSystemFactory::DeleteRenderSystem(RenderSystem* render_system)
   {
     render_system->Quit();
     delete dynamic_cast<GLRenderSystem*>(render_system);

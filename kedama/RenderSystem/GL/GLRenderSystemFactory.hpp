@@ -8,8 +8,8 @@ namespace Kedama
   class GLRenderSystemFactory:public IRenderSystemFactory
   {
   public:
-    IRenderSystem* CreateRenderSystem()override;
-    void DeleteRenderSystem(IRenderSystem*)override;
+    RenderSystem* CreateRenderSystem()override;
+    void DeleteRenderSystem(RenderSystem*)override;
 
     ITexture2DPtr CreateTexture2D()override;
     FrameBufferPtr CreateFrameBuffer()override;

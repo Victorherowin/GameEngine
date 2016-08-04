@@ -1,7 +1,7 @@
 #ifndef GLFRAMEBUFFER
 #define GLFRAMEBUFFER
 
-#include "GLTextureBase.hpp"
+#include "GLTexture2D.hpp"
 
 #include "../FrameBuffer.hpp"
 
@@ -9,17 +9,23 @@
 
 namespace Kedama
 {
-    class GLFrameBuffer:public FrameBuffer
-	{
-	public:
-		GLFrameBuffer();
-		~GLFrameBuffer();
+  class GLFrameBuffer:public FrameBuffer
+  {
+  public:
+    GLFrameBuffer();
+    ~GLFrameBuffer();
 
-         void AddTexture2D(ITexture2DPtr texture,AttachType attachment,int32_t attachment_id=0,int32_t level=0)override;
-	private:
-        GLuint m_fbo;
-		vector<GLTextureBase*> m_texs;
-	};
+  protected:
+
+    void OnAttach(AttachType type)override;
+
+  private:
+    GLuint m_fbo;
+    vector<GLTexture2D*> m_texs;
+    vector<GLuint> m_rbos;
+
+    uint32_t m_w,m_h;
+  };
 }
 
 #endif

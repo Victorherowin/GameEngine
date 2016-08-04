@@ -6,6 +6,11 @@ namespace Kedama
   {
   }
 
+  CameraPtr Camera::CreateCamera(const string& name)
+  {
+    return new Camera(name);
+  }
+
   void Camera::LookAt(const glm::vec3 &position)
   {
     m_look_target=nullptr;

@@ -2,7 +2,7 @@
 #define IRENDERSYSTEMFACTORY
 
 #include <string>
-#include "IRenderSystem.hpp"
+#include "RenderSystem.hpp"
 #include "FrameBuffer.hpp"
 
 namespace Kedama
@@ -12,8 +12,8 @@ namespace Kedama
 	class IRenderSystemFactory
 	{
 	public:
-		virtual IRenderSystem* CreateRenderSystem()=0;
-		virtual void DeleteRenderSystem(IRenderSystem*)=0;
+                virtual RenderSystem* CreateRenderSystem()=0;
+                virtual void DeleteRenderSystem(RenderSystem*)=0;
 
 		virtual ITexture2DPtr CreateTexture2D()=0;
 		virtual FrameBufferPtr CreateFrameBuffer()=0;

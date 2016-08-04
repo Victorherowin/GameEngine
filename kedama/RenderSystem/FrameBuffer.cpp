@@ -2,8 +2,23 @@
 
 namespace Kedama
 {
-  void FrameBuffer::AddTexture2D(ITexture2DPtr texture,AttachType attachment,int32_t attachment_id,int32_t level)
+  void FrameBuffer::Create(uint32_t w, uint32_t h)
   {
-    m_texs.push_back(texture);
+    m_w=w;
+    m_h=h;
   }
+
+  void FrameBuffer::AddAttach(AttachType type)
+  {
+    for(AttachType t:m_attachs)
+    {
+      if(t==type)
+      {
+        throw std::runtime_error("This Attach Point exists");
+      }
+    }
+    m_attachs.push_back(type);
+    OnAttach(type);
+  }
+
 }

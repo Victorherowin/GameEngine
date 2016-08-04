@@ -8,7 +8,7 @@
 #include "SceneManager.hpp"
 #include "AssetManager.hpp"
 #include "RenderSystem/RenderSystemFactoryManager.hpp"
-#include "RenderSystem/IRenderSystem.hpp"
+#include "RenderSystem/RenderSystem.hpp"
 #include "Log.hpp"
 
 namespace Kedama
@@ -20,7 +20,7 @@ namespace Kedama
     Engine(const string& render_system_name);
     ~Engine();
 
-    IRenderSystem* GetRenderSystem();
+    RenderSystem* GetRenderSystem();
     AssetManager* GetAssetManager();
     SceneManager* GetSceneManager();
     IRenderSystemFactory* GetRenderRenderFactory();
@@ -31,7 +31,7 @@ namespace Kedama
     AssetManager* m_asset_manager=nullptr;
     SceneManager* m_scene_manager=nullptr;
     string m_render_system_name=nullptr;
-    IRenderSystem* m_render_system=nullptr;
+    RenderSystem* m_render_system=nullptr;
   };
 }
 

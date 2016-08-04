@@ -1,24 +1,24 @@
 #ifndef GLRENDERSYSTEM
 #define GLRENDERSYSTEM
 
-#include "../IRenderSystem.hpp"
+#include "../RenderSystem.hpp"
 #include "SDLWindow.hpp"
 
 
 namespace Kedama
 {
-  class GLRenderSystem:public IRenderSystem
+  class GLRenderSystem:public RenderSystem
   {
   public:
     void Init()override;
     void Quit()override;
 
-    void SetCamera(CameraPtr camera)override;
     void Clear()override;
     void Flush()override;
     void SwapBuffer()override;
 
-    void OnRender(RenderStreamPtr)override;
+    void OnForwardRender(RenderStreamPtr&)override;
+    void OnDeferredRender(RenderStreamPtr&)override;
 
     IShader* CreateShader(const std::string shader_src)override;
     const string GetShaderLanguage()override;
@@ -26,7 +26,6 @@ namespace Kedama
     IWindow* GetWindow()override;
 
   private:
-    CameraPtr m_main_camera;
 
     SDLWindow m_win;
     SDL_GLContext m_gl;

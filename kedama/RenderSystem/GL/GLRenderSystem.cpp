@@ -49,11 +49,6 @@ namespace Kedama
     glFlush();
   }
 
-  void GLRenderSystem::SetCamera(CameraPtr camera)
-  {
-    m_main_camera=camera;
-  }
-
   void GLRenderSystem::SwapBuffer()
   {
     SDL_GL_SwapWindow(m_win.GetPtr());
@@ -72,10 +67,15 @@ namespace Kedama
     return r_subshader;
   }
 
-  void GLRenderSystem::OnRender(RenderStreamPtr rsptr)
+  void GLRenderSystem::OnForwardRender(RenderStreamPtr& rsptr)
   {
-    vector<RenderStream::MeshBuffer>& mb=rsptr->GetMeshBuffers();
+    vector<RenderStream::MaterialInfo>& mb=rsptr->GetDrawInfo();
 
+
+  }
+
+  void GLRenderSystem::OnDeferredRender(RenderStreamPtr& rsptr)
+  {
 
   }
 }

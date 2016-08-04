@@ -12,6 +12,8 @@
 #endif
 
 #define DEFINE_SHARED_PTR(type) class type;typedef std::shared_ptr<type> type##Ptr;
+#define DEFINE_RAW_PTR(type) class type;typedef type* type##Ptr;
+
 
 #define GLM_FORCE_RADIANS
 
@@ -29,6 +31,7 @@
 #include <memory>
 #include <functional>
 #include <type_traits>
+#include <tuple>
 
 #include <glm/integer.hpp>
 #include <glm/vec2.hpp>

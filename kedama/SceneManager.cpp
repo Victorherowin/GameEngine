@@ -2,7 +2,7 @@
 
 namespace Kedama
 {
-  SceneManager::SceneManager(IRenderSystem* render_system):
+  SceneManager::SceneManager(RenderSystem* render_system):
     m_render_system(render_system),
     m_object_root("__root__")
   {

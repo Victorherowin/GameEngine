@@ -9,7 +9,22 @@ namespace Kedama
 {
   enum class AttachType
   {
-    COLOR_ATTACHMENT,
+    COLOR_ATTACHMENT0,
+    COLOR_ATTACHMENT1,
+    COLOR_ATTACHMENT2,
+    COLOR_ATTACHMENT3,
+    COLOR_ATTACHMENT4,
+    COLOR_ATTACHMENT5,
+    COLOR_ATTACHMENT6,
+    COLOR_ATTACHMENT7,
+    COLOR_ATTACHMENT8,
+    COLOR_ATTACHMENT9,
+    COLOR_ATTACHMENT10,
+    COLOR_ATTACHMENT11,
+    COLOR_ATTACHMENT12,
+    COLOR_ATTACHMENT13,
+    COLOR_ATTACHMENT14,
+    COLOR_ATTACHMENT15,
     DEPTH_ATTACHMENT,
     STENCIL_ATTACHMENT,
     DEPTH_STENCIL_ATTACHMENT
@@ -21,13 +36,16 @@ namespace Kedama
   {
     public:
     virtual ~FrameBuffer(){}
-    virtual void Create(){}
-    //virtual void AddTexture1D(ITexture1D* texture,AttachType attachment,int attachment_id=0);
-    virtual void AddTexture2D(ITexture2DPtr texture,AttachType attachment,int attachment_id=0,int level=0);
-    //virtual void AddTexture3D(ITexture3D* texture,AttachType attachment,int attachment_id=0);
+    void Create(uint32_t w,uint32_t h);
+    void AddAttach(AttachType type);
 
-    private:
-    vector<ITextureBasePtr> m_texs;
+    protected:
+    virtual void OnAttach(AttachType type)=0;
+
+    protected:
+    vector<AttachType> m_attachs;
+    uint32_t m_w,m_h;
+
   };
 }
 
