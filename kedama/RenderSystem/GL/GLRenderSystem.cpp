@@ -69,8 +69,11 @@ namespace Kedama
 
   void GLRenderSystem::OnForwardRender(RenderStreamPtr& rsptr)
   {
-    vector<RenderStream::MaterialInfo>& mb=rsptr->GetDrawInfo();
+    vector<RenderStream::MaterialInfo>& mis=rsptr->GetDrawInfo();
+    for(RenderStream::MaterialInfo& mi:mis)
+    {
 
+    }
 
   }
 
