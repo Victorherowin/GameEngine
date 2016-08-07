@@ -2,7 +2,7 @@
 #define RENDERSTREAM
 
 #include "../Config.hpp"
-#include "IVertexBuffer.hpp"
+#include "VertexBuffer.hpp"
 #include "IIndexBuffer.hpp"
 #include "FrameBuffer.hpp"
 #include "IShader.hpp"
@@ -15,34 +15,34 @@ namespace Kedama
   class KEDAMA_API RenderStream
   {
     public:
-
-    using MeshBuffer = pair<IVertexBufferPtr,IIndexBufferPtr>;
+    using MeshBuffer=pair<VertexBufferPtr,IIndexBufferPtr>;
 
     struct MaterialInfo
     {
-      MeshBuffer mb;
+      MeshBuffer& mesh_buffer;
       uint32_t offset;
       uint32_t vertex_size;
 
-      MaterialPtr tex;
+      MaterialPtr material;
     };
 
     public:
-    uint32_t AddMeshBuffer(MeshBuffer mb);
-    void BindMaterial(uint32_t mesh_id,MaterialPtr& tex,uint32_t offset,uint32_t size);
+    virtual ~RenderStream(){}
+    uint32_t AddMeshBuffer(const MeshBuffer& mb);
+    void BindMaterial(uint32_t mesh_id,MaterialPtr& material,uint32_t offset,uint32_t size);
 
     void Clear();
 
-    inline vector<MaterialInfo>& GetDrawInfo()
-    {
-      return m_texs;
-    }
+    inline vector<MaterialInfo>& GetDrawInfo(){return m_texs;}
 
-    static RenderStreamPtr CreateRenderStream();
+    protected:
 
+    virtual void OnBindMaterial(MaterialInfo* mi)=0;
+    virtual void OnClear()=0;
+
+    private:
     vector<MeshBuffer> m_meshbuffers;
     vector<MaterialInfo> m_texs;
-
   };
 }
 

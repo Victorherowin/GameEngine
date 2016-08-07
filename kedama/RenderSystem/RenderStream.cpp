@@ -2,31 +2,25 @@
 
 namespace Kedama
 {
-  uint32_t RenderStream::AddMeshBuffer(MeshBuffer mb)
+  uint32_t RenderStream::AddMeshBuffer(const MeshBuffer& mb)
   {
     m_meshbuffers.push_back(mb);
     return m_meshbuffers.end()-m_meshbuffers.begin()-1;
   }
 
-  void RenderStream::BindMaterial(uint32_t mesh_id, MaterialPtr &tex, uint32_t offset, uint32_t size)
+  void RenderStream::BindMaterial(uint32_t mesh_id, MaterialPtr &material, uint32_t offset, uint32_t size)
   {
-    MaterialInfo info;
-    info.mb=m_meshbuffers[mesh_id];
-    info.offset=offset;
-    info.vertex_size=size;
-    info.tex=tex;
+    if(mesh_id>m_meshbuffers.size())
+      throw std::runtime_error("Error of Mesh ID");
 
-    m_texs.push_back(info);
-  }
-
-  RenderStreamPtr RenderStream::CreateRenderStream()
-  {
-    return std::make_shared<RenderStream>();
+    MaterialInfo mi({m_meshbuffers[mesh_id],offset,size,material});
+    m_texs.push_back(mi);
+    OnBindMaterial(&m_texs.back());
   }
 
   void RenderStream::Clear()
   {
     m_meshbuffers.clear();
-    m_texs.clear();
+    OnClear();
   }
 }

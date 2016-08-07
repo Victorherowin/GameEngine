@@ -14,10 +14,11 @@ namespace Kedama
     GLTextureBase();
     virtual ~GLTextureBase();
     void GenerateMipmap();
-    GLuint GetGLObject();
 
     virtual void Bind()=0;
     virtual void Unbind()=0;
+
+    inline GLuint GetObj(){return m_tex;}
 
   protected:
     GLuint m_tex;

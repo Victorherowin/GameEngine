@@ -55,6 +55,7 @@ namespace Kedama
     using std::fstream;
     using std::ostream;
     using std::function;
+    using std::tuple;
     //class File;
 }
 

@@ -5,7 +5,7 @@ namespace Kedama
 {
     enum class TextureFormat
     {
-        Depth,Depth_Stencil,Red,RG,RGB,RGBA,SRGB,
+        RGB,RGBA,SRGB,Depth,Depth_Stencil
     };
 
     enum class TextureCompressFormat

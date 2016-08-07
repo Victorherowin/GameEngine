@@ -5,22 +5,32 @@
 
 #include "GL/glew.h"
 
-namespace Kedama {
+namespace Kedama{
 
-    class GLIndexBuffer:public IIndexBuffer
-    {
-	public:
-	GLIndexBuffer();
-	~GLIndexBuffer();
+  DEFINE_SHARED_PTR(GLIndexBuffer)
 
-	void Create(int32_t len)override;
+  class GLIndexBuffer:public IIndexBuffer
+  {
+  public:
+  GLIndexBuffer();
+  ~GLIndexBuffer();
 
-    void SendIndices(vector<uint32_t>& indices)override;
-    void SendSubIndices(vector<uint32_t>& indices,int32_t offset,int32_t len)override;
+  void Bind();
+  void Unbind();
 
-    private:
-    GLuint m_ibo;
-    };
+  void Create(int32_t len)override;
+
+  void SendIndices(vector<uint32_t>& indices)override;
+  void SendSubIndices(vector<uint32_t>& indices,int32_t offset,int32_t len)override;
+
+  inline uint32_t GetSize(){return m_size;}
+
+  inline GLuint GetObj(){return m_ibo;}
+
+  private:
+  GLuint m_ibo;
+  uint32_t m_size;
+};
 
 }
 

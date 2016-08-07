@@ -9,11 +9,17 @@
 
 namespace Kedama
 {
+  DEFINE_SHARED_PTR(GLFrameBuffer)
+
   class GLFrameBuffer:public FrameBuffer
   {
   public:
     GLFrameBuffer();
     ~GLFrameBuffer();
+
+    inline vector<GLTexture2D*>& GetGLTextureObjs(){return m_texs;}
+    inline vector<GLuint>& GetGLRenderBufferObjs(){return m_rbos;}
+    inline GLuint GetObj(){return m_fbo;}
 
   protected:
 
@@ -23,8 +29,6 @@ namespace Kedama
     GLuint m_fbo;
     vector<GLTexture2D*> m_texs;
     vector<GLuint> m_rbos;
-
-    uint32_t m_w,m_h;
   };
 }
 

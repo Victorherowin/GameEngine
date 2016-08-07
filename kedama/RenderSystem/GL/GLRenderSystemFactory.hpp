@@ -13,8 +13,9 @@ namespace Kedama
 
     ITexture2DPtr CreateTexture2D()override;
     FrameBufferPtr CreateFrameBuffer()override;
-    IVertexBufferPtr CreateVertexBuffer()override;
+    VertexBufferPtr CreateVertexBuffer()override;
     IIndexBufferPtr CreateIndexBuffer()override;
+    RenderStreamPtr CreateRenderStream()override;
   };
 }
 

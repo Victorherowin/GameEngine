@@ -2,11 +2,19 @@
 
 namespace Kedama
 {
-  void GLTexture2D::Create(TextureFormat foramt,int32_t w,int32_t h)
+  static GLenum __format_table[]={GL_RGB,GL_RGBA,GL_SRGB,GL_DEPTH,GL_DEPTH24_STENCIL8};
+
+  void GLTexture2D::Create(TextureFormat format,int32_t w,int32_t h)
   {
     m_compress=false;
     glBindTexture(GL_TEXTURE_2D,m_tex);
-    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,w,h,0,GL_RGB,GL_UNSIGNED_BYTE,nullptr);
+    glTexImage2D(GL_TEXTURE_2D,0,__format_table[(int)format],w,h,0,__format_table[(int)format],GL_UNSIGNED_BYTE,nullptr);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+
     glBindTexture(GL_TEXTURE_2D,0);
   }
 

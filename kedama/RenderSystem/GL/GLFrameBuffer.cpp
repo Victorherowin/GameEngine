@@ -37,7 +37,7 @@ namespace Kedama
 
       tex->Bind();
       glBindFramebuffer(GL_FRAMEBUFFER,m_fbo);
-      glFramebufferTexture2D(GL_FRAMEBUFFER,attachment,GL_TEXTURE_2D,tex->GetGLObject(),0);
+      glFramebufferTexture2D(GL_FRAMEBUFFER,attachment,GL_TEXTURE_2D,tex->GetObj(),0);
       glBindFramebuffer(GL_FRAMEBUFFER,0);
       tex->Unbind();
     }

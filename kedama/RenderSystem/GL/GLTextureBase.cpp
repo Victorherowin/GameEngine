@@ -15,9 +15,4 @@ namespace Kedama {
   {
     glGenerateMipmap(m_tex);
   }
-
-  GLuint GLTextureBase::GetGLObject()
-  {
-    return m_tex;
-  }
 }

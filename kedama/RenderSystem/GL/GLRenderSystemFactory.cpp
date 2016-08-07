@@ -5,6 +5,7 @@
 #include "GLFrameBuffer.hpp"
 #include "GLVertexBuffer.hpp"
 #include "GLIndexBuffer.hpp"
+#include "GLRenderStream.hpp"
 
 namespace Kedama
 {
@@ -26,7 +27,7 @@ namespace Kedama
     return std::make_shared<GLFrameBuffer>();
   }
 
-  IVertexBufferPtr GLRenderSystemFactory::CreateVertexBuffer()
+  VertexBufferPtr GLRenderSystemFactory::CreateVertexBuffer()
   {
     return std::make_shared<GLVertexBuffer>();
   }
@@ -39,5 +40,10 @@ namespace Kedama
   ITexture2DPtr GLRenderSystemFactory::CreateTexture2D()
   {
     return std::make_shared<GLTexture2D>();
+  }
+
+  RenderStreamPtr GLRenderSystemFactory::CreateRenderStream()
+  {
+    return std::make_shared<GLRenderStream>();
   }
 }

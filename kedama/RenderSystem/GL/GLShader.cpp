@@ -17,6 +17,10 @@ namespace Kedama
   {
     if(m_shader!=0)
       glDeleteProgram(m_shader);
+    for(auto& info:m_uniform_info_map)
+    {
+      operator delete(info.second.data);
+    }
   }
 
   void GLShader::Create(const string &vertex_shader, const string &fragment_shader)
@@ -82,8 +86,90 @@ namespace Kedama
     glDeleteShader(frag_obj);
   }
 
-  GLuint GLShader::GetShader()
+  void GLShader::BindUniform(ValueType type,VectorType vtype, uint32_t count, const void *usr_data, const string &name)
   {
-    return m_shader;
+    auto it=m_uniform_info_map.find(name);
+    if(it==m_uniform_info_map.end())
+    {
+      operator delete(it->second.data);
+    }
+    void* data=operator new(4*((int)vtype+1)*count);
+    memcpy(data,usr_data,4*((int)vtype+1)*count);
+
+    glUseProgram(m_shader);
+    GLint location=glGetUniformLocation(m_shader,name.c_str());
+    glUseProgram(0);
+
+    UniformInfo uni;
+    uni.type=0;
+    uni.value_type=type;
+    uni.count=count;
+    uni.location=location;
+    uni.data=data;
+    m_uniform_info_map[name]=uni;
+  }
+
+  void GLShader::BindUniformMatrix(MatrixType type, uint32_t count, const void *usr_data, const string &name)
+  {
+    static int __byte_table[]={4,9,16,6,6,8,8,12,12};
+
+    auto it=m_uniform_info_map.find(name);
+    if(it==m_uniform_info_map.end())
+    {
+      operator delete(it->second.data);
+    }
+    void* data=operator new(4*__byte_table[(int)type]*count);
+    memcpy(data,usr_data,4*__byte_table[(int)type]*count);
+
+    glUseProgram(m_shader);
+    GLint location=glGetUniformLocation(m_shader,name.c_str());
+    glUseProgram(0);
+
+    UniformInfo uni;
+    uni.type=1;
+    uni.matrix_type=type;
+    uni.count=count;
+    uni.location=location;
+    uni.data=data;
+    m_uniform_info_map[name]=uni;
+  }
+
+  void GLShader::Use()
+  {
+    typedef void (*UniformFuncPtrINT)(GLint,GLsizei,const GLint*)__attribute__((stdcall));
+    typedef void (*UniformFuncPtrUINT)(GLint,GLsizei,const GLuint*)__attribute__((stdcall));
+    typedef void (*UniformFuncPtrFLOAT)(GLint,GLsizei,const GLfloat*)__attribute__((stdcall));
+    typedef void (*UniformFuncPtrMatrix)(GLint,GLsizei,GLboolean,const GLfloat*)__attribute__((stdcall));
+    static UniformFuncPtrFLOAT __unformfunc_float_table[]={glUniform1fv,glUniform2fv,glUniform3fv,glUniform4fv};
+    static UniformFuncPtrUINT __unformfunc_uint_table[]={glUniform1uiv,glUniform2uiv,glUniform3uiv,glUniform4uiv};
+    static UniformFuncPtrINT __unformfunc_int_table[]={glUniform1iv,glUniform2iv,glUniform3iv,glUniform4iv};
+    static UniformFuncPtrMatrix __unformfunc_matrix_table[]={glUniformMatrix2fv,glUniformMatrix3fv,glUniformMatrix4fv,
+                                                         glUniformMatrix2x3fv,glUniformMatrix3x2fv,
+                                                         glUniformMatrix2x4fv,glUniformMatrix4x2fv,
+                                                         glUniformMatrix3x4fv,glUniformMatrix4x3fv};
+    for(auto& it:m_uniform_info_map)
+    {
+      if(it.second.type==0)
+      {
+        if(it.second.value_type==ValueType::INT)
+        {
+          __unformfunc_int_table[(int)it.second.value_type](it.second.location,it.second.count,(const GLint*)it.second.data);
+        }
+
+        if(it.second.value_type==ValueType::UINT)
+        {
+          __unformfunc_uint_table[(int)it.second.value_type](it.second.location,it.second.count,(const GLuint*)it.second.data);
+        }
+
+        if(it.second.value_type==ValueType::FLOAT)
+        {
+          __unformfunc_float_table[(int)it.second.value_type](it.second.location,it.second.count,(const GLfloat*)it.second.data);
+        }
+      }
+      else
+      {
+        __unformfunc_matrix_table[(int)it.second.matrix_type](it.second.location,it.second.count,GL_FALSE,(const GLfloat*)it.second.data);
+      }
+    }
   }
 }

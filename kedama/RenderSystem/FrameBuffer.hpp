@@ -41,7 +41,6 @@ namespace Kedama
 
     protected:
     virtual void OnAttach(AttachType type)=0;
-
     protected:
     vector<AttachType> m_attachs;
     uint32_t m_w,m_h;
