@@ -23,7 +23,7 @@ namespace Kedama
     RenderSystem* GetRenderSystem();
     AssetManager* GetAssetManager();
     SceneManager* GetSceneManager();
-    IRenderSystemFactory* GetRenderRenderFactory();
+    IRenderSystemFactory* GetRenderSystemFactory();
     string GetRenderSystemName();
 
   private:

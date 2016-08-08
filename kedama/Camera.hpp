@@ -11,7 +11,8 @@ namespace Kedama{
   {
     public:
     explicit Camera(const string& name="camera");
-    glm::mat4 GetVPMatrix();
+    const glm::mat4& GetViewMatrix();
+    const glm::mat4& GetProjectionMatrix();
 
     void LookAt(GameObjectPtr target);
     void LookAt(const glm::vec3& target);

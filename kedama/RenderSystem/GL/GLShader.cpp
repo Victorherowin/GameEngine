@@ -172,4 +172,28 @@ namespace Kedama
       }
     }
   }
+
+  void GLShader::SetViewMatrix(const glm::mat4 &view)
+  {
+    if(m_view_matrix_loc==std::numeric_limits<GLint>::max())
+      m_view_matrix_loc=glGetUniformLocation(m_shader,"kedama_view_matrix");
+    if(m_view_matrix_loc!=std::numeric_limits<GLint>::max())
+      glUniformMatrix4fv(m_view_matrix_loc,1,GL_FALSE,glm::value_ptr(view));
+  }
+
+  void GLShader::SetProjectionMatrix(const glm::mat4 &projection)
+  {
+    if(m_projection_matrix_loc==std::numeric_limits<GLint>::max())
+      m_projection_matrix_loc=glGetUniformLocation(m_shader,"kedama_projection_matrix");
+    if(m_projection_matrix_loc!=std::numeric_limits<GLint>::max())
+      glUniformMatrix4fv(m_projection_matrix_loc,1,GL_FALSE,glm::value_ptr(projection));
+  }
+
+  void GLShader::SetModelMatrix(const glm::mat4 &model)
+  {
+    if(m_model_matrix_loc==std::numeric_limits<GLint>::max())
+      m_model_matrix_loc=glGetUniformLocation(m_shader,"kedama_model_matrix");
+    if(m_model_matrix_loc!=std::numeric_limits<GLint>::max())
+      glUniformMatrix4fv(m_model_matrix_loc,1,GL_FALSE,glm::value_ptr(model));
+  }
 }

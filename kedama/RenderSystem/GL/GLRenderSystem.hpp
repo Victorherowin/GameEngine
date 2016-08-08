@@ -20,7 +20,6 @@ namespace Kedama
     void OnForwardRender(RenderStreamPtr&)override;
     void OnDeferredRender(RenderStreamPtr&)override;
 
-    IShader* CreateShader(const std::string shader_src)override;
     const string GetShaderLanguage()override;
 
     IWindow* GetWindow()override;

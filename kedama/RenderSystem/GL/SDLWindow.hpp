@@ -6,6 +6,8 @@
 
 #include "../../IWindow.hpp"
 
+#undef main
+
 namespace Kedama
 {
   using std::string;

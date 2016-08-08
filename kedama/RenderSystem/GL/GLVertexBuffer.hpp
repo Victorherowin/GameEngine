@@ -30,9 +30,9 @@ namespace Kedama
   void Unbind();
 
   void Create(int32_t vertex_size,int32_t len,BufferUsage usage)override;
-  void SendVertices(vector<Vertex>& vertices)override;
+  void SendVertices(vector<Vertex>& vertices,BufferUsage usage)override;
   void SendSubVertices(vector<Vertex>& vertices,int32_t offset)override;
-  void SendData(void* data,int32_t type_size,int32_t len)override;
+  void SendData(void* data,int32_t type_size,int32_t len,BufferUsage usage)override;
   void SendSubData(void *data,int32_t type_size,int32_t len,int32_t offset)override;
 
   void* MapBuffer(BufferAccess access)override;

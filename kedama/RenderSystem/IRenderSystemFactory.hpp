@@ -4,6 +4,7 @@
 #include <string>
 #include "RenderSystem.hpp"
 #include "FrameBuffer.hpp"
+#include "IShader.hpp"
 
 namespace Kedama
 {
@@ -21,6 +22,7 @@ namespace Kedama
         virtual VertexBufferPtr CreateVertexBuffer()=0;
         virtual IIndexBufferPtr CreateIndexBuffer()=0;
         virtual RenderStreamPtr CreateRenderStream()=0;
+        virtual IShaderPtr CreateShader(const string& source)=0;
     };
 }
 

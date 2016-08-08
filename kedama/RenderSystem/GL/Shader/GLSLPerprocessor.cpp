@@ -15,15 +15,15 @@ namespace Kedama
 
     enum class GLSLPreprocessTokenType
     {
-	IDENTIFIER,QUO,STRING
+        IDENTIFIER,QUO,STRING
     };
 
     struct GLSLPreprocessToken
     {
-	GLSLPreprocessTokenType type;
-	string identifier_name;
-	string content;
-	unsigned int row;
+        GLSLPreprocessTokenType type;
+        string identifier_name;
+        string content;
+        unsigned int row;
     };
 
 
@@ -31,78 +31,78 @@ namespace Kedama
     {
     public:
         void Parse(const string& src,const string& filename="")
-	{
-	    m_is.str(src);
-	    string* current_shader=nullptr;
+        {
+            m_is.str(src);
+            string* current_shader=nullptr;
             string next_filename;
-	    GLSLPreprocessToken token = GetNextToken();
-	    while(!m_is.eof())
-	    {
-		if(token.type==GLSLPreprocessTokenType::IDENTIFIER)
-		{
-		    if(token.identifier_name=="vertex_shader_begin")
-		    {
-			if(current_shader!=nullptr)
-			{
-			    stringstream ts;
-			    ts<<token.row;
+            GLSLPreprocessToken token = GetNextToken();
+            while(!m_is.eof())
+            {
+                if(token.type==GLSLPreprocessTokenType::IDENTIFIER)
+                {
+                    if(token.identifier_name=="vertex_shader_begin")
+                    {
+                        if(current_shader!=nullptr)
+                        {
+                            stringstream ts;
+                            ts<<token.row;
                             throw runtime_error(filename+"("+ts.str()+"):unexpected identifier '"+token.identifier_name+"'");
-			}
-			current_shader=&m_vertex_shader;
-			token=GetNextToken();
-		    }
-		    else if(token.identifier_name=="fragment_shader_begin")
-		    {
-			if(current_shader!=nullptr)
-			{
-			    stringstream ts;
-			    ts<<token.row;
+                        }
+                        current_shader=&m_vertex_shader;
+                        token=GetNextToken();
+                    }
+                    else if(token.identifier_name=="fragment_shader_begin")
+                    {
+                        if(current_shader!=nullptr)
+                        {
+                            stringstream ts;
+                            ts<<token.row;
                             throw runtime_error(filename+"("+ts.str()+"):unexpected identifier '"+token.identifier_name+"'");
-			}
-			current_shader=&m_fragment_shader;
-			token=GetNextToken();
-		    }
-		    else if(token.identifier_name=="vertex_shader_end"||token.identifier_name=="fragment_shader_end")
-		    {
-			current_shader=nullptr;
-			token=GetNextToken();
-		    }
-		    /*else if(token.identifier_name=="include")
-		    {
-			token=GetNextToken();
-			if(token.type==GLSLPreprocessTokenType::QUO)
-			{
-			    token=GetNextToken();
-			    GLSLPreprocessToken next_token=GetNextToken();
-			    if(token.type==GLSLPreprocessTokenType::STRING&&next_token.type!=GLSLPreprocessTokenType::QUO)
-			    {
-				stringstream ts;
-				ts<<token.row;
+                        }
+                        current_shader=&m_fragment_shader;
+                        token=GetNextToken();
+                    }
+                    else if(token.identifier_name=="vertex_shader_end"||token.identifier_name=="fragment_shader_end")
+                    {
+                        current_shader=nullptr;
+                        token=GetNextToken();
+                    }
+                    /*else if(token.identifier_name=="include")
+                    {
+                        token=GetNextToken();
+                        if(token.type==GLSLPreprocessTokenType::QUO)
+                        {
+                            token=GetNextToken();
+                            GLSLPreprocessToken next_token=GetNextToken();
+                            if(token.type==GLSLPreprocessTokenType::STRING&&next_token.type!=GLSLPreprocessTokenType::QUO)
+                            {
+                                stringstream ts;
+                                ts<<token.row;
                                 throw runtime_error(filename+"("+ts.str()+ "):unexpected symbol");
-			    }
-			    GLSLPreprocessor sub_preprocessor;
-			    sub_preprocessor.m_include_paths=m_include_paths;
-			    string prase_src;
-			    if(token.content=="kedama.glsl"||token.content=="skinning.glsl")
-			    {
-				if(token.content=="kedama.glsl")
-				{
-				    prase_src=_kedama_glsl;
+                            }
+                            GLSLPreprocessor sub_preprocessor;
+                            sub_preprocessor.m_include_paths=m_include_paths;
+                            string prase_src;
+                            if(token.content=="kedama.glsl"||token.content=="skinning.glsl")
+                            {
+                                if(token.content=="kedama.glsl")
+                                {
+                                    prase_src=_kedama_glsl;
                                     next_filename="kedama.glsl";
-				}
-				else if(token.content=="skinning.glsl")
-				{
-				    prase_src=_skinning_glsl;
+                                }
+                                else if(token.content=="skinning.glsl")
+                                {
+                                    prase_src=_skinning_glsl;
                                     next_filename="skinning.glsl";
-				}
-			    }
-			    else//FileSystem 类未写
-			    {
+                                }
+                            }
+                            else//FileSystem 类未写
+                            {
                                 stringstream ts;
                                 ts<<token.row;
                                 throw runtime_error(filename+"("+ts.str()+ "):No such found file");
-				    //FileSystem& fs=FileSystem::GetSingleton();
-			    }
+                                    //FileSystem& fs=FileSystem::GetSingleton();
+                            }
 
                             try
                             {
@@ -113,11 +113,11 @@ namespace Kedama
                                 throw e;
                             }
 
-			    m_vertex_shader+=sub_preprocessor.GetVertexShader();
-			    m_fragment_shader+=sub_preprocessor.GetFragmentShader();
+                            m_vertex_shader+=sub_preprocessor.GetVertexShader();
+                            m_fragment_shader+=sub_preprocessor.GetFragmentShader();
                             token=GetNextToken();
                         }
-		    }*/
+                    }*/
                     else
                     {
                         if(current_shader==nullptr)
@@ -135,87 +135,89 @@ namespace Kedama
                         }
                     }
                 }
-		else if(token.type==GLSLPreprocessTokenType::STRING)
-		{
-		    (*current_shader)+=token.content;
-		    token=GetNextToken();
-		}
-		else
-		{
-		    stringstream ts;
-		    ts<<token.row;
+                else if(token.type==GLSLPreprocessTokenType::STRING)
+                {
+                    (*current_shader)+=token.content;
+                    token=GetNextToken();
+                }
+                else
+                {
+                    stringstream ts;
+                    ts<<token.row;
                     throw runtime_error(filename+"("+ts.str()+ "):unexpected symbol");
-		    token=GetNextToken();
-		}
-	    }
-	}
+                    token=GetNextToken();
+                }
+            }
+        }
 
-	void AddIncludePath(const string& path)
-	{
-	    m_include_paths.push_back(path);
-	}
+        void AddIncludePath(const string& path)
+        {
+            m_include_paths.push_back(path);
+        }
 
-	string GetVertexShader()
-	{
-	    return m_vertex_shader;
-	}
+        string GetVertexShader()
+        {
+            return m_vertex_shader;
+        }
 
-	string GetFragmentShader()
-	{
-	    return m_fragment_shader;
-	}
-
-    private:
-
-	GLSLPreprocessToken GetNextToken()
-	{
-	    GLSLPreprocessToken token;
-	    int ch=0;
-	    do
-	    {
-		ch=m_is.get();
-		if(ch=='\n')++m_current_col;
-	    }
-	    while(ch=='\n'||ch==' '||ch=='\t'||ch=='\r');
-
-	    if(ch=='#')
-	    {
-		token.type=GLSLPreprocessTokenType::IDENTIFIER;
-		do
-		{
-		    ch=m_is.get();
-		    token.identifier_name.push_back(ch);
-		}while(ch!='\n'&&ch!=' '&&ch!='"');
-		m_is.seekg(-1,std::ios_base::cur);
-		token.identifier_name.pop_back();
-	    }else if(ch=='"')
-	    {
-		token.type=GLSLPreprocessTokenType::QUO;
-
-	    }
-	    else if(ch>=33&ch<=126)
-	    {
-		m_is.seekg(-1,std::ios_base::cur);
-		token.type=GLSLPreprocessTokenType::STRING;
-		while(ch!='"'&&ch!='#')
-		{
-		    ch=m_is.get();
-		    token.content.push_back(ch);
-		}
-		m_is.seekg(-1,std::ios_base::cur);
-		token.content.pop_back();
-	    }
-	    token.row=m_current_col;
-	    return token;
-	}
+        string GetFragmentShader()
+        {
+            return m_fragment_shader;
+        }
 
     private:
-	unsigned int m_current_col=1;
 
-	stringstream m_is;//input stream
-	string m_vertex_shader;
-	string m_fragment_shader;
+        GLSLPreprocessToken GetNextToken()
+        {
+            GLSLPreprocessToken token;
+            int ch=0;
+            do
+            {
+                ch=m_is.get();
+                if(ch=='\n')++m_current_col;
+            }
+            while(!m_is.eof()&&(ch=='\n'||ch==' '||ch=='\t'||ch=='\r'));
 
-	vector<string> m_include_paths;
+            if(ch=='#')
+            {
+                token.type=GLSLPreprocessTokenType::IDENTIFIER;
+                do
+                {
+                    ch=m_is.get();
+                    token.identifier_name.push_back(ch);
+                }while(!m_is.eof()&&ch!='\n'&&ch!=' '&&ch!='"');
+                if(!m_is.eof())
+                    m_is.seekg(-1,std::ios_base::cur);
+                token.identifier_name.pop_back();
+            }else if(ch=='"')
+            {
+                token.type=GLSLPreprocessTokenType::QUO;
+
+            }
+            else if(!m_is.eof()&&ch>=33&ch<=126)
+            {
+                m_is.seekg(-1,std::ios_base::cur);
+                token.type=GLSLPreprocessTokenType::STRING;
+                while(!m_is.eof()&&ch!='"'&&ch!='#')
+                {
+                    ch=m_is.get();
+                    token.content.push_back(ch);
+                }
+                if(!m_is.eof())
+                    m_is.seekg(-1,std::ios_base::cur);
+                token.content.pop_back();
+            }
+            token.row=m_current_col;
+            return token;
+        }
+
+    private:
+        unsigned int m_current_col=1;
+
+        stringstream m_is;//input stream
+        string m_vertex_shader;
+        string m_fragment_shader;
+
+        vector<string> m_include_paths;
     };
 }

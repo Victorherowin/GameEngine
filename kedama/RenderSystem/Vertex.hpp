@@ -9,33 +9,29 @@ namespace Kedama
     class KEDAMA_API Vertex
     {
     public:
-	inline void SetPositon(vec3 position){m_position=position;}
-	inline void SetNormal(vec3 normal){m_normal=normalize(normal);}
-	inline void SetTextureCoord(vec2 uv){m_uv=uv;}
-	inline void SetWeight(int i,uint16 bone_index,float weight){m_bone_index[i]=bone_index;m_weight[i]=weight;}
-/*	inline void SetTBN(vec3 tangent,vec3 noraml,vec3 bitangent){
-	    m_tbn_quat.w=sqrt(tangent.x*noraml.y*bitangent.z+1);
-	    m_tbn_quat.x=(noraml.z-bitangent.z)/4*m_tbn_quat.w;
-	    m_tbn_quat.y=(bitangent.x-tangent.z)/4*m_tbn_quat.w;
-	    m_tbn_quat.z=(tangent.y-noraml.x)/4*m_tbn_quat.w;
-	}*///暂不实现切线空间
+        Vertex(const vec3& position,const vec2& uv=vec2(),const vec3& normal=vec3(),
+               const mat3& tbn=mat3(),const u16vec4& bone_index=u16vec4(),
+               const vec4& weight=vec4());
 
-	inline vec3 GetPositon(){return m_position;}
-	inline vec3 GetNormal(){return m_normal;}
-	inline vec2 GetTextureCoord(){return m_uv;}
-	inline quat GetTBNQuaternion(){return m_tbn_quat;}
-	inline void GetBoneIndexAndWeight(uint16* bone_inedx,float* weight)
-	{
-		memcpy(bone_inedx,m_bone_index,sizeof(uint16)*4);
-		memcpy(weight,&m_weight[0],sizeof(float)*4);
-	}
+        inline void SetPositon(const vec3& position){m_position=position;}
+        inline void SetNormal(const vec3& normal){m_normal=normalize(normal);}
+        inline void SetTextureCoord(const vec2& uv){m_uv=uv;}
+        inline void SetWeight(const u16vec4& bone_index,vec4 weight){m_bone_index=bone_index;m_weight=weight;}
+        inline void SetTBN(const mat3& tbn){m_tbn_quat=glm::quat_cast(tbn);}
+
+        inline vec3& GetPositon(){return m_position;}
+        inline vec3& GetNormal(){return m_normal;}
+        inline vec2& GetTextureCoord(){return m_uv;}
+        inline quat& GetTBNQuaternion(){return m_tbn_quat;}
+        inline u16vec4& GetBoneIndex(){return m_bone_index;}
+        inline vec4& GetWeight(){return m_weight;}
 
     private:
 	vec3 m_position;
+        vec2 m_uv;
 	vec3 m_normal;
-	vec2 m_uv;
 	quat m_tbn_quat;
-	uint16 m_bone_index[4];
+        u16vec4 m_bone_index;
 	vec4 m_weight;
     };
 }

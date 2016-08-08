@@ -44,13 +44,15 @@ namespace Kedama
     const u8vec4& GetSpecularColor(){return m_specular_color;}
     float GetShininess(){return m_specular_shininess;}
 
-    void AddPass(FrameBufferPtr& src,FrameBufferPtr& dst,IShaderPtr shader);
+    void AddPass(const FrameBufferPtr& src,const FrameBufferPtr& dst,const IShaderPtr& shader);
     const vector<Pass>& GetPass()const{return m_pass;}
     const ITexture2DPtr& GetTexture()const{return m_tex2d;}
 
     const PassPtr& GetPass(int at);
 
-    void BindTexture(ITexture2DPtr tex);
+    void BindTexture(const ITexture2DPtr& tex);
+
+    static MaterialPtr CreateMaterial();
   protected:
 
     vector<Pass> m_pass;

@@ -38,7 +38,7 @@ namespace Kedama
     m_projection_matrix=glm::ortho(left,right,buttom,top);
   }
 
-  glm::mat4 Camera::GetVPMatrix()
+  const glm::mat4& Camera::GetViewMatrix()
   {
     if(m_look_target==nullptr)
     {
@@ -48,6 +48,11 @@ namespace Kedama
     {
       m_view_matrix=glm::lookAt(GetTansform().GetWorldPosition(),m_look_target->GetTansform().GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }
-    return m_projection_matrix*m_view_matrix;
+    return m_view_matrix;
+  }
+
+  const glm::mat4& Camera::GetProjectionMatrix()
+  {
+    return m_projection_matrix;
   }
 }

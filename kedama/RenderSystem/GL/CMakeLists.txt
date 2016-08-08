@@ -10,4 +10,4 @@ aux_source_directory(. GLRENDERSYSTEM_SOURCE)
 
 add_library(Kedama_GLRenderSystem ${GLRENDERSYSTEM_SOURCE})
 
-target_link_libraries(Kedama_GLRenderSystem KedamaEngine SDL2 SDL2main opengl32 glew32)
+target_link_libraries(Kedama_GLRenderSystem KedamaEngine SDL2 SDL2main SDL2_image opengl32 glew32)

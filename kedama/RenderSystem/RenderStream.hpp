@@ -21,7 +21,6 @@ namespace Kedama
     {
       MeshBuffer& mesh_buffer;
       uint32_t offset;
-      uint32_t vertex_size;
 
       MaterialPtr material;
     };
@@ -29,7 +28,7 @@ namespace Kedama
     public:
     virtual ~RenderStream(){}
     uint32_t AddMeshBuffer(const MeshBuffer& mb);
-    void BindMaterial(uint32_t mesh_id,MaterialPtr& material,uint32_t offset,uint32_t size);
+    void BindMaterial(uint32_t mesh_id,MaterialPtr& material,uint32_t offset);
 
     void Clear();
 
@@ -37,7 +36,7 @@ namespace Kedama
 
     protected:
 
-    virtual void OnBindMaterial(MaterialInfo* mi)=0;
+    virtual void OnBindMaterial(const MaterialInfo* mi)=0;
     virtual void OnClear()=0;
 
     private:

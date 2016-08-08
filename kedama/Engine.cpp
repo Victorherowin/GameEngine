@@ -35,7 +35,7 @@ namespace Kedama
     return m_scene_manager;
   }
 
-  IRenderSystemFactory* Engine::GetRenderRenderFactory()
+  IRenderSystemFactory* Engine::GetRenderSystemFactory()
   {
     return RenderSystemFactoryManager::GetSingleton().GetFactory(m_render_system_name);
   }

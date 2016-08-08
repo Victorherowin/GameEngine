@@ -33,7 +33,7 @@ namespace Kedama
   {
     m_size=indices.size();
     Bind();
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices.size(),indices.data(),GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices.size()*sizeof(uint32_t),indices.data(),GL_STATIC_DRAW);
     Unbind();
   }
 

@@ -14,7 +14,6 @@
 #include <GL/glew.h>
 
 #include "Shader/DefaultShader.cpp"
-#include "Shader/GLSLPerprocessor.cpp"
 
 namespace Kedama
 {
@@ -24,9 +23,9 @@ namespace Kedama
     m_gl=SDL_GL_CreateContext(m_win.GetPtr());
     glewInit();
     if(!m_gl)
-      {
-        throw std::runtime_error("Create OpenGL Context Failed");
-      }
+    {
+      throw std::runtime_error("Create OpenGL Context Failed");
+    }
     glClearColor(0.6f,0.8f,0.9f,1.0f);
     glCullFace(GL_BACK);
   }
@@ -61,65 +60,73 @@ namespace Kedama
     return "GLSL";
   }
 
-  IShader* GLRenderSystem::CreateShader(const std::string shader_src)
-  {
-    GLSLPreprocessor glsl_preprocessor;
-    glsl_preprocessor.Parse(shader_src);
-    GLShader* r_subshader=new GLShader(glsl_preprocessor.GetVertexShader(),glsl_preprocessor.GetFragmentShader());
-    return r_subshader;
-  }
-
   void GLRenderSystem::OnForwardRender(RenderStreamPtr& rsptr)
   {
     GLRenderStreamPtr glrsptr=std::dynamic_pointer_cast<GLRenderStream>(rsptr);
     vector<GLRenderStream::MaterialInfo>& mis=glrsptr->GetDrawInfo();
     for(GLRenderStream::MaterialInfo& mi:mis)
     {
-       //GLVertexBufferPtr vbo=std::dynamic_pointer_cast<GLVertexBuffer>(mi.mesh_buffer.first);
-       GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(mi.mesh_buffer.second);
-       GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
-       const vector<Pass> pass=mi.material->GetPass();
-       auto& vaos=glrsptr->GetVAOs();
-       GLuint vao=vaos[&mi];
-       tex2d->Bind();
-       glBindVertexArray(vao);
-       for(const Pass& subpass:pass)
-       {
-         GLFrameBufferPtr src_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_src_framebuffer);
-         if(subpass.m_src_framebuffer==nullptr)
-         {
-           glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
-         }
-         else
-         {
-           GLFrameBufferPtr dst_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_dst_framebuffer);
-           glBindFramebuffer(GL_DRAW_FRAMEBUFFER,dst_fb->GetObj());
-         }
+      //GLVertexBufferPtr vbo=std::dynamic_pointer_cast<GLVertexBuffer>(mi.mesh_buffer.first);
+      GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(mi.mesh_buffer.second);
+      GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
+      const vector<Pass> pass=mi.material->GetPass();
+      auto& vaos=glrsptr->GetVAOs();
+      GLuint vao=vaos[&mi];
+      if(tex2d!=nullptr)
+      {
+        tex2d->Bind();
+      }
+      glBindVertexArray(vao);
+      for(const Pass& subpass:pass)
+      {
+        if(subpass.m_dst_framebuffer!=nullptr)
+        {
+          GLFrameBufferPtr dst_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_dst_framebuffer);
+          glBindFramebuffer(GL_DRAW_FRAMEBUFFER,dst_fb->GetObj());
+        }
 
-         GLShaderPtr shader=std::dynamic_pointer_cast<GLShader>(subpass.m_shader);
-         glUseProgram(shader->GetShader());
+        GLShaderPtr shader=std::dynamic_pointer_cast<GLShader>(subpass.m_shader);
+        glUseProgram(shader->GetShader());
+        if(m_main_camera!=nullptr)
+        {
+          shader->SetViewMatrix(m_main_camera->GetViewMatrix());
+          shader->SetProjectionMatrix(m_main_camera->GetProjectionMatrix());
+        }
 
-         for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
-         {
-           glActiveTexture(i);
-           src_fb->GetGLTextureObjs()[i]->Bind();
-           glUniform1i(i,i);
-         }
 
-         glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
+        if(subpass.m_src_framebuffer!=nullptr)
+        {
+          GLFrameBufferPtr src_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_src_framebuffer);
 
-         for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
-         {
-           glActiveTexture(i);
-           src_fb->GetGLTextureObjs()[i]->Unbind();
-         }
+          for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
+          {
+            glActiveTexture(GL_TEXTURE0+i);
+            src_fb->GetGLTextureObjs()[i]->Bind();
+            glUniform1i(i,i);
+          }
 
-         glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
-         glActiveTexture(0);
-         glUseProgram(0);
-       }
-       glBindVertexArray(0);
-       tex2d->Unbind();
+          glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
+
+          for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
+          {
+            glActiveTexture(GL_TEXTURE0+i);
+            src_fb->GetGLTextureObjs()[i]->Unbind();
+          }
+        }
+        else
+        {
+          glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
+        }
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
+        glActiveTexture(GL_TEXTURE0);
+        glUseProgram(0);
+      }
+      glBindVertexArray(0);
+      if(tex2d!=nullptr)
+      {
+        tex2d->Unbind();
+      }
     }
 
   }

@@ -59,6 +59,12 @@ namespace Kedama {
     m_need_update=true;
   }
 
+  void Transform::Rotate(const glm::mat4 angle)
+  {
+    m_angle=glm::quat_cast(glm::mat4_cast(m_angle)*angle);
+    m_need_update=true;
+  }
+
   void Transform::Rotate(const glm::quat& angle)
   {
     Rotate(glm::mat3_cast(angle));

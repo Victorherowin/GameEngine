@@ -32,7 +32,6 @@ namespace Kedama
     virtual void Clear()=0;
     virtual void Flush()=0;
     virtual void SwapBuffer()=0;
-    virtual IShader* CreateShader(std::string shader_src)=0;
 
   protected:
     virtual void OnForwardRender(RenderStreamPtr& rsptr)=0;

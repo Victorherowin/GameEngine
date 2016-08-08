@@ -39,6 +39,7 @@ namespace Kedama
     void Move(const glm::vec3& distance);
     void Rotate(const glm::quat& angle);
     void Rotate(const glm::mat3& angle);
+    void Rotate(const glm::mat4 angle);
   private:
     void CheckUpdate();
 

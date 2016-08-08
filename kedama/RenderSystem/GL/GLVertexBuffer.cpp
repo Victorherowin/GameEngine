@@ -7,6 +7,8 @@ namespace Kedama
 
   namespace detail
   {
+    static GLenum __usage_table[]={GL_STATIC_DRAW,GL_STATIC_DRAW,GL_DYNAMIC_DRAW};
+
     GLVertex* Convert(vector<Vertex> &vertices)
     {
       GLVertex* tmp_vert=new GLVertex[vertices.size()];
@@ -20,9 +22,11 @@ namespace Kedama
         FloatTo<vec3,int16>(vert.GetNormal(),p_vert->m_normal);
         FloatTo<vec2,uint16>(vert.GetTextureCoord(),p_vert->m_uv);
         FloatTo<quat,int16>(vert.GetTBNQuaternion(),p_vert->m_tbn_quat);
-        vert.GetBoneIndexAndWeight(p_vert->m_bone_index,tmp_weight);
-        for(float& f:tmp_weight)
-          p_vert->m_weight[&f-tmp_weight] = FloatTo<uint8>(f);
+        memcpy(p_vert->m_bone_index,&vert.GetBoneIndex()[0],sizeof(uint16)*4);
+        for(int i=0;i<4;++i)
+        {
+          p_vert->m_weight[i] = FloatTo<uint8>(vert.GetWeight()[i]);
+        }
         ++p_vert;
       }
       return tmp_vert;
@@ -51,17 +55,17 @@ namespace Kedama
 
   void GLVertexBuffer::Create(int32_t vertex_size,int32_t len,BufferUsage usage)
   {
-    static GLenum __usage_table[]={GL_STATIC_DRAW,GL_STATIC_DRAW,GL_DYNAMIC_DRAW};
-
-    m_usage=__usage_table[(int32_t)usage];
+    m_usage=detail::__usage_table[(int32_t)usage];
     Bind();
     glBufferData(GL_ARRAY_BUFFER,vertex_size*len,nullptr,m_usage);
     Unbind();
   }
 
-  void GLVertexBuffer::SendVertices(vector<Vertex> &vertices)
+  void GLVertexBuffer::SendVertices(vector<Vertex> &vertices,BufferUsage usage)
   {
     GLVertex* tmp_vert=detail::Convert(vertices);
+    m_usage=detail::__usage_table[(int32_t)usage];
+
     Bind();
     glBufferData(GL_ARRAY_BUFFER,sizeof(GLVertex)*vertices.size(),tmp_vert,m_usage);
     Unbind();
@@ -77,8 +81,9 @@ namespace Kedama
     delete tmp_vert;
   }
 
-  void GLVertexBuffer::SendData(void*data,int32_t type_size,int32_t len)
+  void GLVertexBuffer::SendData(void*data,int32_t type_size,int32_t len,BufferUsage usage)
   {
+    m_usage=detail::__usage_table[(int32_t)usage];
     Bind();
     glBufferData(GL_ARRAY_BUFFER,type_size*len,data,m_usage);
     Unbind();

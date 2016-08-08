@@ -5,9 +5,9 @@
 
 namespace Kedama
 {
-  void GLRenderStream::OnBindMaterial(MaterialInfo* mi)
+  void GLRenderStream::OnBindMaterial(const MaterialInfo* mi)
   {
-    static GLenum __format_table[]={GL_INT,GL_INT16_NV,GL_INT8_NV,GL_UNSIGNED_INT,GL_UNSIGNED_INT16_NV,GL_UNSIGNED_INT8_NV,
+    static GLenum __format_table[]={GL_INT,GL_SHORT,GL_BYTE,GL_UNSIGNED_INT,GL_UNSIGNED_SHORT,GL_UNSIGNED_BYTE,
                                     GL_FLOAT,GL_HALF_FLOAT};
 
     static VertexLayout __vl({0,1,2,3,4,5});
@@ -31,38 +31,38 @@ namespace Kedama
 
     if(vl.position!=VertexLayout::UNUSEED)
     {
-      glVertexAttribPointer(vl.position,3,GL_FLOAT,GL_FALSE,sizeof(GLVertex),(const void*)offsetof(GLVertex,m_position));
+      glVertexAttribPointer(vl.position,3,GL_FLOAT,GL_FALSE,sizeof(GLVertex),(const void*)(offsetof(GLVertex,m_position)+mi->offset));
       glEnableVertexAttribArray(vl.position);
+    }
+    if(vl.uv!=VertexLayout::UNUSEED)
+    {
+      glVertexAttribPointer(vl.uv,2,GL_UNSIGNED_SHORT,GL_TRUE,sizeof(GLVertex),(const void*)(offsetof(GLVertex,m_uv)+mi->offset));
+      glEnableVertexAttribArray(vl.uv);
     }
     if(vl.normal!=VertexLayout::UNUSEED)
     {
-      glVertexAttribPointer(vl.normal,3,GL_INT16_NV,GL_TRUE,sizeof(GLVertex),(const void*)offsetof(GLVertex,m_normal));
+      glVertexAttribPointer(vl.normal,3,GL_SHORT,GL_TRUE,sizeof(GLVertex),(const void*)(offsetof(GLVertex,m_normal)+mi->offset));
       glEnableVertexAttribArray(vl.normal);
-    }
-    if(vl.coord!=VertexLayout::UNUSEED)
-    {
-      glVertexAttribPointer(vl.coord,2,GL_UNSIGNED_INT16_NV,GL_TRUE,sizeof(GLVertex),(const void*)offsetof(GLVertex,m_uv));
-      glEnableVertexAttribArray(vl.coord);
     }
     if(vl.tbn!=VertexLayout::UNUSEED)
     {
-      glVertexAttribPointer(vl.tbn,4,GL_INT16_NV,GL_TRUE,sizeof(GLVertex),(const void*)offsetof(GLVertex,m_tbn_quat));
+      glVertexAttribPointer(vl.tbn,4,GL_SHORT,GL_TRUE,sizeof(GLVertex),(const void*)(offsetof(GLVertex,m_tbn_quat)+mi->offset));
       glEnableVertexAttribArray(vl.tbn);
     }if(vl.bone_index!=VertexLayout::UNUSEED)
     {
-      glVertexAttribPointer(vl.bone_index,4,GL_UNSIGNED_INT16_NV,GL_TRUE,sizeof(GLVertex),(const void*)offsetof(GLVertex,m_bone_index));
+      glVertexAttribPointer(vl.bone_index,4,GL_UNSIGNED_SHORT,GL_TRUE,sizeof(GLVertex),(const void*)(offsetof(GLVertex,m_bone_index)+mi->offset));
       glEnableVertexAttribArray(vl.bone_index);
     }
     if(vl.weight!=VertexLayout::UNUSEED)
     {
-      glVertexAttribPointer(vl.weight,4,GL_UNSIGNED_INT8_NV,GL_TRUE,sizeof(GLVertex),(const void*)offsetof(GLVertex,m_weight));
+      glVertexAttribPointer(vl.weight,4,GL_UNSIGNED_BYTE,GL_TRUE,sizeof(GLVertex),(const void*)(offsetof(GLVertex,m_weight)+mi->offset));
       glEnableVertexAttribArray(vl.weight);
     }
     if(vl.custom.size()>0)
     {
       for(auto& vle:vl.custom)
       {
-        glVertexAttribPointer(std::get<5>(vle),std::get<1>(vle),__format_table[(int)std::get<0>(vle)],GL_FALSE,std::get<3>(vle),(const void*)std::get<4>(vle));
+        glVertexAttribPointer(std::get<5>(vle),std::get<1>(vle),__format_table[(int)std::get<0>(vle)],GL_FALSE,std::get<3>(vle),(const void*)(std::get<4>(vle)+mi->offset));
         glEnableVertexAttribArray(std::get<5>(vle));
       }
     }

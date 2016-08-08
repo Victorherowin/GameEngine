@@ -23,8 +23,8 @@ namespace Kedama
 
   void GameObject::UpdateSelf()
   {
-    m_transform.SetRelativeAngle(m_transform.m_angle);
-    m_transform.SetRelativePosition(m_transform.m_position);
+    m_transform.m_relative_matrix=glm::mat4_cast(m_transform.m_angle);
+    m_transform.m_relative_matrix[3]=glm::vec4(m_transform.m_position,1.0f);
     m_transform.m_world_matrix=m_transform.m_relative_matrix;
     for(GameObject* it=m_parent;it!=nullptr;it=it->m_parent)
     {

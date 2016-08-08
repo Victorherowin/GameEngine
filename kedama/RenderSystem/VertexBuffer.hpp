@@ -19,8 +19,8 @@ namespace Kedama
         static constexpr uint16_t UNUSEED=std::numeric_limits<uint16_t>::max();
 
         uint16_t position;
+        uint16_t uv;
         uint16_t normal;
-        uint16_t coord;
         uint16_t tbn;
         uint16_t bone_index;
         uint16_t weight;
@@ -36,9 +36,9 @@ namespace Kedama
         virtual void Create(int vertex_size=4,int len=0,BufferUsage usage=BufferUsage::Default)=0;
 
         //发送顶点
-        virtual void SendVertices(vector<Vertex>& vertices)=0;
+        virtual void SendVertices(vector<Vertex>& vertices,BufferUsage usage)=0;
         virtual void SendSubVertices(vector<Vertex>& vertices,int offset)=0;
-        virtual void SendData(void* data,int type_size,int len)=0;
+        virtual void SendData(void* data,int type_size,int len,BufferUsage usage)=0;
         virtual void SendSubData(void *data,int type_size,int len,int offset)=0;
 
         virtual void* MapBuffer(BufferAccess access){return nullptr;}

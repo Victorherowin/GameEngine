@@ -8,12 +8,12 @@ namespace Kedama
     return m_meshbuffers.end()-m_meshbuffers.begin()-1;
   }
 
-  void RenderStream::BindMaterial(uint32_t mesh_id, MaterialPtr &material, uint32_t offset, uint32_t size)
+  void RenderStream::BindMaterial(uint32_t mesh_id, MaterialPtr &material, uint32_t offset)
   {
     if(mesh_id>m_meshbuffers.size())
       throw std::runtime_error("Error of Mesh ID");
 
-    MaterialInfo mi({m_meshbuffers[mesh_id],offset,size,material});
+    MaterialInfo mi({m_meshbuffers[mesh_id],offset,material});
     m_texs.push_back(mi);
     OnBindMaterial(&m_texs.back());
   }

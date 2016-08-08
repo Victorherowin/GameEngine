@@ -12,15 +12,15 @@ namespace Kedama
   {
   public:
     ~GLRenderStream();
-  inline map<MaterialInfo*,GLuint>& GetVAOs(){return m_vao_map;}
+  inline map<const MaterialInfo*,GLuint>& GetVAOs(){return m_vao_map;}
 
   protected:
-    void OnBindMaterial(MaterialInfo* mi)override;
+    void OnBindMaterial(const MaterialInfo* mi)override;
     void OnClear()override;
 
 
   private:
-    map<MaterialInfo*,GLuint> m_vao_map;
+    map<const MaterialInfo*,GLuint> m_vao_map;
   };
 }
 

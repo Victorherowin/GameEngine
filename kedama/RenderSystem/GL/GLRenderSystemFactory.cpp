@@ -7,6 +7,8 @@
 #include "GLIndexBuffer.hpp"
 #include "GLRenderStream.hpp"
 
+#include "Shader/GLSLPerprocessor.cpp"
+
 namespace Kedama
 {
   RenderSystem* GLRenderSystemFactory::CreateRenderSystem()
@@ -45,5 +47,13 @@ namespace Kedama
   RenderStreamPtr GLRenderSystemFactory::CreateRenderStream()
   {
     return std::make_shared<GLRenderStream>();
+  }
+
+  IShaderPtr GLRenderSystemFactory::CreateShader(const string& shader_src)
+  {
+    GLSLPreprocessor glsl_preprocessor;
+    glsl_preprocessor.Parse(shader_src);
+    GLShaderPtr r_shader=std::make_shared<GLShader>(glsl_preprocessor.GetVertexShader(),glsl_preprocessor.GetFragmentShader());
+    return r_shader;
   }
 }
