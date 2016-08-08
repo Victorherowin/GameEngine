@@ -4,8 +4,9 @@
 
 namespace Kedama
 {
-  StaticModel::StaticModel(RenderStreamPtr& rs):m_rs(rs)
+  StaticModel::StaticModel(const string& name):GameObject(name)
   {
+    m_rs=Engine::GetSingleton().GetRenderSystemFactory()->CreateRenderStream();
   }
 
   void StaticModel::SetRenderStream(RenderStreamPtr& rs)

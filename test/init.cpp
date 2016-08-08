@@ -26,12 +26,14 @@ R"(#vertex_shader_begin
    #version 430 core
    uniform mat4 kedama_view_matrix;
    uniform mat4 kedama_projection_matrix;
+   uniform mat4 kedama_model_matrix;
+
    layout(location = 0)in vec4 pos;
    layout(location = 1)in vec4 uv;
    out vec2 f_uv;
    void main()
    {
-    gl_Position=kedama_projection_matrix*kedama_view_matrix*pos;
+    gl_Position=kedama_projection_matrix*kedama_view_matrix*kedama_model_matrix*pos;
     f_uv=uv.xy;
    }
    #vertex_shader_end
@@ -59,9 +61,14 @@ int32_t main(int32_t argc,char** argv)
     RenderSystemFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new Kedama::GLRenderSystemFactory());
     Engine engine("GLRenderSystem");
     RenderSystem* irs = engine.GetRenderSystem();
+    SceneManager* sm=engine.GetSceneManager();
     IRenderSystemFactory* irsf=engine.GetRenderSystemFactory();
     IWindow* win=irs->GetWindow();
     win->SetTitle("ForwardRender Test");
+
+    StaticModel* tri=new StaticModel("test node");
+    sm->GetRoot().AddNode(tri);
+    //go->
 
     IShaderPtr shader=irsf->CreateShader(shader_src);
 
@@ -80,7 +87,7 @@ int32_t main(int32_t argc,char** argv)
     vbo->SendVertices(vert,BufferUsage::StaticDraw);
     ibo->SendIndices(index);
 
-    RenderStreamPtr rs=irsf->CreateRenderStream();
+    RenderStreamPtr rs=tri->GetRenderStream();
     uint32 mesh_id=rs->AddMeshBuffer(RenderStream::MeshBuffer(vbo,ibo));
 
     MaterialPtr material=Material::CreateMaterial();
@@ -88,13 +95,15 @@ int32_t main(int32_t argc,char** argv)
     material->BindTexture(tex);
 
     rs->BindMaterial(mesh_id,material,0);
+    rs->GetInstancingInfoRef(mesh_id).AddInstance(mat4());
+
 
     CameraPtr camera=Camera::CreateCamera("test_camera");
     int w,h;
     win->GetSize(&w,&h);
     camera->SetPerspective(45.0f,(float)w/(float)h,0.1f,1000.0f);
-    camera->GetTansform().Move(vec3(1.0f,0.0f,2.0f));
-    camera->LookAt(vec3(0.0f,0.0f,0.0f));
+    camera->GetTansform().Move(vec3(0.0f,0.0f,10.0f));
+    camera->LookAt(tri);
 
     irs->SetCamera(camera);
 
@@ -107,11 +116,10 @@ int32_t main(int32_t argc,char** argv)
       irs->Clear();
       irs->Render(rs);
       irs->SwapBuffer();
-      camera->LookDirect(direct=vec3(glm::rotate(glm::half_pi<float>()/45.0f,vec3(0.0f,1.0f,0.0f))*vec4(direct,0.0f)));
+      tri->GetTansform().Move(glm::vec3(0.0f,-0.05f,0.0f));
+      rs->GetInstancingInfoRef(mesh_id).GetModelMatrix(0)=tri->GetTansform().GetWorldMatrix();
+      //camera->LookDirect(direct=vec3(glm::rotate(glm::half_pi<float>()/45.0f,vec3(0.0f,1.0f,0.0f))*vec4(direct,0.0f)));
       this_thread::sleep_for(chrono::milliseconds(16));
     }
-
-
-
     return 0;
 }

@@ -14,19 +14,12 @@ namespace Kedama
   DEFINE_SHARED_PTR(Material)
   DEFINE_SHARED_PTR(Pass)
 
-  class KEDAMA_API InstancingInfo
-  {
-//
-  };
-
   class KEDAMA_API Pass
   {
     public:
     FrameBufferPtr m_src_framebuffer;
     FrameBufferPtr m_dst_framebuffer;
     IShaderPtr m_shader;
-    InstancingInfo m_instancing_info;
-
   };
 
   class KEDAMA_API Material

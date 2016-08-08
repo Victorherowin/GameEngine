@@ -5,7 +5,7 @@
 
 namespace Kedama
 {
-  void GLRenderStream::OnBindMaterial(const MaterialInfo* mi)
+  void GLRenderStream::OnBindMaterial(const MeshInfo* mi)
   {
     static GLenum __format_table[]={GL_INT,GL_SHORT,GL_BYTE,GL_UNSIGNED_INT,GL_UNSIGNED_SHORT,GL_UNSIGNED_BYTE,
                                     GL_FLOAT,GL_HALF_FLOAT};

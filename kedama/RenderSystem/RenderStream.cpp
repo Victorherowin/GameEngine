@@ -13,9 +13,9 @@ namespace Kedama
     if(mesh_id>m_meshbuffers.size())
       throw std::runtime_error("Error of Mesh ID");
 
-    MaterialInfo mi({m_meshbuffers[mesh_id],offset,material});
-    m_texs.push_back(mi);
-    OnBindMaterial(&m_texs.back());
+    MeshInfo mi({m_meshbuffers[mesh_id],offset,material});
+    m_mesh_info.push_back(mi);
+    OnBindMaterial(&m_mesh_info.back());
   }
 
   void RenderStream::Clear()

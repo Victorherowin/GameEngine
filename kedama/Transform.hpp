@@ -51,7 +51,7 @@ namespace Kedama
     //相对位置
     glm::vec3 m_position;
     glm::quat m_angle;
-    glm::vec3 m_scale;
+    glm::vec3 m_scale=glm::vec3(1.0f,1.0f,1.0f);
 
     //相对位置矩阵
     glm::mat4 m_relative_matrix;

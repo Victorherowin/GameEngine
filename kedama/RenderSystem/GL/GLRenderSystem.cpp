@@ -63,23 +63,30 @@ namespace Kedama
   void GLRenderSystem::OnForwardRender(RenderStreamPtr& rsptr)
   {
     GLRenderStreamPtr glrsptr=std::dynamic_pointer_cast<GLRenderStream>(rsptr);
-    vector<GLRenderStream::MaterialInfo>& mis=glrsptr->GetDrawInfo();
-    for(GLRenderStream::MaterialInfo& mi:mis)
+    vector<GLRenderStream::MeshInfo>& mis=glrsptr->GetDrawInfo();
+
+    for(GLRenderStream::MeshInfo& mi:mis)
     {
-      //GLVertexBufferPtr vbo=std::dynamic_pointer_cast<GLVertexBuffer>(mi.mesh_buffer.first);
+      if(mi.m_instancing_info.Empty())continue;
+
       GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(mi.mesh_buffer.second);
       GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
+
       const vector<Pass> pass=mi.material->GetPass();
       auto& vaos=glrsptr->GetVAOs();
       GLuint vao=vaos[&mi];
+
       if(tex2d!=nullptr)
       {
         tex2d->Bind();
       }
       glBindVertexArray(vao);
+
       for(const Pass& subpass:pass)
       {
-        if(subpass.m_dst_framebuffer!=nullptr)
+        GLFrameBufferPtr src_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_src_framebuffer);
+
+        if(src_fb!=nullptr)
         {
           GLFrameBufferPtr dst_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_dst_framebuffer);
           glBindFramebuffer(GL_DRAW_FRAMEBUFFER,dst_fb->GetObj());
@@ -93,42 +100,46 @@ namespace Kedama
           shader->SetProjectionMatrix(m_main_camera->GetProjectionMatrix());
         }
 
-
-        if(subpass.m_src_framebuffer!=nullptr)
+        if(src_fb!=nullptr)
         {
-          GLFrameBufferPtr src_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_src_framebuffer);
-
           for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
           {
             glActiveTexture(GL_TEXTURE0+i);
             src_fb->GetGLTextureObjs()[i]->Bind();
             glUniform1i(i,i);
           }
+        }
 
+        if(mi.m_instancing_info.GetSize()==1)
+        {
+          GLint model_mat_loc=glGetUniformLocation(shader->GetShader(),"kedama_model_matrix");
+          glUniformMatrix4fv(model_mat_loc,1,GL_FALSE,glm::value_ptr(mi.m_instancing_info.GetModelMatrix(0)));
           glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
+        }
+        else
+        {
+          //多实例渲染....
+        }
 
+        if(src_fb!=nullptr)
+        {
           for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
           {
             glActiveTexture(GL_TEXTURE0+i);
             src_fb->GetGLTextureObjs()[i]->Unbind();
           }
         }
-        else
-        {
-          glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
-        }
-
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
         glActiveTexture(GL_TEXTURE0);
         glUseProgram(0);
       }
       glBindVertexArray(0);
+
       if(tex2d!=nullptr)
       {
         tex2d->Unbind();
       }
     }
-
   }
 
   void GLRenderSystem::OnDeferredRender(RenderStreamPtr& rsptr)

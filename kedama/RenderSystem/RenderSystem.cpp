@@ -15,7 +15,7 @@ namespace Kedama {
       RenderStreamPtr transparent_rs=Engine::GetSingleton().GetRenderSystemFactory()->CreateRenderStream();
       RenderStreamPtr no_transparent_rs=Engine::GetSingleton().GetRenderSystemFactory()->CreateRenderStream();//拆分透明和不透明材质
 
-      for(RenderStream::MaterialInfo& mb:rsptr->GetDrawInfo())
+      for(RenderStream::MeshInfo& mb:rsptr->GetDrawInfo())
       {
         //部分类不完善，暂时放置延迟渲染
       }

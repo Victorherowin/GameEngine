@@ -5,16 +5,16 @@
 #include "Material.hpp"
 #include "../Config.hpp"
 #include "RenderStream.hpp"
-
+#include "../GameObject.hpp"
 
 
 namespace Kedama
 {
 
-  class KEDAMA_API StaticModel
+  class KEDAMA_API StaticModel:public GameObject
   {
   public:
-    explicit StaticModel(RenderStreamPtr& rs);
+    explicit StaticModel(const string& name);
     void SetRenderStream(RenderStreamPtr& rs);
     const RenderStreamPtr& GetRenderStream();
 
@@ -22,7 +22,7 @@ namespace Kedama
     RenderStreamPtr m_rs;
   };
 
-  class KEDAMA_API DynamicModel
+  class KEDAMA_API DynamicModel:public GameObject
   {
   public:
     void SetRenderStream(RenderStreamPtr& rs);
