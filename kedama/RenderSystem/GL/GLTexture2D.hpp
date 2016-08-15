@@ -8,7 +8,7 @@ namespace Kedama {
   class GLTexture2D:public GLTextureBase,public ITexture2D
   {
   public:
-    /*ITexture2DPtr*/
+    /*ITexture2D*/
     void Create(TextureFormat foramt,int32_t w,int32_t h)override;
     void CreateCompressFromPixels(TextureCompressFormat compress_format,TextureFormat format,int32_t level,void* pixels,int32_t w,int32_t h)override;
     void CreateCompress(TextureCompressFormat compress_foramat,int32_t level,void* data,int32_t size,int32_t w,int32_t h)override;

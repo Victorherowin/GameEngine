@@ -188,12 +188,4 @@ namespace Kedama
     if(m_projection_matrix_loc!=std::numeric_limits<GLint>::max())
       glUniformMatrix4fv(m_projection_matrix_loc,1,GL_FALSE,glm::value_ptr(projection));
   }
-
-  void GLShader::SetModelMatrix(const glm::mat4 &model)
-  {
-    if(m_model_matrix_loc==std::numeric_limits<GLint>::max())
-      m_model_matrix_loc=glGetUniformLocation(m_shader,"kedama_model_matrix");
-    if(m_model_matrix_loc!=std::numeric_limits<GLint>::max())
-      glUniformMatrix4fv(m_model_matrix_loc,1,GL_FALSE,glm::value_ptr(model));
-  }
 }

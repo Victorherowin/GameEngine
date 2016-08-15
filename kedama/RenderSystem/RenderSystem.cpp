@@ -8,7 +8,7 @@ namespace Kedama {
     m_main_camera=camera;
   }
 
-  void RenderSystem::Render(RenderStreamPtr& rsptr)
+  void RenderSystem::Render(const RenderStreamPtr& rsptr)
   {
     if(m_use_deferred_render)
     {

@@ -2,12 +2,6 @@
 
 namespace Kedama
 {
-  static GLenum __format_table[]={GL_RGB,GL_RGBA,GL_SRGB,GL_SRGB8_ALPHA8,GL_RGB16F,GL_RGBA16F,GL_DEPTH,GL_DEPTH24_STENCIL8};
-  static GLenum __compress_format_table[]={GL_COMPRESSED_RGB,GL_COMPRESSED_RGBA,GL_COMPRESSED_SRGB,GL_COMPRESSED_SRGB_ALPHA,
-                                           GL_COMPRESSED_RGB_S3TC_DXT1_EXT,GL_COMPRESSED_SRGB_S3TC_DXT1_EXT,GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,
-                                           GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT,
-                                           GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,
-                                           GL_COMPRESSED_RGB8_ETC2,GL_COMPRESSED_RGBA8_ETC2_EAC};
 
   void GLTexture2D::Create(TextureFormat format,int32_t w,int32_t h)
   {
@@ -23,12 +17,13 @@ namespace Kedama
     Unbind();
   }
 
-  void GLTexture2D::CreateCompressFromPixels(TextureCompressFormat compress_format,TextureFormat format,int32_t level,void* pixels,int32_t w,int32_t h)
+  void GLTexture2D::CreateCompressFromPixels(TextureCompressFormat compress_format,TextureFormat format
+                                             ,int32_t level,void* pixels,int32_t w,int32_t h)
   {
     m_compress=true;
 
     Bind();
-    glTexImage2D(GL_TEXTURE_2D,0,__compress_format_table[(int)compress_format],w,h,0,__format_table[(int)format],GL_UNSIGNED_BYTE,pixels);
+    glTexImage2D(GL_TEXTURE_2D,level,__compress_format_table[(int)compress_format],w,h,0,__format_table[(int)format],GL_UNSIGNED_BYTE,pixels);
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);

@@ -27,7 +27,6 @@ namespace Kedama
 
     void SetViewMatrix(const glm::mat4& view);
     void SetProjectionMatrix(const glm::mat4& projection);
-    void SetModelMatrix(const glm::mat4& model);
 
   private:
     struct UniformInfo
@@ -43,7 +42,6 @@ namespace Kedama
     GLuint m_shader;
     GLint m_view_matrix_loc=std::numeric_limits<GLint>::max();
     GLint m_projection_matrix_loc=std::numeric_limits<GLint>::max();
-    GLint m_model_matrix_loc=std::numeric_limits<GLint>::max();
 
     map<string,UniformInfo> m_uniform_info_map;
   };

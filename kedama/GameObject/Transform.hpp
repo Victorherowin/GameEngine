@@ -1,7 +1,7 @@
 #ifndef TRANSFORM
 #define TRANSFORM
 
-#include "Config.hpp"
+#include "../Config.hpp"
 
 #include <list>
 
@@ -33,13 +33,24 @@ namespace Kedama
     inline const glm::quat& GetRelativeAngle(){return m_angle;}
     glm::quat GetWorldAngle();
 
-    inline glm::mat4 GetRelativeMatrix(){return glm::scale(m_relative_matrix,m_scale);}
-    inline glm::mat4 GetWorldMatrix(){return glm::scale(m_world_matrix,m_scale);}
+    inline const glm::mat4& GetRelativeMatrix(){return m_relative_matrix;}
+    /*inline const glm::mat4& GetWorldMatrix()
+    {
+      CheckUpdate();
+      return m_world_matrix;
+    }*/
+
+    inline glm::mat4& GetModelMatrix()
+    {
+      CheckUpdate();
+      m_model_matirx=glm::scale(m_world_matrix,m_scale);
+      return m_model_matirx;
+    }
 
     void Move(const glm::vec3& distance);
     void Rotate(const glm::quat& angle);
     void Rotate(const glm::mat3& angle);
-    void Rotate(const glm::mat4 angle);
+    void Rotate(const glm::vec3& axis,float rad);
   private:
     void CheckUpdate();
 
@@ -51,13 +62,14 @@ namespace Kedama
     //相对位置
     glm::vec3 m_position;
     glm::quat m_angle;
-    glm::vec3 m_scale=glm::vec3(1.0f,1.0f,1.0f);
+    glm::vec3 m_scale;
 
     //相对位置矩阵
     glm::mat4 m_relative_matrix;
     //绝对位置矩阵
     glm::mat4 m_world_matrix;
-
+    //模型矩阵
+    glm::mat4 m_model_matirx;
     friend class GameObject;
   };
 }

@@ -7,7 +7,7 @@
 #include "FrameBuffer.hpp"
 #include "IShader.hpp"
 #include "Material.hpp"
-#include "../GameObject.hpp"
+#include "../GameObject/GameObject.hpp"
 
 namespace Kedama
 {
@@ -21,17 +21,17 @@ namespace Kedama
     class KEDAMA_API InstancingInfo
     {
     public:
-      uint32_t AddInstance(const glm::mat4& model_mat)
+      uint32_t AddInstance(Transform& tf)
       {
-        model_matrix.push_back(model_mat);
-        return model_matrix.end()-model_matrix.begin()-1;
+        m_transform_ptrs.push_back(&tf);
+        return m_transform_ptrs.end()-m_transform_ptrs.begin()-1;
       }
-      glm::mat4& GetModelMatrix(uint32_t id){return model_matrix[id];}
-      inline bool Empty(){return model_matrix.empty();}
-      inline uint32_t GetSize(){return model_matrix.size();}
+      Transform* GetTransformPtr(uint32_t id){return m_transform_ptrs[id];}
+      inline bool Empty(){return m_transform_ptrs.empty();}
+      inline uint32_t GetSize(){return m_transform_ptrs.size();}
 
     private:
-      vector<glm::mat4> model_matrix;
+      vector<Transform*> m_transform_ptrs;
     };
 
     struct MeshInfo

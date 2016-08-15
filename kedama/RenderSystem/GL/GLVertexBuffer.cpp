@@ -69,7 +69,7 @@ namespace Kedama
     Bind();
     glBufferData(GL_ARRAY_BUFFER,sizeof(GLVertex)*vertices.size(),tmp_vert,m_usage);
     Unbind();
-    delete tmp_vert;
+    delete[] tmp_vert;
   }
 
   void GLVertexBuffer::SendSubVertices(vector<Vertex> &vertices,int32_t offset)
@@ -78,7 +78,7 @@ namespace Kedama
     Bind();
     glBufferSubData(GL_ARRAY_BUFFER,offset*sizeof(GLVertex),vertices.size(),tmp_vert);
     Unbind();
-    delete tmp_vert;
+    delete[] tmp_vert;
   }
 
   void GLVertexBuffer::SendData(void*data,int32_t type_size,int32_t len,BufferUsage usage)

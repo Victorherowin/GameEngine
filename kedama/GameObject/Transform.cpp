@@ -3,7 +3,7 @@
 
 namespace Kedama {
 
-  Transform::Transform(GameObject* obj):m_object(obj)
+  Transform::Transform(GameObject* obj):m_object(obj),m_scale(glm::vec3(1.0f,1.0f,1.0f))
   {
   }
 
@@ -59,10 +59,9 @@ namespace Kedama {
     m_need_update=true;
   }
 
-  void Transform::Rotate(const glm::mat4 angle)
+  void Transform::Rotate(const glm::vec3 &axis, float rad)
   {
-    m_angle=glm::quat_cast(glm::mat4_cast(m_angle)*angle);
-    m_need_update=true;
+    Rotate(glm::mat3(glm::rotate(rad,axis)));
   }
 
   void Transform::Rotate(const glm::quat& angle)

@@ -22,6 +22,10 @@ namespace Kedama
 
   protected:
     GLuint m_tex;
+
+    static GLenum __format_table[];
+    static GLenum __compress_format_table[];
+
   };
 
   DEFINE_SHARED_PTR(GLTextureBase)

@@ -28,6 +28,8 @@ namespace Kedama
     }
     glClearColor(0.6f,0.8f,0.9f,1.0f);
     glCullFace(GL_BACK);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
   }
 
   void GLRenderSystem::Quit()
@@ -60,7 +62,7 @@ namespace Kedama
     return "GLSL";
   }
 
-  void GLRenderSystem::OnForwardRender(RenderStreamPtr& rsptr)
+  void GLRenderSystem::OnForwardRender(const RenderStreamPtr& rsptr)
   {
     GLRenderStreamPtr glrsptr=std::dynamic_pointer_cast<GLRenderStream>(rsptr);
     vector<GLRenderStream::MeshInfo>& mis=glrsptr->GetDrawInfo();
@@ -72,7 +74,7 @@ namespace Kedama
       GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(mi.mesh_buffer.second);
       GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
 
-      const vector<Pass> pass=mi.material->GetPass();
+      const vector<Pass>& pass=mi.material->GetPass();
       auto& vaos=glrsptr->GetVAOs();
       GLuint vao=vaos[&mi];
 
@@ -113,7 +115,7 @@ namespace Kedama
         if(mi.m_instancing_info.GetSize()==1)
         {
           GLint model_mat_loc=glGetUniformLocation(shader->GetShader(),"kedama_model_matrix");
-          glUniformMatrix4fv(model_mat_loc,1,GL_FALSE,glm::value_ptr(mi.m_instancing_info.GetModelMatrix(0)));
+          glUniformMatrix4fv(model_mat_loc,1,GL_FALSE,glm::value_ptr(mi.m_instancing_info.GetTransformPtr(0)->GetModelMatrix()));
           glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
         }
         else
@@ -142,7 +144,7 @@ namespace Kedama
     }
   }
 
-  void GLRenderSystem::OnDeferredRender(RenderStreamPtr& rsptr)
+  void GLRenderSystem::OnDeferredRender(const RenderStreamPtr& rsptr)
   {
 
   }

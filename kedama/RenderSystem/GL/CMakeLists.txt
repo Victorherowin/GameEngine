@@ -8,6 +8,8 @@ include_directories(${PROJECT_SOURCE_DIR}/src/GL/Shader)
 
 aux_source_directory(. GLRENDERSYSTEM_SOURCE)
 
-add_library(Kedama_GLRenderSystem ${GLRENDERSYSTEM_SOURCE})
+add_library(Kedama_GLRenderSystem ${BUILD_TYPE} ${GLRENDERSYSTEM_SOURCE})
+
+message("${BUILD_TYPE}")
 
 target_link_libraries(Kedama_GLRenderSystem KedamaEngine SDL2 SDL2main SDL2_image opengl32 glew32)

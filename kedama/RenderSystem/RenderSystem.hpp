@@ -2,13 +2,13 @@
 #define RENDERSYSTEM
 
 #include <string>
-#include "../GameObject.hpp"
+#include "../GameObject/GameObject.hpp"
 #include "ITexture2D.hpp"
 #include "IShader.hpp"
 #include "../IWindow.hpp"
-#include "Mesh.hpp"
+#include "../GameObject/Mesh.hpp"
 #include "RenderStream.hpp"
-#include "../Camera.hpp"
+#include "../GameObject/Camera.hpp"
 
 #include "../Config.hpp"
 
@@ -21,7 +21,7 @@ namespace Kedama
   public:
     virtual ~RenderSystem(){}
 
-    void Render(RenderStreamPtr&);
+    void Render(const RenderStreamPtr&);
     void UseDeferredRender(bool use);
     void SetCamera(CameraPtr camera);
 
@@ -34,8 +34,8 @@ namespace Kedama
     virtual void SwapBuffer()=0;
 
   protected:
-    virtual void OnForwardRender(RenderStreamPtr& rsptr)=0;
-    virtual void OnDeferredRender(RenderStreamPtr&){throw std::runtime_error(string("No Implement DeferredRender！"));}
+    virtual void OnForwardRender(const RenderStreamPtr& rsptr)=0;
+    virtual void OnDeferredRender(const RenderStreamPtr&){throw std::runtime_error(string("No Implement DeferredRender！"));}
 
     virtual const string GetShaderLanguage()=0;
 

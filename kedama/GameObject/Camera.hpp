@@ -2,7 +2,7 @@
 #define CAMERA
 
 #include "GameObject.hpp"
-#include "Config.hpp"
+#include "../Config.hpp"
 
 namespace Kedama{
   DEFINE_RAW_PTR(Camera)
