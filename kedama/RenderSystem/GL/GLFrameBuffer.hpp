@@ -17,18 +17,19 @@ namespace Kedama
     GLFrameBuffer();
     ~GLFrameBuffer();
 
-    inline vector<GLTexture2D*>& GetGLTextureObjs(){return m_texs;}
-    inline vector<GLuint>& GetGLRenderBufferObjs(){return m_rbos;}
+    inline list<pair<AttachType,GLTexture2D*>>& GetGLTextureObjs(){return m_texs;}
+    inline list<pair<AttachType,GLuint>>& GetGLRenderBufferObjs(){return m_rbos;}
     inline GLuint GetObj(){return m_fbo;}
 
   protected:
 
     void OnAttach(AttachType type)override;
+    void OnRemove(AttachType type)override;
 
   private:
     GLuint m_fbo;
-    vector<GLTexture2D*> m_texs;
-    vector<GLuint> m_rbos;
+    list<pair<AttachType,GLTexture2D*>> m_texs;
+    list<pair<AttachType,GLuint>> m_rbos;
   };
 }
 

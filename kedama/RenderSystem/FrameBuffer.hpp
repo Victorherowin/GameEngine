@@ -37,12 +37,15 @@ namespace Kedama
     public:
     virtual ~FrameBuffer(){}
     void Create(uint32_t w,uint32_t h);
-    void AddAttach(AttachType type);
+    void Attach(AttachType type);
+    void RemoveAttach(AttachType type);
+    void RemoveAll();
 
     protected:
     virtual void OnAttach(AttachType type)=0;
+    virtual void OnRemove(AttachType type)=0;
     protected:
-    vector<AttachType> m_attachs;
+    list<AttachType> m_attachs;
     uint32_t m_w,m_h;
 
   };

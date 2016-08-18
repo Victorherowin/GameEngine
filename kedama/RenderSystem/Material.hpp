@@ -58,8 +58,11 @@ namespace Kedama
     float m_specular_shininess=0.0f;
 
     ITexture2DPtr m_tex2d;
-
     ITexture2DPtr m_normal_tex;
+    ITexture2DPtr m_ambient_tex;
+    ITexture2DPtr m_diffuse_tex;
+    ITexture2DPtr m_specular_tex;
+
     //...
   };
 }

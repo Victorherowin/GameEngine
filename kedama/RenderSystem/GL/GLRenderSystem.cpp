@@ -102,12 +102,21 @@ namespace Kedama
           shader->SetProjectionMatrix(m_main_camera->GetProjectionMatrix());
         }
 
+        int tex_n=1;
+
+        /*
+         *
+         * 贴图设置（等待补完）
+        */
+
         if(src_fb!=nullptr)
         {
-          for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
+          auto it=src_fb->GetGLTextureObjs().begin();
+          for(int i=tex_n;i<src_fb->GetGLTextureObjs().size();++i)
           {
             glActiveTexture(GL_TEXTURE0+i);
-            src_fb->GetGLTextureObjs()[i]->Bind();
+            it->second->Bind();
+            it++;
             glUniform1i(i,i);
           }
         }
@@ -125,10 +134,11 @@ namespace Kedama
 
         if(src_fb!=nullptr)
         {
+          auto it=src_fb->GetGLTextureObjs().begin();
           for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
           {
             glActiveTexture(GL_TEXTURE0+i);
-            src_fb->GetGLTextureObjs()[i]->Unbind();
+            it->second->Unbind();
           }
         }
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
