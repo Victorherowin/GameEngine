@@ -3,7 +3,8 @@
 
 #include "ITexture2D.hpp"
 #include "IShader.hpp"
-#include "../Config.hpp"
+#include "../Include.hpp"
+#include "../Define.hpp"
 #include "FrameBuffer.hpp"
 #include <glm/integer.hpp>
 

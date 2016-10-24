@@ -2,15 +2,20 @@
 #define RENDERSYSTEM
 
 #include <string>
-#include "../GameObject/GameObject.hpp"
+
 #include "ITexture2D.hpp"
 #include "IShader.hpp"
-#include "../IWindow.hpp"
-#include "../GameObject/Mesh.hpp"
+#include "Mesh.hpp"
 #include "RenderStream.hpp"
+#include "Viewport.hpp"
+
+#include "../IWindow.hpp"
+
+#include "../GameObject/GameObject.hpp"
 #include "../GameObject/Camera.hpp"
 
-#include "../Config.hpp"
+#include "../Define.hpp"
+#include "../Include.hpp"
 
 namespace Kedama
 {
@@ -23,7 +28,8 @@ namespace Kedama
 
     void Render(const RenderStreamPtr&);
     void UseDeferredRender(bool use);
-    void SetCamera(CameraPtr camera);
+    void SetCamera(const CameraPtr& camera);
+    void SetViewport(Viewport* vp);
 
     virtual void Init()=0;
     virtual void Quit()=0;
@@ -41,6 +47,8 @@ namespace Kedama
 
   protected:
     CameraPtr m_main_camera=nullptr;
+    Viewport* m_viewport=nullptr;
+
     bool m_use_deferred_render;
 
   };

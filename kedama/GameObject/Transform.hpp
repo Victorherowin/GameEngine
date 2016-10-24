@@ -1,7 +1,7 @@
 #ifndef TRANSFORM
 #define TRANSFORM
 
-#include "../Config.hpp"
+#include "../Include.hpp"
 
 #include <list>
 
@@ -34,15 +34,10 @@ namespace Kedama
     glm::quat GetWorldAngle();
 
     inline const glm::mat4& GetRelativeMatrix(){return m_relative_matrix;}
-    /*inline const glm::mat4& GetWorldMatrix()
-    {
-      CheckUpdate();
-      return m_world_matrix;
-    }*/
+    const glm::mat4& GetWorldMatrix();
 
     inline glm::mat4& GetModelMatrix()
     {
-      CheckUpdate();
       m_model_matirx=glm::scale(m_world_matrix,m_scale);
       return m_model_matirx;
     }
@@ -51,26 +46,20 @@ namespace Kedama
     void Rotate(const glm::quat& angle);
     void Rotate(const glm::mat3& angle);
     void Rotate(const glm::vec3& axis,float rad);
-  private:
-    void CheckUpdate();
 
-  private:
-
+  protected:
     bool m_need_update=false;
-    GameObject* m_object;
 
     //相对位置
     glm::vec3 m_position;
     glm::quat m_angle;
     glm::vec3 m_scale;
 
-    //相对位置矩阵
-    glm::mat4 m_relative_matrix;
-    //绝对位置矩阵
-    glm::mat4 m_world_matrix;
-    //模型矩阵
-    glm::mat4 m_model_matirx;
-    friend class GameObject;
+    glm::mat4 m_relative_matrix;//相对位置矩阵
+    glm::mat4 m_world_matrix;//绝对位置矩阵
+    glm::mat4 m_model_matirx;//模型矩阵
+
+    GameObject* m_object;
   };
 }
 

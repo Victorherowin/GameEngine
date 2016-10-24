@@ -3,6 +3,8 @@
 
 #include "../IShader.hpp"
 
+#include "../../Include.hpp"
+
 #include <string>
 #include <GL/glew.h>
 

@@ -2,7 +2,8 @@
 #define GLRENDERSTREAM
 
 #include "../RenderStream.hpp"
-#include "../../Config.hpp"
+#include "../../Include.hpp"
+#include "../../Define.hpp"
 
 namespace Kedama
 {
@@ -12,15 +13,15 @@ namespace Kedama
   {
   public:
     ~GLRenderStream();
-  inline map<const MeshInfo*,GLuint>& GetVAOs(){return m_vao_map;}
+    inline map<const Mesh*,GLuint>& GetVAOs(){return m_vao_map;}
 
   protected:
-    void OnBindMaterial(const MeshInfo* mi)override;
+    void OnBindMaterial(const Batch& mi)override;
     void OnClear()override;
 
 
   private:
-    map<const MeshInfo*,GLuint> m_vao_map;
+    map<const Mesh*,GLuint> m_vao_map;
   };
 }
 

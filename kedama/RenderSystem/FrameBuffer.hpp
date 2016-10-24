@@ -3,10 +3,14 @@
 
 #include "ITexture2D.hpp"
 
-#include "../Config.hpp"
+#include "../Include.hpp"
+#include "../Define.hpp"
+
 
 namespace Kedama
 {
+  using namespace std;
+
   enum class AttachType
   {
     COLOR_ATTACHMENT0,

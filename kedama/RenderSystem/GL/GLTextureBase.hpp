@@ -2,12 +2,12 @@
 #define GLTEXTUREBASE
 
 #include "../TextureEnum.hpp"
-#include "../../Config.hpp"
+#include "../../Include.hpp"
+#include "../../Define.hpp"
 #include <GL/glew.h>
 
 namespace Kedama
 {
-
   class GLTextureBase
   {
   public:

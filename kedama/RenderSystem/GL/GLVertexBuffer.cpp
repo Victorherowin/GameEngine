@@ -55,19 +55,62 @@ namespace Kedama
 
   void GLVertexBuffer::Create(int32_t vertex_size,int32_t len,BufferUsage usage)
   {
-    m_usage=detail::__usage_table[(int32_t)usage];
     Bind();
-    glBufferData(GL_ARRAY_BUFFER,vertex_size*len,nullptr,m_usage);
+
+    if(m_usage==GL_DYNAMIC_DRAW&&m_maped_ptr!=nullptr)
+    {
+      glUnmapBuffer(GL_ARRAY_BUFFER);
+      m_maped_ptr=nullptr;
+    }
+
+    m_usage=detail::__usage_table[(int32_t)usage];
+
+    if(m_usage==GL_DYNAMIC_DRAW)
+    {
+      glBufferStorage(GL_ARRAY_BUFFER,vertex_size*len,nullptr,
+                      GL_MAP_COHERENT_BIT|GL_MAP_PERSISTENT_BIT|GL_DYNAMIC_STORAGE_BIT|
+                      GL_MAP_WRITE_BIT|GL_MAP_READ_BIT);
+      m_maped_ptr=glMapBufferRange(GL_ARRAY_BUFFER,0,vertex_size*len ,GL_MAP_COHERENT_BIT|GL_MAP_PERSISTENT_BIT|
+                                   GL_DYNAMIC_STORAGE_BIT|GL_MAP_WRITE_BIT|GL_MAP_READ_BIT);
+    }
+    else
+    {
+      glBufferData(GL_ARRAY_BUFFER,vertex_size*len,nullptr,m_usage);
+    }
     Unbind();
   }
 
   void GLVertexBuffer::SendVertices(vector<Vertex> &vertices,BufferUsage usage)
   {
+    Bind();
+
+    if(m_usage==GL_DYNAMIC_DRAW&&m_maped_ptr!=nullptr)
+    {
+      glUnmapBuffer(GL_ARRAY_BUFFER);
+      m_maped_ptr=nullptr;
+    }
+
     GLVertex* tmp_vert=detail::Convert(vertices);
     m_usage=detail::__usage_table[(int32_t)usage];
 
-    Bind();
-    glBufferData(GL_ARRAY_BUFFER,sizeof(GLVertex)*vertices.size(),tmp_vert,m_usage);
+    if(m_usage==GL_DYNAMIC_DRAW)
+    {
+      if(m_maped_ptr!=nullptr)
+      {
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+        m_maped_ptr=nullptr;
+      }
+      glBufferStorage(GL_ARRAY_BUFFER,vertices.size()*sizeof(GLVertex),tmp_vert,
+                      GL_MAP_COHERENT_BIT|GL_MAP_PERSISTENT_BIT|GL_DYNAMIC_STORAGE_BIT|
+                      GL_MAP_WRITE_BIT|GL_MAP_READ_BIT);
+      m_maped_ptr=glMapBufferRange(GL_ARRAY_BUFFER,0,vertices.size()*sizeof(GLVertex),GL_MAP_COHERENT_BIT|
+                                   GL_MAP_PERSISTENT_BIT|GL_DYNAMIC_STORAGE_BIT|GL_MAP_WRITE_BIT|
+                                   GL_MAP_READ_BIT);
+    }
+    else
+    {
+      glBufferData(GL_ARRAY_BUFFER,sizeof(GLVertex)*vertices.size(),tmp_vert,m_usage);
+    }
     Unbind();
     delete[] tmp_vert;
   }
@@ -76,40 +119,55 @@ namespace Kedama
   {
     GLVertex* tmp_vert=detail::Convert(vertices);
     Bind();
-    glBufferSubData(GL_ARRAY_BUFFER,offset*sizeof(GLVertex),vertices.size(),tmp_vert);
+    if(m_usage==GL_DYNAMIC_DRAW)
+    {
+      memcpy(((GLVertex*)m_maped_ptr)+offset,vertices.data(),vertices.size()*sizeof(GLVertex));
+    }
+    else
+    {
+      glBufferSubData(GL_ARRAY_BUFFER,offset*sizeof(GLVertex),vertices.size()*sizeof(GLVertex),tmp_vert);
+    }
     Unbind();
     delete[] tmp_vert;
   }
 
-  void GLVertexBuffer::SendData(void*data,int32_t type_size,int32_t len,BufferUsage usage)
+  void GLVertexBuffer::SendData(void*data,int32_t len,BufferUsage usage)
   {
+    Bind();
+    if(m_usage==GL_DYNAMIC_DRAW&&m_maped_ptr!=nullptr)
+    {
+      glUnmapBuffer(GL_ARRAY_BUFFER);
+      m_maped_ptr=nullptr;
+    }
+
     m_usage=detail::__usage_table[(int32_t)usage];
-    Bind();
-    glBufferData(GL_ARRAY_BUFFER,type_size*len,data,m_usage);
+
+    if(m_usage==GL_DYNAMIC_DRAW)
+    {
+      glBufferStorage(GL_ARRAY_BUFFER,len,data,
+                      GL_MAP_COHERENT_BIT|GL_MAP_PERSISTENT_BIT|GL_DYNAMIC_STORAGE_BIT|
+                      GL_MAP_WRITE_BIT|GL_MAP_READ_BIT);
+      m_maped_ptr=glMapBufferRange(GL_ARRAY_BUFFER,0,len ,GL_MAP_COHERENT_BIT|GL_MAP_PERSISTENT_BIT|
+                                   GL_DYNAMIC_STORAGE_BIT|GL_MAP_WRITE_BIT|GL_MAP_READ_BIT);
+    }
+    else
+    {
+      glBufferData(GL_ARRAY_BUFFER,len,data,m_usage);
+    }
     Unbind();
   }
 
-  void GLVertexBuffer::SendSubData(void* data,int32_t type_size,int32_t len,int32_t offset)
+  void GLVertexBuffer::SendSubData(void* data,int32_t len,int32_t offset)
   {
     Bind();
-    glBufferSubData(GL_ARRAY_BUFFER,offset*type_size,len,data);
+    if(m_usage==GL_DYNAMIC_DRAW)
+    {
+      memcpy(((uint8_t*)m_maped_ptr)+offset,data,len);
+    }
+    else
+    {
+      glBufferSubData(GL_ARRAY_BUFFER,offset,len,data);
+    }
     Unbind();
-  }
-
-  void* GLVertexBuffer::MapBuffer(BufferAccess access)
-  {
-    static GLenum __table[]={GL_READ_ONLY,GL_WRITE_ONLY,GL_READ_WRITE};
-    Bind();
-    void* p=glMapBuffer(GL_ARRAY_BUFFER,__table[(int32_t)access]);
-    Unbind();
-    return p;
-  }
-
-  bool GLVertexBuffer::UnMapBuffer()
-  {
-    Bind();
-    bool ret=glUnmapBuffer(GL_ARRAY_BUFFER);
-    Unbind();
-    return ret;
   }
 }

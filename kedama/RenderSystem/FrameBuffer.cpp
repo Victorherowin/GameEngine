@@ -37,8 +37,8 @@ namespace Kedama
   {
     for(auto it=m_attachs.begin();it!=m_attachs.end();++it)
     {
-        OnRemove(*it);
-        it=m_attachs.erase(it);
+      OnRemove(*it);
+      it=m_attachs.erase(it);
     }
   }
 

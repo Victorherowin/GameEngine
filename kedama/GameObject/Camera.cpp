@@ -8,7 +8,7 @@ namespace Kedama
 
   CameraPtr Camera::CreateCamera(const string& name)
   {
-    return new Camera(name);
+    return std::make_shared<Camera>(name);
   }
 
   void Camera::LookAt(const glm::vec3 &position)
@@ -17,7 +17,7 @@ namespace Kedama
     m_target_position=position;
   }
 
-  void Camera::LookAt(GameObject *target)
+  void Camera::LookAt(GameObjectPtr target)
   {
     m_look_target=target;
   }
@@ -26,16 +26,6 @@ namespace Kedama
   {
     m_look_target=nullptr;
     m_target_position=glm::normalize(direction)+GetTansform().GetWorldPosition();
-  }
-
-  void Camera::SetPerspective(float fov, float aspect, float near, float far)
-  {
-    m_projection_matrix=glm::perspective(fov,aspect,near,far);
-  }
-
-  void Camera::SetOrtho(float left,float right,float buttom,float top)
-  {
-    m_projection_matrix=glm::ortho(left,right,buttom,top);
   }
 
   const glm::mat4& Camera::GetViewMatrix()
@@ -49,10 +39,5 @@ namespace Kedama
       m_view_matrix=glm::lookAt(GetTansform().GetWorldPosition(),m_look_target->GetTansform().GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }
     return m_view_matrix;
-  }
-
-  const glm::mat4& Camera::GetProjectionMatrix()
-  {
-    return m_projection_matrix;
   }
 }

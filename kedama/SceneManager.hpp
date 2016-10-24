@@ -17,7 +17,7 @@ namespace Kedama
 
   private:
     RenderSystem* m_render_system;
-    GameObject m_object_root;
+    GameObjectPtr m_object_root;
   };
 }
 

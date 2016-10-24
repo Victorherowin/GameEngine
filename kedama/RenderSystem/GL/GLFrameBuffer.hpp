@@ -5,7 +5,8 @@
 
 #include "../FrameBuffer.hpp"
 
-#include "../../Config.hpp"
+#include "../../Include.hpp"
+#include "../../Define.hpp"
 
 namespace Kedama
 {

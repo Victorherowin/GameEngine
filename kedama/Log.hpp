@@ -2,13 +2,16 @@
 #define LOG_H
 
 #include "utility/Singleton.hpp"
-#include "Config.hpp"
+#include "Define.hpp"
+#include "Include.hpp"
 
 #define KEDAMALOG(...) Log::GetSingleton().printf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),__VA_ARGS__)
 #define KEDAMAELOG(...) Log::GetSingleton().printf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),__VA_ARGS__)
 
 namespace Kedama
 {
+  using namespace std;
+
   struct LogInfo
   {
     string function;

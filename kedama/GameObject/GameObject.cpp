@@ -2,54 +2,63 @@
 
 namespace Kedama
 {
-  GameObject::GameObject(const std::string &name):m_name(name),m_transform(this)
+  GameObjectPtr GameObject::CreateGameObject(const std::string &name)
   {
+    static char _tmp_buf_[12];
+    static uint32_t __undefined_counter__=0;
+    string _name(name);
 
+    if(name.empty())
+    {
+      sprintf(_tmp_buf_,"%u",__undefined_counter__++);
+      _name=string("unnamed")+_tmp_buf_;
+    }
+    return std::make_shared<GameObject>(_name);
+  }
+
+  GameObject::GameObject(const std::string &name):m_name(name),Transform(this)
+  {
   }
 
   GameObject::~GameObject()
   {
-    for(GameObjectPtr ptr:m_children)
-    {
-      delete ptr;
-    }
   }
 
   void GameObject::AddNode(GameObjectPtr node)
   {
-    if(node==this)throw std::runtime_error("Can't add self");
-    node->m_parent=this;
+    if(node==shared_from_this())throw std::runtime_error("Can't add self");
+    node->m_parent=shared_from_this();
     m_children.push_back(node);
   }
 
   void GameObject::UpdateSelf()
   {
-    m_transform.m_relative_matrix=glm::mat4_cast(m_transform.m_angle);
-    m_transform.m_relative_matrix[3]=glm::vec4(m_transform.m_position,1.0f);
+    m_relative_matrix=glm::mat4_cast(m_angle);
+    m_relative_matrix[3]=glm::vec4(m_position,1.0f);
 
-    /*for(GameObjectPtr it=m_parent;it!=nullptr;it=it->m_parent)
-    {
-      m_transform.m_world_matrix=it->m_transform.m_relative_matrix*m_transform.m_world_matrix;
-    }*/
     if(m_parent!=nullptr)
-      m_transform.m_world_matrix=m_parent->m_transform.m_world_matrix*m_transform.m_relative_matrix;
+      m_world_matrix=m_parent->m_world_matrix*m_relative_matrix;
     else
-      m_transform.m_world_matrix=m_transform.m_relative_matrix;
-
-    m_transform.m_need_update=false;
+      m_world_matrix=m_relative_matrix;
+    m_need_update=false;
   }
 
   void GameObject::UpdateChildren()
   {
-    if(m_transform.m_need_update)//更新子节点
+    if(m_need_update)//更新子节点
     {
       UpdateSelf();
       for(GameObjectPtr node:m_children)
       {
-        node->m_transform.m_need_update=true;
+        node->m_need_update=true;
         node->UpdateChildren();
       }
     }
+  }
+
+  void GameObject::Update()
+  {
+    UpdateChildren();
   }
 
   GameObjectPtr GameObject::GetChildNode(const std::string &name)
@@ -70,9 +79,9 @@ namespace Kedama
       if(cnode==node)
       {
         cnode->m_parent=nullptr;
-        cnode->m_transform.m_relative_matrix=cnode->m_transform.m_world_matrix;
-        cnode->m_transform.m_position=glm::vec3(cnode->m_transform.m_relative_matrix[3]);
-        cnode->m_transform.m_angle=glm::quat_cast(glm::mat3(cnode->m_transform.m_relative_matrix));
+        cnode->m_relative_matrix=cnode->m_world_matrix;
+        cnode->m_position=glm::vec3(cnode->m_relative_matrix[3]);
+        cnode->m_angle=glm::quat_cast(glm::mat3(cnode->m_relative_matrix));
         return true;
       }
       cnode->RemoveNode(node);
@@ -80,8 +89,9 @@ namespace Kedama
     return false;
   }
 
+
   Transform& GameObject::GetTansform()
   {
-    return m_transform;
+    return *this;
   }
 }

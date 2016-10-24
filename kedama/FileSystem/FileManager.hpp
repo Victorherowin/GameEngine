@@ -3,7 +3,7 @@
 
 #include "../utility/Singleton.hpp"
 
-#include "../Config.hpp"
+#include "../Include.hpp"
 #include "IFileSystem.hpp"
 
 namespace Kedama

@@ -20,6 +20,15 @@ namespace Kedama
   void GLRenderSystem::Init()
   {
     m_win.Create("Kedama",800,600);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
     m_gl=SDL_GL_CreateContext(m_win.GetPtr());
     glewInit();
     if(!m_gl)
@@ -65,13 +74,13 @@ namespace Kedama
   void GLRenderSystem::OnForwardRender(const RenderStreamPtr& rsptr)
   {
     GLRenderStreamPtr glrsptr=std::dynamic_pointer_cast<GLRenderStream>(rsptr);
-    vector<GLRenderStream::MeshInfo>& mis=glrsptr->GetDrawInfo();
+    const list<Batch>& batchs=glrsptr->GetBatchs();
 
-    for(GLRenderStream::MeshInfo& mi:mis)
+    for(const Batch& batch:batchs)
     {
-      if(mi.m_instancing_info.Empty())continue;
+      if(batch.GetInstancies().empty())continue;
 
-      GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(mi.mesh_buffer.second);
+ /*     GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(batch.GetModelMesh().front().mesh_buffer.second);
       GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
 
       const vector<Pass>& pass=mi.material->GetPass();
@@ -104,10 +113,8 @@ namespace Kedama
 
         int tex_n=1;
 
-        /*
-         *
-         * 贴图设置（等待补完）
-        */
+//贴图设置（等待补完）
+
 
         if(src_fb!=nullptr)
         {
@@ -150,7 +157,7 @@ namespace Kedama
       if(tex2d!=nullptr)
       {
         tex2d->Unbind();
-      }
+      }*/
     }
   }
 

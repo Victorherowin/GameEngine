@@ -82,7 +82,7 @@ int32_t main(int32_t argc,char** argv)
     VertexBufferPtr floor_vbo=irsf->CreateVertexBuffer();
     IIndexBufferPtr floor_ibo=irsf->CreateIndexBuffer();
 
-    SDL_Surface* t=IMG_Load(R"(C:\Users\MaoYu\Desktop\yande.re 361945 cameltoe hakamada_hinata loli pantsu ro-kyu-bu! thighhighs tinkle topless undressing.png)");
+    SDL_Surface* t=IMG_Load(R"(F:\pixiv\[Nikennosekai] Prinz Eugen (1).jpeg)");
     SDL_Surface* tt=SDL_ConvertSurfaceFormat(t,SDL_PIXELFORMAT_ABGR8888,0);
 
 
@@ -101,30 +101,34 @@ int32_t main(int32_t argc,char** argv)
     material->AddPass(nullptr,nullptr,shader);
     material->BindTexture(tex);
 
-    StaticModel* tri=new StaticModel("test node");
+    BaseModelPtr tri=BaseModel::CreateBaseModel("test node");
     sm->GetRoot().AddNode(tri);
-    tri->AddMesh(RenderStream::MeshBuffer(vbo,ibo),material);
+    tri->AddMesh(MeshBuffer(vbo,ibo),material);
 
-    StaticModel* tri2=new StaticModel("test node2");
+    BaseModelPtr tri2=BaseModel::CreateBaseModel("test node2");
     tri->AddNode(tri2);
-    tri2->AddMesh(RenderStream::MeshBuffer(vbo,ibo),material);
+    tri2->AddMesh(MeshBuffer(vbo,ibo),material);
     tri2->GetTansform().Rotate(glm::vec3(0.0f,1.0f,0.0f),glm::pi<float>()/3.0f);
 
-    StaticModel* tri3=new StaticModel("test node3");
+    BaseModelPtr tri3=BaseModel::CreateBaseModel("test node3");
     tri2->AddNode(tri3);
-    tri3->AddMesh(RenderStream::MeshBuffer(vbo,ibo),material);
+    tri3->AddMesh(MeshBuffer(vbo,ibo),material);
     tri3->GetTansform().Rotate(glm::vec3(0.0f,1.0f,0.0f),glm::pi<float>()/3.0f*4.0f);
 
-    StaticModel* floor=new StaticModel("floor");
-    floor->AddMesh(RenderStream::MeshBuffer(floor_vbo,floor_ibo),material);
+    BaseModelPtr floor=BaseModel::CreateBaseModel("floor");
+    floor->AddMesh(MeshBuffer(floor_vbo,floor_ibo),material);
     floor->GetTansform().SetScale(vec3(100.0f,100.0f,100.0f));
     floor->GetTansform().Rotate(vec3(1.0f,0.0f,0.0f),glm::half_pi<float>());
     sm->GetRoot().AddNode(floor);
 
-    CameraPtr camera=Camera::CreateCamera("test_camera");
     int w,h;
     win->GetSize(&w,&h);
-    camera->SetPerspective(45.0f,(float)w/(float)h,0.1f,1000.0f);
+
+    CameraPtr camera=Camera::CreateCamera("test_camera");
+    Viewport vp;
+    vp.SetPerspective(45.0f,(float)w/(float)h,0.1f,1000.0f);
+    irs->SetViewport(&vp);
+
     camera->GetTansform().Move(vec3(1.0f,1.8f,10.0f));
     camera->LookAt(tri);
 
@@ -133,14 +137,16 @@ int32_t main(int32_t argc,char** argv)
     SDL_Event ev;
     bool flag=false;
 
+    RenderStreamPtr rs=Engine::GetSingleton().GetRenderSystemFactory()->CreateRenderStream();
+
     while(!flag)
     {
       while(SDL_PollEvent(&ev))if(ev.type==SDL_QUIT)flag=true;
       irs->Clear();
-      irs->Render(tri->GetRenderStream());
-      irs->Render(tri2->GetRenderStream());
-      irs->Render(tri3->GetRenderStream());
-      irs->Render(floor->GetRenderStream());
+      irs->Render(rs);
+      irs->Render(rs);
+      irs->Render(rs);
+      irs->Render(rs);
       irs->SwapBuffer();
       tri->GetTansform().Rotate(vec3(0.0,1.0,0.0),glm::pi<float>()/180.0f);
       tri->GetTansform().Move(glm::vec3(0.0f,0.00f,0.05f));

@@ -4,7 +4,7 @@ namespace Kedama
 {
   SceneManager::SceneManager(RenderSystem* render_system):
     m_render_system(render_system),
-    m_object_root("__root__")
+    m_object_root(GameObject::CreateGameObject("__root__"))
   {
     m_render_system->Clear();
     m_render_system->SwapBuffer();
@@ -12,6 +12,6 @@ namespace Kedama
 
   GameObject& SceneManager::GetRoot()
   {
-    return m_object_root;
+    return *m_object_root;
   }
 }

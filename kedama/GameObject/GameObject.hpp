@@ -4,38 +4,45 @@
 #include <vector>
 
 #include "Transform.hpp"
-#include "../Config.hpp"
+#include "../Include.hpp"
+#include "../Define.hpp"
 
 namespace Kedama
 {
-  DEFINE_RAW_PTR(GameObject)
+  DEFINE_SHARED_PTR(GameObject)
 
-  using std::vector;
+  using namespace std;
 
-  class GameObject
+  class KEDAMA_API GameObject : protected Transform,public std::enable_shared_from_this<GameObject>
   {
   public:
-    GameObject(const string& name="");
+
+    GameObject(const string& name=string());
     virtual ~GameObject();
     Transform& GetTansform();
-    inline const string& GetName(){return m_name;}
+
+    inline const string& GetName()
+    {return m_name;}
+
+    inline GameObjectPtr GetParentNode()
+    {return m_parent;}
 
     void AddNode(GameObjectPtr node);
     GameObjectPtr GetChildNode(const string& name);
     bool RemoveNode(GameObjectPtr node);
 
+    static GameObjectPtr CreateGameObject(const string& name);
+
+    void Update();
   private:
     void UpdateSelf();
     void UpdateChildren();
 
-  protected:
-    string m_name;
   private:
-    Transform m_transform;
+    string m_name;
+
     GameObjectPtr m_parent=nullptr;
     std::list<GameObjectPtr> m_children;
-
-    friend class Transform;
   };
 }
 
