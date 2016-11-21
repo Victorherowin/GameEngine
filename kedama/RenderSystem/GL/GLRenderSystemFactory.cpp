@@ -5,9 +5,11 @@
 #include "GLFrameBuffer.hpp"
 #include "GLVertexBuffer.hpp"
 #include "GLIndexBuffer.hpp"
-#include "GLRenderStream.hpp"
+
+#include "../RenderStream.hpp"
 
 #include "Shader/GLSLPerprocessor.cpp"
+
 
 namespace Kedama
 {
@@ -44,16 +46,10 @@ namespace Kedama
     return std::make_shared<GLTexture2D>();
   }
 
-  RenderStreamPtr GLRenderSystemFactory::CreateRenderStream()
+  ShaderPtr GLRenderSystemFactory::CreateShader(Shader::ShaderType type,const string& src)
   {
-    return std::make_shared<GLRenderStream>();
-  }
-
-  IShaderPtr GLRenderSystemFactory::CreateShader(const string& shader_src)
-  {
-    GLSLPreprocessor glsl_preprocessor;
-    glsl_preprocessor.Parse(shader_src);
-    GLShaderPtr r_shader=std::make_shared<GLShader>(glsl_preprocessor.GetVertexShader(),glsl_preprocessor.GetFragmentShader());
+    GLShaderPtr r_shader=std::make_shared<GLShader>(type);
+    r_shader->Create(src);
     return r_shader;
   }
 }

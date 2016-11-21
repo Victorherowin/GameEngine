@@ -12,14 +12,14 @@ namespace Kedama {
   {
   public:
 
-    void SetModelMesh(const ModelMeshes& model);
-    void AddModelInstance(GameObjectPtr& obj);
+    inline void AddInstance(BaseModelPtr& obj)
+    {m_instancies.push_back(obj);}
 
-    inline const ModelMeshes GetModelMesh()const{return m_model_mesh;}
-    inline const list<GameObjectPtr> GetInstancies()const{return m_instancies;}
+    inline list<BaseModelPtr>& GetInstancies()
+    {return m_instancies;}
+
   private:
-    ModelMeshes m_model_mesh;
-    list<GameObjectPtr> m_instancies;
+    list<BaseModelPtr> m_instancies;
   };
 
 }

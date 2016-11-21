@@ -16,39 +16,45 @@ namespace Kedama
   {
     enum class ValueType
     {
-      INT32,INT16,INT8,UINT32,UINT16,UINT8,FLOAT,HALF_FLAOT
+      INT32,INT16,INT8,UINT32,UINT16,UINT8,FLOAT,HALF_FLAOT,
+      INT_2_10_10_10,UNSIGNED_INT_2_10_10_10,UNSIGNED_INT_10F_11F_11F
     };
 
-    static constexpr uint16_t UNUSEED=std::numeric_limits<uint16_t>::max();
+    enum class ValueLength
+    {
+      FLOAT=1,VEC2,VEC3,VEC4
+    };
 
-    uint16_t position;
-    uint16_t uv;
-    uint16_t normal;
-    uint16_t tbn;
-    uint16_t bone_index;
-    uint16_t weight;
-    vector<tuple<ValueType,int/*size*/,int/*type*/,int/*stride*/,int/*offset*/,uint16_t>> custom;
+    struct VertexLayoutInfo
+    {
+      ValueType type;
+      ValueLength size;
+      uint32_t stride;
+      uint32_t offset;
+      bool normalized;
+    };
+
+    map<uint16_t,VertexLayoutInfo> layout;
   };
 
   class VertexBuffer
   {
   public:
+
     virtual ~VertexBuffer(){}
 
     //创建一个空VertexBuffer
-    virtual void Create(int vertex_size=4,int len=0,BufferUsage usage=BufferUsage::Default)=0;
+    virtual void Create(uint32_t vertex_size=4,uint32_t len=0,BufferUsage usage=BufferUsage::Default)=0;
 
     //发送顶点
     virtual void SendVertices(vector<Vertex>& vertices,BufferUsage usage)=0;
-    virtual void SendSubVertices(vector<Vertex>& vertices,int offset)=0;
-    virtual void SendData(void* data,int len,BufferUsage usage)=0;
-    virtual void SendSubData(void *data,int len,int offset)=0;
+    virtual void SendSubVertices(vector<Vertex>& vertices,uint32_t offset)=0;
+    virtual void SendData(void* data,uint32_t len,BufferUsage usage)=0;
+    virtual void SendSubData(void *data,uint32_t len,uint32_t offset)=0;
 
-    void SetVertexLayout(const VertexLayout& vl){use_vl=true;m_vl=vl;}
+    void SetVertexLayout(const VertexLayout& vl){m_vl=vl;}
     inline const VertexLayout& GetVertexLayout(){return m_vl;}
-    bool UsedVertexLayout(){return use_vl;}
   private:
-    bool use_vl=false;
     VertexLayout m_vl;
   };
 

@@ -2,25 +2,23 @@
 #define MATERIAL
 
 #include "ITexture2D.hpp"
-#include "IShader.hpp"
 #include "../Include.hpp"
 #include "../Define.hpp"
 #include "FrameBuffer.hpp"
-#include <glm/integer.hpp>
+#include "Shader.hpp"
 
 namespace Kedama
 {
   using namespace glm;
 
   DEFINE_SHARED_PTR(Material)
-  DEFINE_SHARED_PTR(Pass)
 
   class KEDAMA_API Pass
   {
     public:
-    FrameBufferPtr m_src_framebuffer;
-    FrameBufferPtr m_dst_framebuffer;
-    IShaderPtr m_shader;
+    //TODO:其他渲染设置
+    ShaderPtr m_vertex_shader;
+    ShaderPtr m_fragment_shader;
   };
 
   class KEDAMA_API Material
@@ -31,6 +29,7 @@ namespace Kedama
     void SetAmbientColor(const u8vec4& color);
     void SetDiffuseColor(const u8vec4& color);
     void SetSpecularColorAndShininess(const u8vec4& color,float shininess);
+    const void SetTexture(const string& name,ITexture2DPtr);
 
     const u8vec4& GetColor(){return m_color;}
     const u8vec4& GetAmbientColor(){return m_ambient_color;}
@@ -38,18 +37,19 @@ namespace Kedama
     const u8vec4& GetSpecularColor(){return m_specular_color;}
     float GetShininess(){return m_specular_shininess;}
 
-    void AddPass(const FrameBufferPtr& src,const FrameBufferPtr& dst,const IShaderPtr& shader);
-    const vector<Pass>& GetPass()const{return m_pass;}
+    Pass& CreatePass();
+    const vector<Pass>& GetPasses()const{return m_passes;}
     const ITexture2DPtr& GetTexture()const{return m_tex2d;}
 
-    const PassPtr& GetPass(int at);
+    const vector<Pass> GetPasses(int at);
 
     void BindTexture(const ITexture2DPtr& tex);
 
     static MaterialPtr CreateMaterial();
   protected:
 
-    vector<Pass> m_pass;
+    vector<Pass> m_passes;
+    vector<pair<string,ITexture2DPtr>> m_textures;
 
     u8vec4 m_color;
 
@@ -57,14 +57,6 @@ namespace Kedama
     u8vec4 m_diffuse_color;
     u8vec4 m_specular_color;
     float m_specular_shininess=0.0f;
-
-    ITexture2DPtr m_tex2d;
-    ITexture2DPtr m_normal_tex;
-    ITexture2DPtr m_ambient_tex;
-    ITexture2DPtr m_diffuse_tex;
-    ITexture2DPtr m_specular_tex;
-
-    //...
   };
 }
 

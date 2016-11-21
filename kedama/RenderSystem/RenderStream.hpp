@@ -8,7 +8,7 @@
 #include "VertexBuffer.hpp"
 #include "IIndexBuffer.hpp"
 #include "FrameBuffer.hpp"
-#include "IShader.hpp"
+#include "Shader.hpp"
 #include "Material.hpp"
 #include "Batch.hpp"
 
@@ -21,18 +21,28 @@ namespace Kedama
     public:
     virtual ~RenderStream(){}
 
-    void AddBatch(const Batch& batch);
-    inline const list<Batch> GetBatchs(){return m_batchs;}
+    inline bool Empty()
+    {return m_batch_queue.empty();}
 
-    void Clear();
+    inline void AddBatch(const Batch& batch)
+    {m_batch_queue.push(batch);}
 
-    protected:
+    inline void PopBatch()
+    {
+      m_batch_queue.pop();
+    }
 
-    virtual void OnBindMaterial(const Batch& batch)=0;
-    virtual void OnClear()=0;
+    inline const Batch GetBatch()
+    {
+      return m_batch_queue.front();
+    }
+
+    inline uint32_t GetSize()
+    {return m_batch_queue.size();}
+
 
     private:
-    list<Batch> m_batchs;
+    queue<Batch> m_batch_queue;
   };
 }
 

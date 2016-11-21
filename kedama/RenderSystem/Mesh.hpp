@@ -24,26 +24,24 @@ namespace Kedama
     uint32_t offset;
   };
 
-  using ModelMeshes=list<Mesh>;
-
   class KEDAMA_API BaseModel:public GameObject
   {
   public:
     BaseModel(const string& name="");
 
-    inline const ModelMeshes& GetMeshes(){return m_meshs;}
-    void AddMesh(const MeshBuffer &mb,MaterialPtr& material,uint32_t offset=0);
+    inline const list<Mesh>& GetMeshes(){return m_meshs;}
+    void AddMesh(const Mesh &mb,MaterialPtr& material,uint32_t offset=0);
 
     static BaseModelPtr CreateBaseModel(const string& name);
 
   protected:
-    ModelMeshes m_meshs;
+    list<Mesh> m_meshs;
   };
 
   class KEDAMA_API DynamicModel:public BaseModel
   {
   public:
-    DynamicModel(const string& name="");
+    DynamicModel(const string& name=string());
     static DynamicModelPtr CreateDynamicModel(const string& name);
 
   private:

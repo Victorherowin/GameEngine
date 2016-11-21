@@ -18,6 +18,10 @@ namespace Kedama
 
   GameObject::GameObject(const std::string &name):m_name(name),Transform(this)
   {
+    Transform::AddUpdateListener([&](const Transform& tf)
+    {
+      UpdateChildren();
+    });
   }
 
   GameObject::~GameObject()
@@ -54,11 +58,6 @@ namespace Kedama
         node->UpdateChildren();
       }
     }
-  }
-
-  void GameObject::Update()
-  {
-    UpdateChildren();
   }
 
   GameObjectPtr GameObject::GetChildNode(const std::string &name)

@@ -15,8 +15,7 @@ namespace Kedama
     FrameBufferPtr CreateFrameBuffer()override;
     VertexBufferPtr CreateVertexBuffer()override;
     IIndexBufferPtr CreateIndexBuffer()override;
-    RenderStreamPtr CreateRenderStream()override;
-    IShaderPtr CreateShader(const std::string& shader_src)override;
+    ShaderPtr CreateShader(Shader::ShaderType type,const string& src)override;
   };
 }
 

@@ -1,7 +1,7 @@
 #ifndef GLSHADER
 #define GLSHADER
 
-#include "../IShader.hpp"
+#include "../Shader.hpp"
 
 #include "../../Include.hpp"
 
@@ -13,39 +13,46 @@ namespace Kedama
   DEFINE_SHARED_PTR(GLShader)
 
   using std::string;
-
-  class GLShader:public IShader
+//TODO:UBO的管理
+  class GLShader:public Shader
   {
   public:
-    GLShader(const string& vertex_shader,const string& fragment_shader);
+    GLShader(ShaderType type);
     ~GLShader();
-    void Create(const string& vertex_shader,const string& fragment_shader);
 
-    void BindUniform(ValueType type,VectorType vtype,uint32_t count,const void* data,const string& name)override;
-    void BindUniformMatrix(MatrixType type,uint32_t count, const void* data,const string& name)override;
+    void Create(const string& src)override;
+
+    void SetUniform(int loc,mat2& mat)override;
+    void SetUniform(int loc,mat3& mat)override;
+    void SetUniform(int loc,mat4& mat)override;
+    void SetUniform(int loc,mat3x2& mat)override;
+    void SetUniform(int loc,mat4x3& mat)override;
+    void SetUniform(int loc,int32_t n)override;
+    void SetUniform(int loc,int16_t n)override;
+    void SetUniform(int loc,int8_t n)override;
+    void SetUniform(int loc,uint32_t n)override;
+    void SetUniform(int loc,uint16_t n)override;
+    void SetUniform(int loc,uint8_t n)override;
+    void SetUniform(int loc,float n)override;
+
+    void SetUniform(int loc,vector<mat2>& mat)override;
+    void SetUniform(int loc,vector<mat3>& mat)override;
+    void SetUniform(int loc,vector<mat4>& mat)override;
+    void SetUniform(int loc,vector<mat3x2>& mat)override;
+    void SetUniform(int loc,vector<mat4x3>& mat)override;
+    void SetUniform(int loc,vector<int32_t>& n)override;
+    void SetUniform(int loc,vector<int16_t>& n)override;
+    void SetUniform(int loc,vector<int8_t>& n)override;
+    void SetUniform(int loc,vector<uint32_t>& n)override;
+    void SetUniform(int loc,vector<uint16_t>& n)override;
+    void SetUniform(int loc,vector<uint8_t>& n)override;
+    void SetUniform(int loc,vector<float>& n)override;
 
     void Use();
     inline GLuint GetShader(){return m_shader;}
 
-    void SetViewMatrix(const glm::mat4& view);
-    void SetProjectionMatrix(const glm::mat4& projection);
-
   private:
-    struct UniformInfo
-    {
-      int type;
-      ValueType value_type;
-      MatrixType matrix_type;
-      uint32_t count;
-      GLuint location;
-      void* data;
-    };
-
     GLuint m_shader;
-    GLint m_view_matrix_loc=std::numeric_limits<GLint>::max();
-    GLint m_projection_matrix_loc=std::numeric_limits<GLint>::max();
-
-    map<string,UniformInfo> m_uniform_info_map;
   };
 }
 

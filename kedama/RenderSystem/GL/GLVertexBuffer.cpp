@@ -53,7 +53,7 @@ namespace Kedama
     glBindBuffer(GL_ARRAY_BUFFER,0);
   }
 
-  void GLVertexBuffer::Create(int32_t vertex_size,int32_t len,BufferUsage usage)
+  void GLVertexBuffer::Create(uint32_t vertex_size,uint32_t len,BufferUsage usage)
   {
     Bind();
 
@@ -115,7 +115,7 @@ namespace Kedama
     delete[] tmp_vert;
   }
 
-  void GLVertexBuffer::SendSubVertices(vector<Vertex> &vertices,int32_t offset)
+  void GLVertexBuffer::SendSubVertices(vector<Vertex> &vertices,uint32_t offset)
   {
     GLVertex* tmp_vert=detail::Convert(vertices);
     Bind();
@@ -131,7 +131,7 @@ namespace Kedama
     delete[] tmp_vert;
   }
 
-  void GLVertexBuffer::SendData(void*data,int32_t len,BufferUsage usage)
+  void GLVertexBuffer::SendData(void* data,uint32_t len,BufferUsage usage)
   {
     Bind();
     if(m_usage==GL_DYNAMIC_DRAW&&m_maped_ptr!=nullptr)
@@ -157,7 +157,7 @@ namespace Kedama
     Unbind();
   }
 
-  void GLVertexBuffer::SendSubData(void* data,int32_t len,int32_t offset)
+  void GLVertexBuffer::SendSubData(void* data,uint32_t len,uint32_t offset)
   {
     Bind();
     if(m_usage==GL_DYNAMIC_DRAW)

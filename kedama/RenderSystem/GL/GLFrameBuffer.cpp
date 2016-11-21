@@ -51,7 +51,7 @@ namespace Kedama
       glGenRenderbuffers(1,&rbo);
       m_rbos.push_back(std::make_pair(type,rbo));
 
-      glBindRenderbuffer(GL_FRAMEBUFFER,rbo);
+      glBindRenderbuffer(GL_RENDERBUFFER,rbo);
 
       if(attachment==GL_DEPTH_ATTACHMENT)
       {

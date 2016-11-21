@@ -32,8 +32,6 @@ namespace Kedama
     bool RemoveNode(GameObjectPtr node);
 
     static GameObjectPtr CreateGameObject(const string& name);
-
-    void Update();
   private:
     void UpdateSelf();
     void UpdateChildren();

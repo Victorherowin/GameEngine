@@ -7,6 +7,7 @@
 
 namespace Kedama
 {
+  using namespace std;
 
   class GameObject;
 
@@ -26,27 +27,22 @@ namespace Kedama
     void SetScale(const glm::vec3& scale);
 
     inline const glm::vec3& GetRelativePosition(){return m_position;}
-    glm::vec3 GetWorldPosition();
-
     inline const glm::vec3& GetScale(){return m_scale;}
-
     inline const glm::quat& GetRelativeAngle(){return m_angle;}
-    glm::quat GetWorldAngle();
-
     inline const glm::mat4& GetRelativeMatrix(){return m_relative_matrix;}
-    const glm::mat4& GetWorldMatrix();
 
-    inline glm::mat4& GetModelMatrix()
-    {
-      m_model_matirx=glm::scale(m_world_matrix,m_scale);
-      return m_model_matirx;
-    }
+    glm::quat GetWorldAngle();
+    glm::vec3 GetWorldPosition();
+    const glm::mat4& GetWorldMatrix();
+    const glm::mat4& GetModelMatrix();
 
     void Move(const glm::vec3& distance);
     void Rotate(const glm::quat& angle);
     void Rotate(const glm::mat3& angle);
     void Rotate(const glm::vec3& axis,float rad);
 
+    void AddUpdateListener(const function<void(Transform&)>& listener);
+    void ClearListener();
   protected:
     bool m_need_update=false;
 
@@ -60,6 +56,8 @@ namespace Kedama
     glm::mat4 m_model_matirx;//模型矩阵
 
     GameObject* m_object;
+
+    list<function<void(Transform&)>> m_listener_list;
   };
 }
 

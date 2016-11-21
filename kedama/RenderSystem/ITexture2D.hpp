@@ -8,7 +8,7 @@
 namespace Kedama
 {
   DEFINE_SHARED_PTR(ITexture2D)
-
+//TODO:TextureCube的面 转Texture2D
   class ITexture2D:public ITextureBase
   {
   public:

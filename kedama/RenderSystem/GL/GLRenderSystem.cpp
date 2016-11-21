@@ -9,14 +9,40 @@
 #include "GLFrameBuffer.hpp"
 #include "GLVertexBuffer.hpp"
 #include "GLIndexBuffer.hpp"
-#include "GLRenderStream.hpp"
+
 #include <stdexcept>
 #include <GL/glew.h>
 
 #include "Shader/DefaultShader.cpp"
 
+#include "../RenderStream.hpp"
+
 namespace Kedama
 {
+  GLRenderSystem::GLRenderSystem()
+  {
+    glGenBuffers(1,&m_model_view_ubo);
+    glNamedBufferData(m_model_view_ubo,sizeof(mat4)<<1,nullptr,GL_DYNAMIC_DRAW);
+
+  }
+
+  void GLRenderSystem::SetCamera(const CameraPtr &camera)
+  {
+    if(m_main_camera!=nullptr)
+      m_main_camera->GetTansform().ClearListener();
+    camera->GetTansform().AddUpdateListener([camera,this](Transform& tf)
+    {
+      glNamedBufferSubData(m_model_view_ubo,sizeof(mat4),sizeof(mat4),glm::value_ptr(camera->GetTansform().GetWorldMatrix()));
+    });
+    RenderSystem::SetCamera(camera);
+  }
+
+  void GLRenderSystem::SetViewport(Viewport *vp)
+  {
+    glNamedBufferSubData(m_model_view_ubo,0,sizeof(mat4),glm::value_ptr(vp->GetProjectionMatrix()));
+    RenderSystem::SetViewport(vp);
+  }
+
   void GLRenderSystem::Init()
   {
     m_win.Create("Kedama",800,600);
@@ -73,12 +99,25 @@ namespace Kedama
 
   void GLRenderSystem::OnForwardRender(const RenderStreamPtr& rsptr)
   {
-    GLRenderStreamPtr glrsptr=std::dynamic_pointer_cast<GLRenderStream>(rsptr);
-    const list<Batch>& batchs=glrsptr->GetBatchs();
-
-    for(const Batch& batch:batchs)
+    while(!rsptr->Empty())
     {
-      if(batch.GetInstancies().empty())continue;
+      Batch batch=std::move(rsptr->GetBatch());
+      for(BaseModelPtr& pbasemodel:batch.GetInstancies())
+      {
+        GLIndexBufferPtr ibo=static_pointer_cast<GLIndexBuffer>(batch.GetInstancies().front()->GetMeshes().front().mesh_buffer.second);
+        for(const Mesh& mesh:pbasemodel->GetMeshes())
+        {
+          GLuint vao=m_vao_manager.GetVAO(mesh,batch);
+          glBindVertexArray(vao);
+          glDrawElementsInstanced(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr,rsptr->GetSize());
+          glBindVertexArray(0);
+        }
+      }
+      rsptr->PopBatch();
+    }
+   // for(const Batch& batch:batchs)
+   // {
+    //  if(batch.GetInstancies().empty())continue;
 
  /*     GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(batch.GetModelMesh().front().mesh_buffer.second);
       GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
@@ -158,7 +197,7 @@ namespace Kedama
       {
         tex2d->Unbind();
       }*/
-    }
+   // }
   }
 
   void GLRenderSystem::OnDeferredRender(const RenderStreamPtr& rsptr)

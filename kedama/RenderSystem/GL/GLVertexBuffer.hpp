@@ -29,13 +29,15 @@ namespace Kedama
   void Bind();
   void Unbind();
 
-  void Create(int32_t vertex_size,int32_t len,BufferUsage usage)override;
+  void Create(uint32_t vertex_size,uint32_t len,BufferUsage usage)override;
   void SendVertices(vector<Vertex>& vertices,BufferUsage usage)override;
-  void SendSubVertices(vector<Vertex>& vertices,int32_t offset)override;
-  void SendData(void* data,int32_t len,BufferUsage usage)override;
-  void SendSubData(void *data,int32_t len,int32_t offset)override;
+  void SendSubVertices(vector<Vertex>& vertices,uint32_t offset)override;
+  void SendData(void* data,uint32_t len,BufferUsage usage)override;
+  void SendSubData(void *data,uint32_t len,uint32_t offset)override;
 
-  inline GLuint GetObj(){m_vbo;}
+  inline GLuint GetObj()
+  {return m_vbo;}
+
   private:
   GLuint m_vbo;
   GLenum m_usage;

@@ -4,7 +4,8 @@
 #include <string>
 
 #include "ITexture2D.hpp"
-#include "IShader.hpp"
+#include "Shader.hpp"
+#include "RenderTarget.hpp"
 #include "Mesh.hpp"
 #include "RenderStream.hpp"
 #include "Viewport.hpp"
@@ -28,8 +29,8 @@ namespace Kedama
 
     void Render(const RenderStreamPtr&);
     void UseDeferredRender(bool use);
-    void SetCamera(const CameraPtr& camera);
-    void SetViewport(Viewport* vp);
+    virtual void SetCamera(const CameraPtr& camera);
+    virtual void SetViewport(Viewport* vp);
 
     virtual void Init()=0;
     virtual void Quit()=0;
@@ -40,12 +41,14 @@ namespace Kedama
     virtual void SwapBuffer()=0;
 
   protected:
+
     virtual void OnForwardRender(const RenderStreamPtr& rsptr)=0;
     virtual void OnDeferredRender(const RenderStreamPtr&){throw std::runtime_error(string("No Implement DeferredRender！"));}
 
     virtual const string GetShaderLanguage()=0;
 
   protected:
+    RenderTarget m_render_target;
     CameraPtr m_main_camera=nullptr;
     Viewport* m_viewport=nullptr;
 

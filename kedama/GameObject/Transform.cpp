@@ -7,6 +7,16 @@ namespace Kedama {
   {
   }
 
+  void Transform::AddUpdateListener(const function<void (Transform &)> &listener)
+  {
+    m_listener_list.push_back(listener);
+  }
+
+  void Transform::ClearListener()
+  {
+    m_listener_list.clear();
+  }
+
   void Transform::SetRelativePosition(const glm::vec3& position)
   {
     m_position=position;
@@ -73,11 +83,21 @@ namespace Kedama {
 
   glm::vec3 Transform::GetWorldPosition()
   {
+    if(m_need_update)
+    {
+      for(auto& func:m_listener_list)
+        func(*this);
+    }
     return glm::vec3(m_world_matrix[3]);
   }
 
   glm::quat Transform::GetWorldAngle()
   {
+    if(m_need_update)
+    {
+      for(auto& func:m_listener_list)
+        func(*this);
+    }
     return glm::quat_cast(glm::mat3(m_world_matrix));
   }
 
@@ -85,9 +105,21 @@ namespace Kedama {
   {
     if(m_need_update)
     {
-      m_object->Update();
+      for(auto& func:m_listener_list)
+        func(*this);
     }
     return m_world_matrix;
+  }
+
+  const glm::mat4& Transform::GetModelMatrix()
+  {
+    if(m_need_update)
+    {
+      for(auto& func:m_listener_list)
+        func(*this);
+    }
+    m_model_matirx=glm::scale(m_world_matrix,m_scale);
+    return m_model_matirx;
   }
 
 }

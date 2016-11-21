@@ -23,18 +23,10 @@ namespace Kedama {
     m_specular_shininess=shininess;
   }
 
-  void Material::AddPass(const FrameBufferPtr &src, const FrameBufferPtr &dst,const IShaderPtr& shader)
+  Pass& Material::CreatePass()
   {
-    Pass pass;
-    pass.m_src_framebuffer=src;
-    pass.m_dst_framebuffer=dst;
-    pass.m_shader=shader;
-    m_pass.push_back(pass);
-  }
-
-  void Material::BindTexture(const ITexture2DPtr& tex)
-  {
-    m_tex2d=tex;
+    m_passes.push_back(Pass());
+    return m_passes.back();
   }
 
   MaterialPtr Material::CreateMaterial()
