@@ -1,15 +1,15 @@
 #ifndef ITEXTURE2D
 #define ITEXTURE2D
 
-#include "ITextureBase.hpp"
+#include "ITexture.hpp"
 
 #include "../Define.hpp"
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(ITexture2D)
+
 //TODO:TextureCube的面 转Texture2D
-  class ITexture2D:public ITextureBase
+  class ITexture2D:public ITexture
   {
   public:
     virtual void Create(TextureFormat foramt,int w,int h)=0;

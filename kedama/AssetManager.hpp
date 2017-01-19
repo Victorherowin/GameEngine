@@ -5,9 +5,6 @@
 #include "Define.hpp"
 
 #include "RenderSystem/Mesh.hpp"
-#include "RenderSystem/Material.hpp"
-#include "RenderSystem/IIndexBuffer.hpp"
-#include "RenderSystem/VertexBuffer.hpp"
 
 namespace Kedama
 {
@@ -15,10 +12,11 @@ namespace Kedama
   class AssetManager
   {
   public:
-    Mesh* CreateMesh(const string& name,IIndexBufferPtr& ibo,VertexBufferPtr& vbo);
-    void CreateMaterial();
+    void AddMesh(const string& name,Mesh* mesh);
+    Mesh* CreateMesh(const string& name);
+    Mesh* GetMesh(const string& name);
   private:
-    map<string,Mesh> m_meshes;
+    map<string,Mesh*> m_mesh_map;
   };
 }
 

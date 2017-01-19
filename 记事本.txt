@@ -1,0 +1,4 @@
+1.实现延迟光照
+
+
+Texture不能放在Uniform Block里，因此推迟到渲染时绑定(GLMaterialNative.hpp)

@@ -22,8 +22,6 @@ namespace Kedama
 	virtual void SendIndices(vector<uint32>& indices)=0;
 	virtual void SendSubIndices(vector<uint32>& indices,int offset,int len)=0;
     };
-
-	DEFINE_SHARED_PTR(IIndexBuffer)
 }
 
 #endif

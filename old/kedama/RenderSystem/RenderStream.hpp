@@ -14,8 +14,6 @@
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(RenderStream)
-
   class KEDAMA_API RenderStream
   {
     public:

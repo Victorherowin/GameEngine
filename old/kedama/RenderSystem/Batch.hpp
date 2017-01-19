@@ -12,14 +12,14 @@ namespace Kedama {
   {
   public:
 
-    inline void AddInstance(BaseModelPtr& obj)
+    inline void AddInstance(BaseModel* obj)
     {m_instancies.push_back(obj);}
 
-    inline list<BaseModelPtr>& GetInstancies()
+    inline list<BaseModel*>& GetInstancies()
     {return m_instancies;}
 
   private:
-    list<BaseModelPtr> m_instancies;
+    list<BaseModel*> m_instancies;
   };
 
 }

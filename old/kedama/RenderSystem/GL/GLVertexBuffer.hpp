@@ -7,7 +7,6 @@
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(GLVertexBuffer)
 
   struct GLVertex
   {

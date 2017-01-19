@@ -9,15 +9,15 @@ using namespace std;
 
 namespace Kedama
 {
-  class SceneManager:public Singleton<SceneManager>
+  class KEDAMA_API SceneManager:public Singleton<SceneManager>
   {
   public:
     SceneManager(RenderSystem* irfs);
     GameObject& GetRoot();
-
+    void Update();
   private:
     RenderSystem* m_render_system;
-    GameObjectPtr m_object_root;//场景管理树根
+    GameObject m_object_root;//场景管理树根
   };
 }
 

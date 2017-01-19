@@ -17,6 +17,18 @@ namespace Kedama {
     m_listener_list.clear();
   }
 
+  void Transform::SetRelativeMatrix(const glm::mat4 &mat)
+  {
+    m_relative_matrix=mat;
+    m_need_update=true;
+  }
+
+  void Transform::SetWorldMatrix(const glm::mat4 &mat)
+  {
+    m_world_matrix=mat;
+    m_need_update=true;
+  }
+
   void Transform::SetRelativePosition(const glm::vec3& position)
   {
     m_position=position;
@@ -25,7 +37,7 @@ namespace Kedama {
 
   void Transform::SetWorldPosition(const glm::vec3& position)
   {
-    const Transform* parent=reinterpret_cast<Transform*>(m_object->GetParentNode().get());
+    const Transform* parent=m_object->GetParent()->GetTansform();
     m_position=glm::vec3(glm::inverse(parent->m_world_matrix)*glm::vec4(position,1.0f));
     m_need_update=true;
   }
@@ -44,7 +56,7 @@ namespace Kedama {
 
   void Transform::SetWorldAngle(const glm::mat3& angle)
   {
-    const Transform* parent=reinterpret_cast<Transform*>(m_object->GetParentNode().get());
+    const Transform* parent=m_object->GetParent()->GetTansform();
     m_angle=glm::quat_cast(glm::transpose(glm::mat3(parent->m_world_matrix)*angle));
     m_need_update=true;
   }
@@ -83,43 +95,51 @@ namespace Kedama {
 
   glm::vec3 Transform::GetWorldPosition()
   {
-    if(m_need_update)
-    {
-      for(auto& func:m_listener_list)
-        func(*this);
-    }
     return glm::vec3(m_world_matrix[3]);
   }
 
   glm::quat Transform::GetWorldAngle()
   {
-    if(m_need_update)
-    {
-      for(auto& func:m_listener_list)
-        func(*this);
-    }
     return glm::quat_cast(glm::mat3(m_world_matrix));
   }
 
   const glm::mat4& Transform::GetWorldMatrix()
   {
-    if(m_need_update)
-    {
-      for(auto& func:m_listener_list)
-        func(*this);
-    }
     return m_world_matrix;
   }
 
   const glm::mat4& Transform::GetModelMatrix()
   {
+    m_model_matirx=glm::scale(m_world_matrix,m_scale);
+    return m_model_matirx;
+  }
+
+  void Transform::Update()
+  {
+    if(m_need_update)
+    {
+      //更新自己
+      m_relative_matrix=glm::mat4_cast(m_angle);
+      m_relative_matrix[3]=glm::vec4(m_position,1.0f);
+
+      if(m_object->GetParent()!=nullptr)
+        m_world_matrix=m_object->GetParent()->GetTansform()->m_world_matrix*m_relative_matrix;
+      else
+        m_world_matrix=m_relative_matrix;
+      m_need_update=false;
+
+      for(GameObject* node:m_object->GetParent()->GetChildren())//更新子节点
+      {
+        node->GetTansform()->m_need_update=true;
+        node->GetTansform()->Update();
+      }
+    }
+
     if(m_need_update)
     {
       for(auto& func:m_listener_list)
         func(*this);
     }
-    m_model_matirx=glm::scale(m_world_matrix,m_scale);
-    return m_model_matirx;
   }
 
 }

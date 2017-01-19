@@ -12,9 +12,9 @@ namespace Kedama {
 
   struct RenderTarget
   {
-    vector<ITexture2DPtr> color;
-    IRenderBufferPtr depth;
-    IRenderBufferPtr depth_stencil;
+    vector<ITexture2D*> color;
+    IRenderBuffer* depth;
+    IRenderBuffer* depth_stencil;
   };
 }
 

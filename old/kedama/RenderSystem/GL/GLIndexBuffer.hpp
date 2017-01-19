@@ -7,8 +7,6 @@
 
 namespace Kedama{
 
-  DEFINE_SHARED_PTR(GLIndexBuffer)
-
   class GLIndexBuffer:public IIndexBuffer
   {
   public:

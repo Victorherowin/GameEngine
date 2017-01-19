@@ -9,10 +9,7 @@ namespace Kedama
   using namespace std;
   using namespace glm;
 
-  DEFINE_SHARED_PTR(Shader)
-
-
-  class Shader
+  class KEDAMA_API Shader
   {
     public:
 
@@ -28,9 +25,9 @@ namespace Kedama
 
     virtual ~Shader(){}
     inline ShaderType GetType(){return m_type;}
-    virtual void Create(const string& src)=0;
-
-    virtual void SetUniform(int loc,mat2& mat)=0;
+    virtual void SetSource(const string& src)=0;
+//TODO Uniform设置
+/*    virtual void SetUniform(int loc,mat2& mat)=0;
     virtual void SetUniform(int loc,mat3& mat)=0;
     virtual void SetUniform(int loc,mat4& mat)=0;
     virtual void SetUniform(int loc,mat3x2& mat)=0;
@@ -54,7 +51,7 @@ namespace Kedama
     virtual void SetUniform(int loc,vector<uint32_t>& n)=0;
     virtual void SetUniform(int loc,vector<uint16_t>& n)=0;
     virtual void SetUniform(int loc,vector<uint8_t>& n)=0;
-    virtual void SetUniform(int loc,vector<float>& n)=0;
+    virtual void SetUniform(int loc,vector<float>& n)=0;*/
 
     protected:
     ShaderType m_type;

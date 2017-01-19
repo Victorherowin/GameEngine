@@ -24,12 +24,15 @@ namespace Kedama
     void SetRelativeAngle(const glm::mat3& angle);
     void SetWorldAngle(const glm::mat3& angle);//矩阵
 
+    void SetRelativeMatrix(const glm::mat4& mat);
+    void SetWorldMatrix(const glm::mat4& mat);
+
     void SetScale(const glm::vec3& scale);
 
     inline const glm::vec3& GetRelativePosition(){return m_position;}
-    inline const glm::vec3& GetScale(){return m_scale;}
     inline const glm::quat& GetRelativeAngle(){return m_angle;}
     inline const glm::mat4& GetRelativeMatrix(){return m_relative_matrix;}
+    inline const glm::vec3& GetScale(){return m_scale;}
 
     glm::quat GetWorldAngle();
     glm::vec3 GetWorldPosition();
@@ -43,6 +46,8 @@ namespace Kedama
 
     void AddUpdateListener(const function<void(Transform&)>& listener);
     void ClearListener();
+
+    void Update();
   protected:
     bool m_need_update=false;
 

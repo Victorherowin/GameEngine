@@ -4,59 +4,94 @@
 #include "ITexture2D.hpp"
 #include "../Include.hpp"
 #include "../Define.hpp"
-#include "FrameBuffer.hpp"
 #include "Shader.hpp"
 
 namespace Kedama
 {
   using namespace glm;
 
-  DEFINE_SHARED_PTR(Material)
-
   class KEDAMA_API Pass
   {
-    public:
+  public:
     //TODO:其他渲染设置
-    ShaderPtr m_vertex_shader;
-    ShaderPtr m_fragment_shader;
+    Shader* m_vertex_shader;
+    Shader* m_fragment_shader;
   };
 
   class KEDAMA_API Material
   {
   public:
+    Material();
+    ~Material();
 
-    void SetColor(const u8vec4& color);//RGBA
-    void SetAmbientColor(const u8vec4& color);
-    void SetDiffuseColor(const u8vec4& color);
-    void SetSpecularColorAndShininess(const u8vec4& color,float shininess);
-    const void SetTexture(const string& name,ITexture2DPtr);
+    void SetColor(const string& property,const u8vec4& color);//RGBA
+    void SetFloat(const string& property,float _float);
+    void SetInt(const string& property,int _int);
+    void SetMatrix(const string& property,const mat4& mat);
 
-    const u8vec4& GetColor(){return m_color;}
-    const u8vec4& GetAmbientColor(){return m_ambient_color;}
-    const u8vec4& GetDiffuseColor(){return m_diffuse_color;}
-    const u8vec4& GetSpecularColor(){return m_specular_color;}
-    float GetShininess(){return m_specular_shininess;}
+    void SetColorArray(const string& property,vector<u8vec4>& colors);
+    void SetFloatArray(const string& property,vector<float>& floats);
+    void SetIntArray(const string& property,vector<int>& ints);
+    void SetMatrixArray(const string& property,vector<mat4>& mat);
 
-    Pass& CreatePass();
-    const vector<Pass>& GetPasses()const{return m_passes;}
-    const ITexture2DPtr& GetTexture()const{return m_tex2d;}
+    void SetTexture(const string& property,ITexture2D*);//设置材质
 
-    const vector<Pass> GetPasses(int at);
 
-    void BindTexture(const ITexture2DPtr& tex);
 
-    static MaterialPtr CreateMaterial();
+    u8vec4 GetColor(const string& property);
+    float GetFloat(const string& property);
+    int GetInt(const string& property);
+    mat4 GetMatrix(const string& property);
+
+    vector<u8vec4> GetColorArray(const string& property);
+    vector<float> GetFloatArray(const string &property);
+    vector<int> GetIntArray(const string& property);
+    ITexture* GetTextures(const string& property);
+    vector<mat4> GetMatrixArray(const string& property);
+
+    Pass* CreatePass();
+    void RemovePass(Pass*);
+
+    const list<Pass>& GetPasses()const{return m_passes;}
+  public:
+    class Native;
+    struct Value;
+
   protected:
 
-    vector<Pass> m_passes;
-    vector<pair<string,ITexture2DPtr>> m_textures;
+    Native* m_native=nullptr;
+    list<Pass> m_passes;
+    list<Value> m_property_list;
+    map<string,Value*> m_property_value;
+  };
 
-    u8vec4 m_color;
+  class Material::Native
+  {
+  public:
+    virtual void Upload(const list<Value>&)=0;
+    virtual ~Native(){}
+  };
 
-    u8vec4 m_ambient_color;
-    u8vec4 m_diffuse_color;
-    u8vec4 m_specular_color;
-    float m_specular_shininess=0.0f;
+  struct Material::Value
+  {
+    Value():data(1){}
+
+    enum class Type:uint8_t
+    {
+      TEXTURE,COLOR,FLOAT,INT,MATRIX/*float array*/
+    };
+
+    union _Internal
+    {
+      float _flaot;
+      int _int;//int or color
+    };
+
+    string property_name;
+    Type type;
+    bool is_array=false;
+    ITexture* _texture=nullptr;
+    vector<_Internal> data;
   };
 }
 

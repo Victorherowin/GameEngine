@@ -9,38 +9,35 @@
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(GameObject)
-
   using namespace std;
 
-  class KEDAMA_API GameObject : protected Transform,public std::enable_shared_from_this<GameObject>
+  class KEDAMA_API GameObject
   {
   public:
 
     GameObject(const string& name=string());
     virtual ~GameObject();
-    Transform& GetTansform();
+    Transform* GetTansform();
 
     inline const string& GetName()
     {return m_name;}
 
-    inline GameObjectPtr GetParentNode()
+    void AddNode(GameObject* node);
+    bool RemoveNode(GameObject* node);
+
+    GameObject* GetChild(const string& name);
+    std::list<GameObject*>& GetChildren()
+    {return m_children;}
+
+    inline GameObject* GetParent()
     {return m_parent;}
-
-    void AddNode(GameObjectPtr node);
-    GameObjectPtr GetChildNode(const string& name);
-    bool RemoveNode(GameObjectPtr node);
-
-    static GameObjectPtr CreateGameObject(const string& name);
-  private:
-    void UpdateSelf();
-    void UpdateChildren();
 
   private:
     string m_name;
+    Transform m_transform;
 
-    GameObjectPtr m_parent=nullptr;
-    std::list<GameObjectPtr> m_children;
+    GameObject* m_parent=nullptr;
+    std::list<GameObject*> m_children;
   };
 }
 

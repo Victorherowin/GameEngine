@@ -18,7 +18,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
-#include <memory>
 #include <functional>
 #include <type_traits>
 #include <tuple>

@@ -6,7 +6,7 @@
 #include "Include.hpp"
 
 #define KEDAMALOG(...) Log::GetSingleton().printf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),__VA_ARGS__)
-#define KEDAMAELOG(...) Log::GetSingleton().printf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),__VA_ARGS__)
+#define KEDAMALOGE(...) Log::GetSingleton().eprintf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),__VA_ARGS__)
 
 namespace Kedama
 {

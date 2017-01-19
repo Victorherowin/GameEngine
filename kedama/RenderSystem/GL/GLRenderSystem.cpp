@@ -6,202 +6,101 @@
 #include "GLRenderSystem.hpp"
 #include "GLShader.hpp"
 #include "GLTexture2D.hpp"
-#include "GLFrameBuffer.hpp"
-#include "GLVertexBuffer.hpp"
-#include "GLIndexBuffer.hpp"
 
 #include <stdexcept>
 #include <GL/glew.h>
 
-#include "Shader/DefaultShader.cpp"
-
-#include "../RenderStream.hpp"
-
 namespace Kedama
 {
-  GLRenderSystem::GLRenderSystem()
+  namespace GL
   {
-    glGenBuffers(1,&m_model_view_ubo);
-    glNamedBufferData(m_model_view_ubo,sizeof(mat4)<<1,nullptr,GL_DYNAMIC_DRAW);
 
-  }
-
-  void GLRenderSystem::SetCamera(const CameraPtr &camera)
-  {
-    if(m_main_camera!=nullptr)
-      m_main_camera->GetTansform().ClearListener();
-    camera->GetTansform().AddUpdateListener([camera,this](Transform& tf)
+    GLRenderSystem::GLRenderSystem()
     {
-      glNamedBufferSubData(m_model_view_ubo,sizeof(mat4),sizeof(mat4),glm::value_ptr(camera->GetTansform().GetWorldMatrix()));
-    });
-    RenderSystem::SetCamera(camera);
-  }
+      glGenBuffers(1,&m_model_view_ubo);
+      glNamedBufferData(m_model_view_ubo,sizeof(mat4)<<1,nullptr,GL_DYNAMIC_DRAW);
 
-  void GLRenderSystem::SetViewport(Viewport *vp)
-  {
-    glNamedBufferSubData(m_model_view_ubo,0,sizeof(mat4),glm::value_ptr(vp->GetProjectionMatrix()));
-    RenderSystem::SetViewport(vp);
-  }
-
-  void GLRenderSystem::Init()
-  {
-    m_win.Create("Kedama",800,600);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    m_gl=SDL_GL_CreateContext(m_win.GetPtr());
-    glewInit();
-    if(!m_gl)
-    {
-      throw std::runtime_error("Create OpenGL Context Failed");
     }
-    glClearColor(0.6f,0.8f,0.9f,1.0f);
-    glCullFace(GL_BACK);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-  }
 
-  void GLRenderSystem::Quit()
-  {
-    SDL_GL_DeleteContext(m_gl);
-  }
-
-  IWindow* GLRenderSystem::GetWindow()
-  {
-    return &m_win;
-  }
-
-  void GLRenderSystem::Clear()
-  {
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  }
-
-  void GLRenderSystem::Flush()
-  {
-    glFlush();
-  }
-
-  void GLRenderSystem::SwapBuffer()
-  {
-    SDL_GL_SwapWindow(m_win.GetPtr());
-  }
-
-  const string GLRenderSystem::GetShaderLanguage()
-  {
-    return "GLSL";
-  }
-
-  void GLRenderSystem::OnForwardRender(const RenderStreamPtr& rsptr)
-  {
-    while(!rsptr->Empty())
+    void GLRenderSystem::SetCamera(Camera* camera)
     {
-      Batch batch=std::move(rsptr->GetBatch());
-      for(BaseModelPtr& pbasemodel:batch.GetInstancies())
+      if(m_main_camera!=nullptr)
+        m_main_camera->GetTansform()->ClearListener();
+      camera->GetTansform()->AddUpdateListener([camera,this](Transform& tf)
       {
-        GLIndexBufferPtr ibo=static_pointer_cast<GLIndexBuffer>(batch.GetInstancies().front()->GetMeshes().front().mesh_buffer.second);
-        for(const Mesh& mesh:pbasemodel->GetMeshes())
-        {
-          GLuint vao=m_vao_manager.GetVAO(mesh,batch);
-          glBindVertexArray(vao);
-          glDrawElementsInstanced(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr,rsptr->GetSize());
-          glBindVertexArray(0);
-        }
-      }
-      rsptr->PopBatch();
+        //TODO
+      });
+      RenderSystem::SetCamera(camera);
     }
-   // for(const Batch& batch:batchs)
-   // {
-    //  if(batch.GetInstancies().empty())continue;
 
- /*     GLIndexBufferPtr ibo=std::dynamic_pointer_cast<GLIndexBuffer>(batch.GetModelMesh().front().mesh_buffer.second);
-      GLTexture2DPtr tex2d=std::dynamic_pointer_cast<GLTexture2D>(mi.material->GetTexture());
+    void GLRenderSystem::SetViewport(Viewport *vp)
+    {
+      glNamedBufferSubData(m_model_view_ubo,0,sizeof(mat4),glm::value_ptr(vp->GetProjectionMatrix()));
+      RenderSystem::SetViewport(vp);
+    }
 
-      const vector<Pass>& pass=mi.material->GetPass();
-      auto& vaos=glrsptr->GetVAOs();
-      GLuint vao=vaos[&mi];
+    void GLRenderSystem::Init()
+    {
+      m_win.Create("Kedama",800,600);
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+      SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+      SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+      SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+      SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+      SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-      if(tex2d!=nullptr)
+      m_gl=SDL_GL_CreateContext(m_win.GetPtr());
+      glewInit();
+      if(!m_gl)
       {
-        tex2d->Bind();
+        throw std::runtime_error("Create OpenGL Context Failed");
       }
-      glBindVertexArray(vao);
+      glClearColor(0.6f,0.8f,0.9f,1.0f);
+      glCullFace(GL_BACK);
+      glEnable(GL_DEPTH_TEST);
+      glDepthFunc(GL_LESS);
+    }
 
-      for(const Pass& subpass:pass)
-      {
-        GLFrameBufferPtr src_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_src_framebuffer);
+    void GLRenderSystem::Quit()
+    {
+      SDL_GL_DeleteContext(m_gl);
+    }
 
-        if(src_fb!=nullptr)
-        {
-          GLFrameBufferPtr dst_fb=std::dynamic_pointer_cast<GLFrameBuffer>(subpass.m_dst_framebuffer);
-          glBindFramebuffer(GL_DRAW_FRAMEBUFFER,dst_fb->GetObj());
-        }
+    IWindow* GLRenderSystem::GetWindow()
+    {
+      return &m_win;
+    }
 
-        GLShaderPtr shader=std::dynamic_pointer_cast<GLShader>(subpass.m_shader);
-        glUseProgram(shader->GetShader());
-        if(m_main_camera!=nullptr)
-        {
-          shader->SetViewMatrix(m_main_camera->GetViewMatrix());
-          shader->SetProjectionMatrix(m_main_camera->GetProjectionMatrix());
-        }
+    void GLRenderSystem::Clear()
+    {
+      glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    }
 
-        int tex_n=1;
+    void GLRenderSystem::Flush()
+    {
+      glFlush();
+    }
 
-//贴图设置（等待补完）
+    void GLRenderSystem::SwapBuffer()
+    {
+      SDL_GL_SwapWindow(m_win.GetPtr());
+    }
 
-
-        if(src_fb!=nullptr)
-        {
-          auto it=src_fb->GetGLTextureObjs().begin();
-          for(int i=tex_n;i<src_fb->GetGLTextureObjs().size();++i)
-          {
-            glActiveTexture(GL_TEXTURE0+i);
-            it->second->Bind();
-            it++;
-            glUniform1i(i,i);
-          }
-        }
-
-        if(mi.m_instancing_info.GetSize()==1)
-        {
-          GLint model_mat_loc=glGetUniformLocation(shader->GetShader(),"kedama_model_matrix");
-          glUniformMatrix4fv(model_mat_loc,1,GL_FALSE,glm::value_ptr(mi.m_instancing_info.GetTransformPtr(0)->GetModelMatrix()));
-          glDrawElements(GL_TRIANGLES,ibo->GetSize(),GL_UNSIGNED_INT,nullptr);
-        }
-        else
-        {
-          //多实例渲染....
-        }
-
-        if(src_fb!=nullptr)
-        {
-          auto it=src_fb->GetGLTextureObjs().begin();
-          for(int i=1;i<src_fb->GetGLTextureObjs().size();++i)
-          {
-            glActiveTexture(GL_TEXTURE0+i);
-            it->second->Unbind();
-          }
-        }
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
-        glActiveTexture(GL_TEXTURE0);
-        glUseProgram(0);
-      }
-      glBindVertexArray(0);
-
-      if(tex2d!=nullptr)
-      {
-        tex2d->Unbind();
-      }*/
-   // }
-  }
-
-  void GLRenderSystem::OnDeferredRender(const RenderStreamPtr& rsptr)
+    const string GLRenderSystem::GetShaderLanguage()
+    {
+      return "GLSL4.50";
+    }
+    //TODO
+    /*void GLRenderSystem::OnForwardRender(const RenderStream* rsptr)
   {
 
+  }
+
+  void GLRenderSystem::OnDeferredRender(const RenderStream* rsptr)
+  {
+
+  }*/
   }
 }

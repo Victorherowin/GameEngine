@@ -10,19 +10,19 @@
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(GLShader)
-
-  using std::string;
-//TODO:UBO的管理
-  class GLShader:public Shader
+  namespace GL
   {
-  public:
-    GLShader(ShaderType type);
-    ~GLShader();
+    using namespace std;
+    //TODO:UBO的管理
+    class GLShader:public Shader
+    {
+    public:
+      GLShader(ShaderType type);
+      ~GLShader();
 
-    void Create(const string& src)override;
-
-    void SetUniform(int loc,mat2& mat)override;
+      void SetSource(const string& src)override;
+      //TODO 与Shader通信
+      /*   void SetUniform(int loc,mat2& mat)override;
     void SetUniform(int loc,mat3& mat)override;
     void SetUniform(int loc,mat4& mat)override;
     void SetUniform(int loc,mat3x2& mat)override;
@@ -46,14 +46,15 @@ namespace Kedama
     void SetUniform(int loc,vector<uint32_t>& n)override;
     void SetUniform(int loc,vector<uint16_t>& n)override;
     void SetUniform(int loc,vector<uint8_t>& n)override;
-    void SetUniform(int loc,vector<float>& n)override;
+    void SetUniform(int loc,vector<float>& n)override;*/
 
-    void Use();
-    inline GLuint GetShader(){return m_shader;}
+      void Use();
+      inline GLuint GetShader(){return m_shader;}
 
-  private:
-    GLuint m_shader;
-  };
+    private:
+      GLuint m_shader;
+    };
+  }
 }
 
 #endif

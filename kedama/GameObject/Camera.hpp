@@ -6,7 +6,6 @@
 #include "../Define.hpp"
 
 namespace Kedama{
-  DEFINE_SHARED_PTR(Camera)
 
   class Camera:public GameObject
   {
@@ -14,14 +13,14 @@ namespace Kedama{
     explicit Camera(const string& name="camera");
     const glm::mat4& GetViewMatrix();
 
-    void LookAt(GameObjectPtr target);
+    void LookAt(GameObject* target);
     void LookAt(const glm::vec3& target);
     void LookDirect(const glm::vec3& direction);
 
-    static CameraPtr CreateCamera(const string& name);
+    static Camera* CreateCamera(const string& name);
   protected:
     glm::vec3 m_target_position;
-    GameObjectPtr m_look_target=nullptr;
+    GameObject* m_look_target=nullptr;
 
     glm::mat4 m_view_matrix;
   };

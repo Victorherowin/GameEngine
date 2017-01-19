@@ -10,10 +10,6 @@
 namespace Kedama {
   class UBOModelMatrixManager
   {
-      struct weak_ptr_less{
-        bool operator()(const weak_ptr<VertexBuffer>& x, const weak_ptr<VertexBuffer>& y)const
-        { return x.lock() < y.lock(); }
-      };
   public:
 
       GLuint GetUBO(Batch& batch)
@@ -21,10 +17,10 @@ namespace Kedama {
         if(m_manager.size()>100&&m_manager.size()%20==0)
           Clear();
 
-        weak_ptr<VertexBuffer> wpvbo(batch.GetInstancies().front()->GetMeshes().front().mesh_buffer.first);
-        if(m_manager.find(wpvbo)==m_manager.end())
+        VertexBuffer* vbo=batch.GetInstancies().front()->GetMeshes().front().vbo;
+        if(m_manager.find(vbo)==m_manager.end())
           SetupUBO(batch);
-        return m_manager[wpvbo];
+        return m_manager[vbo];
       }
 
   private:
@@ -58,7 +54,7 @@ namespace Kedama {
         m_manager[wpvbo]=ubo;
       }
   private:
-     map<const weak_ptr<VertexBuffer>,GLuint,weak_ptr_less> m_manager;
+     map<const VertexBuffer*,GLuint> m_manager;
   };
 }
 

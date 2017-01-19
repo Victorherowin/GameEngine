@@ -1,51 +1,72 @@
-#ifndef MESH
-#define MESH
+#ifndef _H_MESH
+#define _H_MESH
 
 #include "../Include.hpp"
-#include "../Define.hpp"
-#include "../GameObject/GameObject.hpp"
-
-#include "VertexBuffer.hpp"
-#include "IIndexBuffer.hpp"
-#include "Vertex.hpp"
 #include "Material.hpp"
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(BaseModel)
-  DEFINE_SHARED_PTR(DynamicModel)
-
-  using MeshBuffer=pair<VertexBufferPtr,IIndexBufferPtr>;
-
-  struct Mesh
-  {
-    MeshBuffer mesh_buffer;
-    MaterialPtr material;
-    uint32_t offset;
-  };
-
-  class KEDAMA_API BaseModel:public GameObject
+  using namespace glm;
+  using namespace std;
+  class Mesh
   {
   public:
-    BaseModel(const string& name="");
-
-    inline const list<Mesh>& GetMeshes(){return m_meshs;}
-    void AddMesh(const Mesh &mb,MaterialPtr& material,uint32_t offset=0);
-
-    static BaseModelPtr CreateBaseModel(const string& name);
-
-  protected:
-    list<Mesh> m_meshs;
-  };
-
-  class KEDAMA_API DynamicModel:public BaseModel
-  {
+    class Native;
+  //TODO 顶点 UVs TBN...
   public:
-    DynamicModel(const string& name=string());
-    static DynamicModelPtr CreateDynamicModel(const string& name);
+    Mesh();
+    ~Mesh();
+
+    inline void SetVertices(vector<vec3>& vertices)
+    {m_vertices=vertices;}
+
+    inline void SetIndices(vector<uint32_t>& indices)
+    {m_indices=indices;}
+
+    inline void SetUVs(vector<vec2>& uvs)
+    {m_uvs=uvs;}
+
+    inline void SetNormal(vector<vec3>& normals)
+    {m_normals=normals;}
+
+    inline void SetTangent(vector<vec3>& tangent)
+    {m_tangent=tangent;}
+
+    inline vector<vec3>& GetVertices()
+    {return m_vertices;}
+
+    inline vector<uint32_t>& GetIndices()
+    {return m_indices;}
+
+    inline vector<vec2>& GetUVs()
+    {return m_uvs;}
+
+    inline vector<vec3>& GetNormal()
+    {return m_normals;}
+
+    inline vector<vec3>& GetTangent()
+    {return m_tangent;}
 
   private:
-    //AABBBox
+    vector<vec2> m_uvs;
+    vector<vec3> m_vertices;
+    vector<vec3> m_normals;
+    vector<vec3> m_tangent;
+    vector<uint32_t> m_indices;
+    Material* m_material;
+    Native* m_native;
+  };
+
+  class Mesh::Native
+  {
+  public:
+    ~Native(){}
+    void SetMesh(Mesh* mesh);
+    Mesh* GetMesh();
+
+    virtual void Upload()=0;
+  protected:
+    Mesh* m_mesh=nullptr;
   };
 }
 

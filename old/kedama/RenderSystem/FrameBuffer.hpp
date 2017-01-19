@@ -34,8 +34,6 @@ namespace Kedama
     DEPTH_STENCIL_ATTACHMENT
   };
 
-  DEFINE_SHARED_PTR(FrameBuffer)
-
   class FrameBuffer
   {
     public:

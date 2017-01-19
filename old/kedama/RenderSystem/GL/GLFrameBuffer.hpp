@@ -10,8 +10,6 @@
 
 namespace Kedama
 {
-  DEFINE_SHARED_PTR(GLFrameBuffer)
-
   class GLFrameBuffer:public FrameBuffer
   {
   public:

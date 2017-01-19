@@ -57,8 +57,6 @@ namespace Kedama
   private:
     VertexLayout m_vl;
   };
-
-  DEFINE_SHARED_PTR(VertexBuffer)
 }
 
 #endif

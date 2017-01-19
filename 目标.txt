@@ -1,5 +1,0 @@
-1.实现延迟光照
-
-
-未来目标：
-1.使用[OpenShader(LLVM)->GLSL/HLSL]代替现在的GLSL(暂定)

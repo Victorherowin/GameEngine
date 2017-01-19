@@ -5,7 +5,6 @@
 #include "../Define.hpp"
 
 namespace Kedama {
-  DEFINE_SHARED_PTR(IRenderBuffer)
 
   class IRenderBuffer
   {

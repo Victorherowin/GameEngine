@@ -2,7 +2,6 @@
 #define LIGHT
 
 #include "GameObject.hpp"
-#include "../RenderSystem/FrameBuffer.hpp"
 
 namespace Kedama {
   class Light:public GameObject
