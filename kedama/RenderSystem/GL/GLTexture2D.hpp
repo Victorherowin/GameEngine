@@ -1,7 +1,7 @@
 #ifndef GLTEXTURE2D
 #define GLTEXTURE2D
 
-#include "../ITexture2D.hpp"
+#include "../InterFace/ITexture2D.hpp"
 #include "GLTexture.hpp"
 
 namespace Kedama {

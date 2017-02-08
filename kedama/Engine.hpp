@@ -7,7 +7,7 @@
 
 #include "SceneManager.hpp"
 #include "AssetManager.hpp"
-#include "RenderSystem/RenderSystemFactoryManager.hpp"
+#include "RenderSystem/RendererFactoryManager.hpp"
 #include "RenderSystem/RenderSystem.hpp"
 #include "Log.hpp"
 
@@ -23,15 +23,16 @@ namespace Kedama
     RenderSystem* GetRenderSystem();
     AssetManager* GetAssetManager();
     SceneManager* GetSceneManager();
-    IRenderSystemFactory* GetRenderSystemFactory();
-    string GetRenderSystemName();
+    IRendererFactory* GetRendererFactory();
+    string GetRendererName();
 
   private:
-
+    Log m_logger;
+    RendererFactoryManager* m_renderer_factory_manager=nullptr;
     AssetManager* m_asset_manager=nullptr;
     SceneManager* m_scene_manager=nullptr;
-    string m_render_system_name=nullptr;
     RenderSystem* m_render_system=nullptr;
+    IRendererFactory* m_renderer_factory=nullptr;
   };
 }
 

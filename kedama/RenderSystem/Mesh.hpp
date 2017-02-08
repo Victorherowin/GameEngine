@@ -11,7 +11,7 @@ namespace Kedama
   class Mesh
   {
   public:
-    class Native;
+    class INative;
   //TODO 顶点 UVs TBN...
   public:
     Mesh();
@@ -26,25 +26,25 @@ namespace Kedama
     inline void SetUVs(vector<vec2>& uvs)
     {m_uvs=uvs;}
 
-    inline void SetNormal(vector<vec3>& normals)
+    inline void SetNormals(vector<vec3>& normals)
     {m_normals=normals;}
 
-    inline void SetTangent(vector<vec3>& tangent)
+    inline void SetTangents(vector<vec3>& tangent)
     {m_tangent=tangent;}
 
-    inline vector<vec3>& GetVertices()
+    inline const vector<vec3>& GetVertices()const
     {return m_vertices;}
 
-    inline vector<uint32_t>& GetIndices()
+    inline const vector<uint32_t>& GetIndices()const
     {return m_indices;}
 
-    inline vector<vec2>& GetUVs()
+    inline const vector<vec2>& GetUVs()const
     {return m_uvs;}
 
-    inline vector<vec3>& GetNormal()
+    inline const vector<vec3>& GetNormals()const
     {return m_normals;}
 
-    inline vector<vec3>& GetTangent()
+    inline const vector<vec3>& GetTangents()const
     {return m_tangent;}
 
   private:
@@ -53,20 +53,14 @@ namespace Kedama
     vector<vec3> m_normals;
     vector<vec3> m_tangent;
     vector<uint32_t> m_indices;
-    Material* m_material;
-    Native* m_native;
+    INative* m_native;
   };
 
-  class Mesh::Native
+  class Mesh::INative
   {
   public:
-    ~Native(){}
-    void SetMesh(Mesh* mesh);
-    Mesh* GetMesh();
-
-    virtual void Upload()=0;
-  protected:
-    Mesh* m_mesh=nullptr;
+    ~INative(){}
+    virtual void Upload(const Mesh& mesh)=0;
   };
 }
 

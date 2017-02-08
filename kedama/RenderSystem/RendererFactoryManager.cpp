@@ -1,10 +1,8 @@
-#include "RenderSystemFactoryManager.hpp"
-
-static Kedama::RenderSystemFactoryManager render_system_factory_manager;
+#include "RendererFactoryManager.hpp"
 
 namespace Kedama
 {
-  int32_t RenderSystemFactoryManager::RegisterFactory(const string& name,IRenderSystemFactory* irsf)
+  int32_t RendererFactoryManager::RegisterFactory(const string& name,IRendererFactory* irsf)
   {
     auto it=m_render_system_factory_map.find(name);
     if(it==m_render_system_factory_map.end())
@@ -15,7 +13,7 @@ namespace Kedama
     return -1;
   }
 
-  int32_t RenderSystemFactoryManager::UnregisterFactory(const string& name)
+  int32_t RendererFactoryManager::UnregisterFactory(const string& name)
   {
     auto it=m_render_system_factory_map.find(name);
     if(it==m_render_system_factory_map.end())
@@ -24,7 +22,7 @@ namespace Kedama
     return 0;
   }
 
-  IRenderSystemFactory* RenderSystemFactoryManager::GetFactory(const string& name)
+  IRendererFactory* RendererFactoryManager::GetFactory(const string& name)
   {
     auto it=m_render_system_factory_map.find(name);
     if(it==m_render_system_factory_map.end())
@@ -32,12 +30,11 @@ namespace Kedama
     return it->second;
   }
 
-  RenderSystemFactoryManager::~RenderSystemFactoryManager()
+  RendererFactoryManager::~RendererFactoryManager()
   {
     for(auto& it:m_render_system_factory_map)
     {
       delete it.second;
     }
   }
-
 };

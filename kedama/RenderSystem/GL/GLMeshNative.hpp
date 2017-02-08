@@ -6,12 +6,12 @@
 
 namespace Kedama {
   namespace GL {
-    class KEDAMA_API GLMeshNative:public Mesh::Native
+    class KEDAMA_API GLMeshNative:public Mesh::INative
     {
     public:
       GLMeshNative();
       ~GLMeshNative();
-      void Upload()override;
+      void Upload(const Mesh& mesh)override;
 
     private:
       GLuint m_vao;

@@ -2,14 +2,12 @@
 
 #include <stdexcept>
 
+#include "gl/glew.h"
+#include "GLControl.hpp"
+
 namespace Kedama
 {
-  SDLWindow::SDLWindow(){}
-
-  SDLWindow::SDLWindow(const string& title,int32_t w,int32_t h)
-  {
-    Create(title,w,h);
-  }
+  SDLWindow::SDLWindow(GL::GLControl* control):m_control(control){}
 
   SDLWindow::~SDLWindow()
   {
@@ -19,9 +17,10 @@ namespace Kedama
 
   void SDLWindow::Create(const string& title,int32_t w,int32_t h)
   {
-    m_win=m_win=SDL_CreateWindow(title.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL);
+    m_win=m_win=SDL_CreateWindow(title.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,SDL_WINDOW_SHOWN|SDL_WINDOW_ALLOW_HIGHDPI|SDL_WINDOW_OPENGL);
     if(!m_win)
       throw std::runtime_error("Create Window Failed");
+    m_control->InitGL();
   }
 
   void SDLWindow::CreateFrom(void* handle)
@@ -29,6 +28,7 @@ namespace Kedama
     m_win=m_win=SDL_CreateWindowFrom(handle);
     if(!m_win)
       throw std::runtime_error("Create Window Failed");
+    m_control->InitGL();
   }
 
   void SDLWindow::SetTitle(const string& title)
@@ -56,7 +56,7 @@ namespace Kedama
 
   const string SDLWindow::GetTitle()
   {
-    return string(SDL_GetWindowTitle(m_win));
+    return SDL_GetWindowTitle(m_win);
   }
 
   void SDLWindow::GetSize(int32_t* w,int32_t* h)
@@ -69,8 +69,7 @@ namespace Kedama
     SDL_GetWindowPosition(m_win,x,y);
   }
 
-
-  SDL_Window* SDLWindow::GetPtr()
+  SDL_Window* SDLWindow::GetNativePtr()
   {
     return m_win;
   }

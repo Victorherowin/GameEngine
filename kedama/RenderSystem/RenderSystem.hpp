@@ -1,19 +1,19 @@
-#ifndef RENDERSYSTEM
-#define RENDERSYSTEM
+/*!
+  \file RenderSystem.hpp
+  \brief 分发渲染对象，以及后处理
+
+  \date 2017.01.31
+  \author KedamaOvO
+*/
+
+
+#ifndef _H_RENDERSYSTEM_
+#define _H_RENDERSYSTEM_
 
 #include <string>
 
-/*#include "ITexture2D.hpp"
-#include "Shader.hpp"
-#include "RenderTarget.hpp"
-#include "Mesh.hpp"
-*/
-#include "Viewport.hpp"
-
-#include "../IWindow.hpp"
-
-#include "../GameObject/GameObject.hpp"
-#include "../GameObject/Camera.hpp"
+#include "../GameObject/GameObjectClass.hpp"
+#include "RenderSystemClass.hpp"
 
 #include "../Define.hpp"
 #include "../Include.hpp"
@@ -21,39 +21,31 @@
 namespace Kedama
 {
   using std::string;
+  class IRendererFactory;
 
   class RenderSystem
   {
   public:
-    virtual ~RenderSystem(){}
-
-  //  void Render(RenderStream*);
+    RenderSystem(IRendererFactory* factory);
+    ~RenderSystem(){}
     void UseDeferredRender(bool use);
-    virtual void SetCamera(Camera* camera);
-    virtual void SetViewport(Viewport* vp);
+    void SetCamera(Camera* camera);
 
-    virtual void Init()=0;
-    virtual void Quit()=0;
-    virtual IWindow* GetWindow()=0;
+    void Render(CommandBuffer& cb);
+    void Clear();
+    void SwapBuffer();
 
-    virtual void Clear()=0;
-    virtual void Flush()=0;
-    virtual void SwapBuffer()=0;
+    IWindow* GetWindow();
 
-  protected:
+  private:
+    IForwardRenderer* m_forward_renderer=nullptr;
+    IDeferredRenderer* m_deferred_renderer=nullptr;
+    IPostProcessor* m_post_processor=nullptr;
+    IControl* m_control=nullptr;
 
-//    virtual void OnForwardRender(const RenderStream* rsptr)=0;
-//    virtual void OnDeferredRender(const RenderStream*){throw std::runtime_error(string("No Implement DeferredRender！"));}
-
-    virtual const string GetShaderLanguage()=0;
-
-  protected:
-//    RenderTarget m_render_target;
     Camera* m_main_camera=nullptr;
-    Viewport* m_viewport=nullptr;
 
-    bool m_use_deferred_render;
-
+    bool m_use_deferred_render=false;
   };
 }
 

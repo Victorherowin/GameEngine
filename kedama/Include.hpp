@@ -21,6 +21,7 @@
 #include <functional>
 #include <type_traits>
 #include <tuple>
+#include <algorithm>
 
 #include <glm/integer.hpp>
 #include <glm/vec2.hpp>

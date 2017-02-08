@@ -187,7 +187,7 @@ namespace Kedama {
     return v;
   }
 
-  ITexture* Material::GetTextures(const string& property)
+  ITexture2D* Material::GetTextures(const string& property)
   {
     auto it=m_property_value.find(property);
     if(it==m_property_value.end())

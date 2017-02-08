@@ -17,7 +17,7 @@ namespace Kedama {
 
     protected:
       GLuint m_ubo;
-      vector<pair<string,ITexture*>> m_textures;
+      vector<pair<string,ITexture2D*>> m_textures;
     };
   }
 }

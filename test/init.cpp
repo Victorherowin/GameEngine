@@ -1,8 +1,8 @@
 #include <Engine.hpp>
-#include <RenderSystem/RenderSystemFactoryManager.hpp>
-#include <RenderSystem/GL/GLRenderSystemFactory.hpp>
-#include <RenderSystem/IRenderSystemFactory.hpp>
-#include <IWindow.hpp>
+#include <RenderSystem/RendererFactoryManager.hpp>
+#include <RenderSystem/GL/GLRendererFactory.hpp>
+#include <RenderSystem/Interface/IRendererFactory.hpp>
+#include <RenderSystem/Interface/IWindow.hpp>
 #include <Log.hpp>
 
 #include <string>
@@ -53,11 +53,11 @@ vector<uint32> floor_index({0,1,2,0,3,2});
 
 int32_t main(int32_t argc,char** argv)
 {
-    RenderSystemFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new GLRenderSystemFactory());
+    RendererFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new GLRenderSystemFactory());
     Engine engine("GLRenderSystem");
     RenderSystem* irs = engine.GetRenderSystem();
     SceneManager* sm=engine.GetSceneManager();
-    IRenderSystemFactory* irsf=engine.GetRenderSystemFactory();
+    IRendererFactory* irsf=engine.GetRendererFactory();
     IWindow* win=irs->GetWindow();
     win->SetTitle("ForwardRender Test");
 

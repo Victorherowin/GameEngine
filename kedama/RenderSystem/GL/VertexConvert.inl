@@ -48,12 +48,12 @@ namespace Kedama {
         vector<quat> tbns;
         quat tmp;
         vec3 bitangent;
-        for(int i=0;i<m_mesh->GetNormal().size();i++)
+        for(int i=0;i<m_mesh->GetNormals().size();i++)
         {
-          bitangent=glm::cross(m_mesh->GetNormal()[i],m_mesh->GetTangent()[i]);
+          bitangent=glm::cross(m_mesh->GetNormals()[i],m_mesh->GetTangents()[i]);
           tmp=glm::quat_cast(mat3(
-                                     m_mesh->GetTangent()[i],
-                                     m_mesh->GetNormal()[i],
+                                     m_mesh->GetTangents()[i],
+                                     m_mesh->GetNormals()[i],
                                      bitangent
                                      ));
           tbns.push_back(tmp);
@@ -77,7 +77,7 @@ namespace Kedama {
       {
         vector<i16vec3> normals;
         i16vec3 tmp;
-        for(auto v:m_mesh->GetNormal())
+        for(auto v:m_mesh->GetNormals())
         {
           tmp=v*numeric_limits<int16_t>::max();
           normals.push_back(tmp);

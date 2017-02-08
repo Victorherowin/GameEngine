@@ -4,18 +4,17 @@
 #include <string>
 #include <SDL2/SDL.h>
 
-#include "../../IWindow.hpp"
+#include "GLRenderSystemClass.hpp"
+#include "../Interface/IWindow.hpp"
 
 #undef main
 
 namespace Kedama
 {
-  using std::string;
   class SDLWindow:public IWindow
   {
   public:
-    SDLWindow();
-    SDLWindow(const string& title,int32_t w,int32_t h);
+    SDLWindow(GL::GLControl* control);
     ~SDLWindow();
 
     void Create(const string& title,int32_t w,int32_t h)override;
@@ -30,10 +29,11 @@ namespace Kedama
     void GetSize(int32_t* w,int32_t* h)override;
     void GetPosition(int32_t* x,int32_t* y)override;
 
-    SDL_Window* GetPtr();
+    SDL_Window* GetNativePtr();
 
   private:
     SDL_Window* m_win;
+    GL::GLControl* m_control;
   };
 }
 

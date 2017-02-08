@@ -104,6 +104,4 @@ namespace Kedama
   {
     m_hook_func=hook_func;
   }
-
-  Log __logger__;
 }

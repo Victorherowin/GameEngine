@@ -13,11 +13,12 @@ namespace Kedama
   {
   public:
     SceneManager(RenderSystem* irfs);
-    GameObject& GetRoot();
+    ~SceneManager();
+    GameObject* GetRoot();
     void Update();
   private:
     RenderSystem* m_render_system;
-    GameObject m_object_root;//场景管理树根
+    GameObject* m_object_root;//场景管理树根
   };
 }
 

@@ -7,16 +7,6 @@ namespace Kedama {
   {
   }
 
-  void Transform::AddUpdateListener(const function<void (Transform &)> &listener)
-  {
-    m_listener_list.push_back(listener);
-  }
-
-  void Transform::ClearListener()
-  {
-    m_listener_list.clear();
-  }
-
   void Transform::SetRelativeMatrix(const glm::mat4 &mat)
   {
     m_relative_matrix=mat;
@@ -95,26 +85,67 @@ namespace Kedama {
 
   glm::vec3 Transform::GetWorldPosition()
   {
+    if(m_need_update)
+    {
+      UpdateSelf();
+      SetChildrenNeedUpdateFlag();
+    }
     return glm::vec3(m_world_matrix[3]);
   }
 
   glm::quat Transform::GetWorldAngle()
   {
+    if(m_need_update)
+    {
+      UpdateSelf();
+      SetChildrenNeedUpdateFlag();
+    }
     return glm::quat_cast(glm::mat3(m_world_matrix));
   }
 
   const glm::mat4& Transform::GetWorldMatrix()
   {
+    if(m_need_update)
+    {
+      UpdateSelf();
+      SetChildrenNeedUpdateFlag();
+    }
     return m_world_matrix;
   }
 
   const glm::mat4& Transform::GetModelMatrix()
   {
+    if(m_need_update)
+    {
+      UpdateSelf();
+      SetChildrenNeedUpdateFlag();
+    }
     m_model_matirx=glm::scale(m_world_matrix,m_scale);
     return m_model_matirx;
   }
 
-  void Transform::Update()
+  void Transform::SetChildrenNeedUpdateFlag()
+  {
+    for(GameObject* node:m_object->GetParent()->GetChildren())
+    {
+      if(!node->GetTansform()->m_need_update)
+      {
+        node->GetTansform()->m_need_update=true;
+        node->GetTansform()->SetChildrenNeedUpdateFlag();
+      }
+    }
+  }
+
+  void Transform::UpdateChildren()
+  {
+    for(GameObject* node:m_object->GetParent()->GetChildren())
+    {
+      node->GetTansform()->UpdateSelf();
+      node->GetTansform()->UpdateChildren();
+    }
+  }
+
+  void Transform::UpdateSelf()
   {
     if(m_need_update)
     {
@@ -128,18 +159,16 @@ namespace Kedama {
         m_world_matrix=m_relative_matrix;
       m_need_update=false;
 
-      for(GameObject* node:m_object->GetParent()->GetChildren())//更新子节点
-      {
-        node->GetTansform()->m_need_update=true;
-        node->GetTansform()->Update();
-      }
+      m_position=glm::vec3();
+      m_angle=glm::quat();
     }
+  }
 
-    if(m_need_update)
-    {
-      for(auto& func:m_listener_list)
-        func(*this);
-    }
+  void Transform::Update()
+  {
+    UpdateSelf();
+    SetChildrenNeedUpdateFlag();
+    UpdateChildren();
   }
 
 }

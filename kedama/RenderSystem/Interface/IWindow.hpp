@@ -2,6 +2,7 @@
 #define IWINDOW
 
 #include <string>
+#include "../RenderSystemClass.hpp"
 
 namespace Kedama
 {

@@ -44,10 +44,13 @@ namespace Kedama
     void Rotate(const glm::mat3& angle);
     void Rotate(const glm::vec3& axis,float rad);
 
-    void AddUpdateListener(const function<void(Transform&)>& listener);
-    void ClearListener();
-
     void Update();
+
+  private:
+    void SetChildrenNeedUpdateFlag();
+    void UpdateSelf();
+    void UpdateChildren();
+
   protected:
     bool m_need_update=false;
 
@@ -61,8 +64,6 @@ namespace Kedama
     glm::mat4 m_model_matirx;//模型矩阵
 
     GameObject* m_object;
-
-    list<function<void(Transform&)>> m_listener_list;
   };
 }
 

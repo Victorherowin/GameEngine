@@ -1,7 +1,15 @@
+/*!
+  \file MAterial.hpp
+  \brief 材质类
+
+  \author KedamaOvO
+  \date 2017.02.01
+*/
+
 #ifndef MATERIAL
 #define MATERIAL
 
-#include "ITexture2D.hpp"
+#include "Interface/ITexture2D.hpp"
 #include "../Include.hpp"
 #include "../Define.hpp"
 #include "Shader.hpp"
@@ -10,10 +18,15 @@ namespace Kedama
 {
   using namespace glm;
 
-  class KEDAMA_API Pass
+  enum class DrawMode
   {
-  public:
+    LINES,NORMAL
+  };
+
+  struct KEDAMA_API Pass
+  {
     //TODO:其他渲染设置
+    DrawMode draw_mode=DrawMode::NORMAL;
     Shader* m_vertex_shader;
     Shader* m_fragment_shader;
   };
@@ -36,8 +49,6 @@ namespace Kedama
 
     void SetTexture(const string& property,ITexture2D*);//设置材质
 
-
-
     u8vec4 GetColor(const string& property);
     float GetFloat(const string& property);
     int GetInt(const string& property);
@@ -46,7 +57,7 @@ namespace Kedama
     vector<u8vec4> GetColorArray(const string& property);
     vector<float> GetFloatArray(const string &property);
     vector<int> GetIntArray(const string& property);
-    ITexture* GetTextures(const string& property);
+    ITexture2D* GetTextures(const string& property);
     vector<mat4> GetMatrixArray(const string& property);
 
     Pass* CreatePass();
@@ -90,7 +101,7 @@ namespace Kedama
     string property_name;
     Type type;
     bool is_array=false;
-    ITexture* _texture=nullptr;
+    ITexture2D* _texture=nullptr;
     vector<_Internal> data;
   };
 }

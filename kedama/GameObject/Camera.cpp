@@ -35,4 +35,15 @@ namespace Kedama
     }
     return m_view_matrix;
   }
+
+  void Camera::SetPerspective(float fov, float aspect, float near, float far)
+  {
+    m_projection_matrix=glm::perspective(fov,aspect,near,far);
+  }
+
+  void Camera::SetOrtho(float left,float right,float buttom,float top)
+  {
+    m_projection_matrix=glm::ortho(left,right,buttom,top);
+  }
+
 }

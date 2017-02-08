@@ -1,3 +1,13 @@
+/*!
+ * \file Define.hpp
+ * \brief 整个项目的预编译宏控制
+ *
+ * \author KedamaOvO
+ * \version 0.0.1
+ * \date 2017.01.26
+ *
+*/
+
 #ifndef _DEFINE_H
 #define _DEFINE_H
 

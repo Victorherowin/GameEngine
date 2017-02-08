@@ -5,10 +5,11 @@
 
 namespace Kedama
 {
-  Engine::Engine(const string& render_system_name):
-    m_render_system(RenderSystemFactoryManager::GetSingleton().GetFactory(render_system_name)->CreateRenderSystem()),
-    m_render_system_name(render_system_name)
+  Engine::Engine(const string& api_name)
   {
+    m_renderer_factory_manager=new RendererFactoryManager();
+    m_renderer_factory=m_renderer_factory_manager->GetFactory(api_name);
+    m_render_system=new RenderSystem(m_renderer_factory);
     m_asset_manager=new AssetManager();
     m_scene_manager=new SceneManager(m_render_system);
   }
@@ -16,9 +17,9 @@ namespace Kedama
   Engine::~Engine()
   {
     delete m_scene_manager;
-
-    RenderSystemFactoryManager::GetSingleton().GetFactory(m_render_system_name)->DeleteRenderSystem(m_render_system);
+    delete m_render_system;
     delete m_asset_manager;
+    delete m_renderer_factory_manager;
   }
 
   RenderSystem* Engine::GetRenderSystem()
@@ -36,13 +37,8 @@ namespace Kedama
     return m_scene_manager;
   }
 
-  IRenderSystemFactory* Engine::GetRenderSystemFactory()
+  IRendererFactory* Engine::GetRendererFactory()
   {
-    return RenderSystemFactoryManager::GetSingleton().GetFactory(m_render_system_name);
-  }
-
-  string Engine::GetRenderSystemName()
-  {
-    return m_render_system_name;
+    return m_renderer_factory;
   }
 }
