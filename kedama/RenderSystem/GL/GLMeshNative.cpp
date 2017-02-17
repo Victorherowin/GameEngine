@@ -1,6 +1,11 @@
 #include "GLMeshNative.hpp"
 #include "VertexConvert.inl"
 
+#define POSITION_INDEX 0
+#define UV_INDEX 1
+#define NORMAL_INDEX 2
+#define TBN_INDEX 3
+
 namespace Kedama {
   template<typename T>
   inline size_t GetByteCount(T& v)
@@ -11,16 +16,16 @@ namespace Kedama {
   namespace GL {
     GLMeshNative::GLMeshNative()
     {
-      glGenBuffers(1,&m_vbo);
-      glGenBuffers(1,&m_ibo);
-      glGenVertexArrays(1,&m_vao);
+      glCreateBuffers(1,&vbo);
+      glCreateBuffers(1,&ibo);
+      glCreateVertexArrays(1,&vao);
     }
 
     GLMeshNative::~GLMeshNative()
     {
-      glDeleteBuffers(1,&m_vbo);
-      glDeleteBuffers(1,&m_ibo);
-      glDeleteVertexArrays(1,&m_vao);
+      glDeleteBuffers(1,&vbo);
+      glDeleteBuffers(1,&ibo);
+      glDeleteVertexArrays(1,&vao);
     }
 
 
@@ -39,27 +44,47 @@ namespace Kedama {
       size_t normals_size=GetByteCount(mesh.GetNormals());
       //size_t tbns_size=GetByte(mesh->Get);
       size_t total_size=vert_size+uvs_size+normals_size;
+      size_t indices_size=GetByteCount(mesh.GetIndices());
 
 
-      glNamedBufferStorage(m_vbo,total_size,nullptr,GL_MAP_WRITE_BIT);
-      glNamedBufferStorage(m_ibo,GetByteCount(mesh.GetIndices()),nullptr,GL_MAP_WRITE_BIT);
-      uint8_t* mvbo=(uint8_t*)glMapNamedBuffer(m_vbo,GL_STATIC_DRAW);
-      uint8_t* mibo=(uint8_t*)glMapNamedBuffer(m_ibo,GL_STATIC_DRAW);
+      glNamedBufferStorage(vbo,total_size,nullptr,GL_MAP_WRITE_BIT);
+      glNamedBufferStorage(ibo,indices_size,nullptr,GL_MAP_WRITE_BIT);
+      vec3* mvbo=(vec3*)glMapNamedBufferRange(vbo,0,total_size,GL_MAP_WRITE_BIT);
+      vec3* mibo=(vec3*)glMapNamedBufferRange(ibo,0,indices_size,GL_MAP_WRITE_BIT);
+
+      const vec3* p=mesh.GetVertices().data();
 
       //VBO
-      memcpy(mvbo,mesh.GetVertices().data(),vert_size);
-      mvbo+=vert_size;
-      memcpy(mvbo,mesh.GetUVs().data(),uvs_size);
-      mvbo+=uvs_size;
-      memcpy(mvbo,mesh.GetNormals().data(),normals_size);
-      mvbo+=normals_size;
+      memcpy(mvbo,p,vert_size);
+      memcpy(mvbo+vert_size,mesh.GetUVs().data(),uvs_size);
+      memcpy(mvbo+vert_size+uvs_size,mesh.GetNormals().data(),normals_size);
+//      mvbo+=normals_size;
       //memcpy(mvbo,tbns.data(),tbns_size);
 
       //IBO
-      memcpy(mibo,mesh.GetIndices().data(),GetByteCount(mesh.GetIndices()));
+      memcpy(mibo,mesh.GetIndices().data(),indices_size);
 
-      glUnmapNamedBuffer(m_vbo);
-      glUnmapNamedBuffer(m_ibo);
+      glUnmapNamedBuffer(vbo);
+      glUnmapNamedBuffer(ibo);
+
+      //VAO
+      glVertexArrayElementBuffer(vao,ibo);//ibo
+
+      glVertexArrayVertexBuffer(vao,POSITION_INDEX,vbo,0,sizeof(vec3));
+      glVertexArrayAttribBinding(vao,POSITION_INDEX,POSITION_INDEX);
+      glVertexArrayAttribFormat(vao,POSITION_INDEX,3,GL_FLOAT,GL_FALSE,0);//position 0
+
+      glVertexArrayVertexBuffer(vao,UV_INDEX,vbo,0,sizeof(vec2));
+      glVertexArrayAttribBinding(vao,UV_INDEX,UV_INDEX);
+      glVertexArrayAttribFormat(vao,UV_INDEX,2,GL_FLOAT,GL_FALSE,vert_size);//uv 1
+
+      glVertexArrayVertexBuffer(vao,NORMAL_INDEX,vbo,0,sizeof(vec3));
+      glVertexArrayAttribBinding(vao,NORMAL_INDEX,NORMAL_INDEX);
+      glVertexArrayAttribFormat(vao,NORMAL_INDEX,3,GL_FLOAT,GL_FALSE,vert_size+uvs_size);//normal 2
+
+      glEnableVertexArrayAttrib(vao,POSITION_INDEX);
+      glEnableVertexArrayAttrib(vao,UV_INDEX);
+      glEnableVertexArrayAttrib(vao,NORMAL_INDEX);
     }
   }
 }

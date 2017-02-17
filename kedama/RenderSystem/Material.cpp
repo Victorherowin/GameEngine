@@ -1,4 +1,5 @@
 #include "Material.hpp"
+#include "../Engine.hpp"
 
 #define GETPROPERTY(val_type,_type,property) {\
   auto it=m_property_value.find(property);\
@@ -57,17 +58,36 @@
 
 namespace Kedama {
 
-  void Material::SetColor(const string& property,const u8vec4& _color)
+  Material::Material()
   {
-    int _int=*(int*)&_color[0];
-
-    SETPROPERTY(COLOR,property,_int)
+    m_native=Engine::GetSingleton().GetRendererFactory()->CreateMaterialNative();
   }
 
-  void Material::SetColorArray(const string &property, vector<u8vec4> &colors)
+  Material::~Material()
   {
-    int* _int_array =(int*)colors.data();
-    SETPROPERTYARRAY(COLOR,property,_int_array,colors.size());
+    delete m_native;
+  }
+
+  void Material::SetVector3(const string& property,const vec3& vec)
+  {
+    SETPROPERTYARRAY(VECTOR3,property,vec,3);
+    m_property_value[property]->is_array=false;
+  }
+
+  void Material::SetVector3Array(const string &property, vector<vec3> &vec)
+  {
+    SETPROPERTYARRAY(VECTOR3,property,vec.data(),vec.size()*3);
+  }
+
+  void Material::SetVector4(const string& property,const vec4& vec)
+  {
+    SETPROPERTYARRAY(VECTOR4,property,vec,4);
+    m_property_value[property]->is_array=false;
+  }
+
+  void Material::SetVector4Array(const string &property, vector<vec4> &vec)
+  {
+    SETPROPERTYARRAY(VECTOR4,property,vec.data(),vec.size()*4);
   }
 
   void Material::SetFloat(const string &property, float _float)
@@ -116,21 +136,26 @@ namespace Kedama {
 
   void Material::SetMatrixArray(const string &property, vector<mat4> &mats)
   {
-    SETPROPERTYARRAY(MATRIX,property,mats.data(),mats.size());
+    SETPROPERTYARRAY(MATRIX,property,mats.data(),mats.size()*16);
   }
 
   //Get
-  u8vec4 Material::GetColor(const string &property)
+  vec3 Material::GetVector3(const string &property)
   {
-    GETPROPERTY(u8vec4,COLOR,property);
+    GETPROPERTY(vec3,VECTOR3,property);
   }
 
-  vector<u8vec4> Material::GetColorArray(const string &property)
+  vec4 Material::GetVector4(const string &property)
   {
-    u8vec4* p;
+    GETPROPERTY(vec4,VECTOR4,property);
+  }
+
+  vector<vec4> Material::GetVector4Array(const string &property)
+  {
+    vec4* p;
     int n;
-    GETPROPERTYARRAY(u8vec4,COLOR,property,p,n);
-    vector<u8vec4> v(n);
+    GETPROPERTYARRAY(vec4,VECTOR4,property,p,n);
+    vector<vec4> v(n);
     v.insert(v.begin(),p,p+n);
     return v;
   }
@@ -211,6 +236,11 @@ namespace Kedama {
         break;
       }
     }
+  }
+
+  void Material::Update()
+  {
+    m_native->Upload(m_property_list);
   }
 
 }

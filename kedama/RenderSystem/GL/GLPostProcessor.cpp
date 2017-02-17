@@ -12,5 +12,10 @@ namespace Kedama {
     {
 
     }
+    //TODO:GLPostProcessor 执行后处理
+    void GLPostProcessor::PostProcess(const PostProcessCommand &ppc)
+    {
+
+    }
   }
 }

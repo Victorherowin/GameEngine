@@ -11,15 +11,12 @@ namespace Kedama {
     public:
       GLDeferredRenderer(GLControl* control);
       ~GLDeferredRenderer();
-      void Render(const RenderCommand& cb)override;
+      void Render(const RenderCommand& rc)override;
       void Render(const MergedRenderCommand& mrc)override;
       void Finish()override;
 
-      void SetCamera(Camera* camera)override;
-
     private:
       GLControl* m_control;
-      Camera* m_camera;
     };
   }
 }

@@ -126,7 +126,7 @@ namespace Kedama {
 
   void Transform::SetChildrenNeedUpdateFlag()
   {
-    for(GameObject* node:m_object->GetParent()->GetChildren())
+    for(GameObject* node:m_object->GetChildren())
     {
       if(!node->GetTansform()->m_need_update)
       {
@@ -138,7 +138,7 @@ namespace Kedama {
 
   void Transform::UpdateChildren()
   {
-    for(GameObject* node:m_object->GetParent()->GetChildren())
+    for(GameObject* node:m_object->GetChildren())
     {
       node->GetTansform()->UpdateSelf();
       node->GetTansform()->UpdateChildren();

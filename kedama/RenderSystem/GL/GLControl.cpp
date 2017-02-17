@@ -19,6 +19,26 @@ namespace Kedama {
     GLControl::~GLControl()
     {
       if(m_gbuffer)delete m_gbuffer;
+      if(m_camera_ubo)
+      {
+        glUnmapNamedBuffer(m_camera_ubo);
+        glDeleteBuffers(1,&m_camera_ubo);
+      }
+      if(m_directional_lights_ubo)
+      {
+        glUnmapNamedBuffer(m_directional_lights_ubo);
+        glDeleteBuffers(1,&m_directional_lights_ubo);
+      }
+      if(m_point_lights_ubo)
+      {
+        glUnmapNamedBuffer(m_point_lights_ubo);
+        glDeleteBuffers(1,&m_point_lights_ubo);
+      }
+      if(m_spot_lights_ubo)
+      {
+        glUnmapNamedBuffer(m_spot_lights_ubo);
+        glDeleteBuffers(1,&m_spot_lights_ubo);
+      }
       if(m_forward_renderer)delete m_forward_renderer;
       if(m_deferrf_renderer)delete m_deferrf_renderer;
       if(m_post_processor)delete m_post_processor;
@@ -39,19 +59,119 @@ namespace Kedama {
       SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 #ifdef DEBUG
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS,SDL_GL_CONTEXT_DEBUG_FLAG);
-      glDebugMessageCallback(&GLControl::DebugOutput,nullptr);
-      glDebugMessageControl(GL_DEBUG_SOURCE_API,GL_DEBUG_TYPE_ERROR,GL_DEBUG_SEVERITY_HIGH,0, nullptr, GL_TRUE);
 #endif
 
       m_glcontext=SDL_GL_CreateContext(m_window->GetNativePtr());
       glewInit();
+      glClearColor(0.4f,0.6f,0.8f,1.0f);
+      glClearDepth(0.0f);
+ //     glEnable(GL_DEPTH_TEST);
+ //     glDepthFunc(GL_LESS);
+     // glEnable(GL_CULL_FACE);
+   //   glCullFace(GL_BACK);
+
+#ifdef DEBUG
+      glDebugMessageCallback(&GLControl::DebugOutput,nullptr);
+      glDebugMessageControl(GL_DEBUG_SOURCE_API,GL_DEBUG_TYPE_ERROR,GL_DEBUG_SEVERITY_HIGH,0, nullptr, GL_TRUE);
+#endif
 
       m_forward_renderer=new GLForwardRenderer(this);
       m_deferrf_renderer=new GLDeferredRenderer(this);
       m_post_processor=new GLPostProcessor(this);
       int32_t w,h;
       m_window->GetSize(&w,&h);
-      m_gbuffer=new GBuffer(w,h);
+      m_gbuffer=new GBuffer();
+
+      //Light UBO
+      glCreateBuffers(1,&m_directional_lights_ubo);
+      glCreateBuffers(1,&m_point_lights_ubo);
+      glCreateBuffers(1,&m_spot_lights_ubo);
+      glNamedBufferStorage(m_point_lights_ubo,452,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_directional_lights_ubo,116,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_spot_lights_ubo,516,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_point_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_point_lights_ubo,0,452,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_directional_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_directional_lights_ubo,0,116,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_spot_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_spot_lights_ubo,0,516,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+
+      //Creame UBO
+      glCreateBuffers(1,&m_camera_ubo);
+      glNamedBufferStorage(m_camera_ubo,sizeof(mat4)*2,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_camera_ubo_data=(GLubyte*)glMapNamedBufferRange(m_camera_ubo,0,sizeof(mat4)*2,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+    }
+
+    /// \brief
+    /// std430
+    /// layout(std430,binding=1)uniform DirectionalLights
+    /// {
+    ///   int num;
+    ///   vec3 directional[4];
+    ///   vec4 light_color[4];
+    /// }
+    ///
+    /// layout(std430,binding=2)uniform PointLights
+    /// {
+    ///   int num;
+    ///   vec3 postion[16];
+    ///   vec4 light_color[16];
+    /// }
+    ///
+    /// layout(std430,binding=3)uniform Spotlights
+    /// {
+    ///   int num;
+    ///   vec3 postion[16];
+    ///   vec4 light_color[16];
+    ///   float radius[16];
+    /// }
+    void GLControl::SetLights(vector<Light *> &lights)
+    {
+      m_lights=lights;
+      if(m_point_lights_ubo==0||m_directional_lights_ubo==0||m_spot_lights_ubo==0)throw runtime_error("GL No Init");
+      //TODO:Lights UBO
+      GLint num[3]={0,0,0};
+      vector<vec3> position[3];
+      vector<vec4> color[3];
+      vector<float> radius;
+
+      for(Light* light:lights)
+      {
+        int type=(int)light->GetType();
+        position[type].push_back(light->GetTansform()->GetWorldPosition());
+        color[type].push_back(light->GetColor());
+        ++num[type];
+        if(light->GetType()==LightType::SpotLight)
+        {
+          SpotLight* sl=static_cast<SpotLight*>(light);
+          radius.push_back(sl->GetRadius());
+        }
+      }
+      memcpy(m_directional_lights_ubo_data,&num[(int)LightType::PointLight],sizeof(GLint));
+      memcpy(m_point_lights_ubo_data,&num[(int)LightType::PointLight],sizeof(GLint));
+      memcpy(m_spot_lights_ubo_data,&num[(int)LightType::SpotLight],sizeof(GLint));
+
+      memcpy(m_directional_lights_ubo_data+4,position[(int)LightType::DirectionalLight].data(),position[(int)LightType::DirectionalLight].size()*sizeof(vec3));
+      memcpy(m_point_lights_ubo_data+4,position[(int)LightType::PointLight].data(),position[(int)LightType::PointLight].size()*sizeof(vec3));
+      memcpy(m_spot_lights_ubo_data+4,position[(int)LightType::SpotLight].data(),position[(int)LightType::SpotLight].size()*sizeof(vec3));
+
+      memcpy(m_directional_lights_ubo_data+52,color[(int)LightType::DirectionalLight].data(),color[(int)LightType::DirectionalLight].size()*sizeof(vec4));
+      memcpy(m_point_lights_ubo_data+196,color[(int)LightType::PointLight].data(),color[(int)LightType::PointLight].size()*sizeof(vec4));
+      memcpy(m_spot_lights_ubo_data+196,color[(int)LightType::SpotLight].data(),color[(int)LightType::SpotLight].size()*sizeof(vec4));
+
+      memcpy(m_spot_lights_ubo_data+452,radius.data(),radius.size()*sizeof(float));
+    }
+
+    /// \brief
+    /// std430
+    /// layout(std430,binding=0)uniform Camera
+    /// {
+    ///    mat4 view_matrix;
+    ///    mat4 projection_matrix;
+    ///    mat4 view_projection_matrix;
+    /// }
+    void GLControl::SetCamera(Camera *camera)
+    {
+      memcpy(m_camera_ubo_data,glm::value_ptr(camera->GetViewMatrix()),sizeof(mat4));
+      memcpy(m_camera_ubo_data+sizeof(mat4),glm::value_ptr(camera->GetProjectionMatrix()),sizeof(mat4));
+      memcpy(m_camera_ubo_data+sizeof(mat4)*2,glm::value_ptr(camera->GetProjectionMatrix()*camera->GetViewMatrix()),sizeof(mat4));
     }
 
     void GLControl::ClearColor(glm::vec4 color)
@@ -117,46 +237,46 @@ namespace Kedama {
 #ifdef DEBUG
     void GLControl::DebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,const void *userParam)
     {
-        // 忽略一些不重要的错误/警告代码
-        if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+      // 忽略一些不重要的错误/警告代码
+      if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
 
-        stringstream ss;
+      stringstream ss;
 
-        ss << "---------------" << std::endl;
-        ss << "Debug message (" << id << "): " <<  message << std::endl;
+      ss << "---------------" << std::endl;
+      ss << "Debug message (" << id << "): " <<  message << std::endl;
 
-        switch (source)
-        {
-            case GL_DEBUG_SOURCE_API:             ss << "Source: API"; break;
-            case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   ss << "Source: Window System"; break;
-            case GL_DEBUG_SOURCE_SHADER_COMPILER: ss << "Source: Shader Compiler"; break;
-            case GL_DEBUG_SOURCE_THIRD_PARTY:     ss << "Source: Third Party"; break;
-            case GL_DEBUG_SOURCE_APPLICATION:     ss << "Source: Application"; break;
-            case GL_DEBUG_SOURCE_OTHER:           ss << "Source: Other"; break;
-        } ss << std::endl;
+      switch (source)
+      {
+        case GL_DEBUG_SOURCE_API:             ss << "Source: API"; break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   ss << "Source: Window System"; break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER: ss << "Source: Shader Compiler"; break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY:     ss << "Source: Third Party"; break;
+        case GL_DEBUG_SOURCE_APPLICATION:     ss << "Source: Application"; break;
+        case GL_DEBUG_SOURCE_OTHER:           ss << "Source: Other"; break;
+      } ss << std::endl;
 
-        switch (type)
-        {
-            case GL_DEBUG_TYPE_ERROR:               ss << "Type: Error"; break;
-            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ss << "Type: Deprecated Behaviour"; break;
-            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ss << "Type: Undefined Behaviour"; break;
-            case GL_DEBUG_TYPE_PORTABILITY:         ss << "Type: Portability"; break;
-            case GL_DEBUG_TYPE_PERFORMANCE:         ss << "Type: Performance"; break;
-            case GL_DEBUG_TYPE_MARKER:              ss << "Type: Marker"; break;
-            case GL_DEBUG_TYPE_PUSH_GROUP:          ss << "Type: Push Group"; break;
-            case GL_DEBUG_TYPE_POP_GROUP:           ss << "Type: Pop Group"; break;
-            case GL_DEBUG_TYPE_OTHER:               ss << "Type: Other"; break;
-        } ss << std::endl;
+      switch (type)
+      {
+        case GL_DEBUG_TYPE_ERROR:               ss << "Type: Error"; break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: ss << "Type: Deprecated Behaviour"; break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  ss << "Type: Undefined Behaviour"; break;
+        case GL_DEBUG_TYPE_PORTABILITY:         ss << "Type: Portability"; break;
+        case GL_DEBUG_TYPE_PERFORMANCE:         ss << "Type: Performance"; break;
+        case GL_DEBUG_TYPE_MARKER:              ss << "Type: Marker"; break;
+        case GL_DEBUG_TYPE_PUSH_GROUP:          ss << "Type: Push Group"; break;
+        case GL_DEBUG_TYPE_POP_GROUP:           ss << "Type: Pop Group"; break;
+        case GL_DEBUG_TYPE_OTHER:               ss << "Type: Other"; break;
+      } ss << std::endl;
 
-        switch (severity)
-        {
-            case GL_DEBUG_SEVERITY_HIGH:         ss << "Severity: high"; break;
-            case GL_DEBUG_SEVERITY_MEDIUM:       ss << "Severity: medium"; break;
-            case GL_DEBUG_SEVERITY_LOW:          ss << "Severity: low"; break;
-            case GL_DEBUG_SEVERITY_NOTIFICATION: ss << "Severity: notification"; break;
-        } ss << std::endl;
-        ss << std::endl;
-        KEDAMALOGE(ss.str().c_str());
+      switch (severity)
+      {
+        case GL_DEBUG_SEVERITY_HIGH:         ss << "Severity: high"; break;
+        case GL_DEBUG_SEVERITY_MEDIUM:       ss << "Severity: medium"; break;
+        case GL_DEBUG_SEVERITY_LOW:          ss << "Severity: low"; break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION: ss << "Severity: notification"; break;
+      } ss << std::endl;
+      ss << std::endl;
+      KEDAMALOGE(ss.str().c_str());
     }
 #endif
   }

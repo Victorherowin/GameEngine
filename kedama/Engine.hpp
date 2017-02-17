@@ -28,7 +28,6 @@ namespace Kedama
 
   private:
     Log m_logger;
-    RendererFactoryManager* m_renderer_factory_manager=nullptr;
     AssetManager* m_asset_manager=nullptr;
     SceneManager* m_scene_manager=nullptr;
     RenderSystem* m_render_system=nullptr;

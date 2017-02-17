@@ -2,6 +2,7 @@
 #define _H_GBUFFER
 
 #include "GL/glew.h"
+#include "../../Include.hpp"
 
 namespace Kedama {
   namespace GL {
@@ -9,11 +10,10 @@ namespace Kedama {
     {
     public:
       GLuint fbo;
-      GLuint color_specular_tex;//color(3)+specular(1)
-      GLuint postion_depth_tex;//postion(3)+linear depth(1)
-      GLuint normal_tex;//normal(3)
+      std::vector<GLuint> texs;
 
-      GBuffer(GLint w,GLint h);
+      GBuffer();
+      void AddTexture(GLint w,GLint h,GLenum format,GLenum attach_target);
       ~GBuffer();
     };
   }

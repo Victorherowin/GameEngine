@@ -14,14 +14,16 @@ namespace Kedama {
 
       void Render(const RenderCommand& rc)override;
       void Render(const MergedRenderCommand& mrc)override;
-      void SetCamera(Camera* camera)override;
+
+      void RenderShadow(const RenderCommand& rc)override;
+      void RenderShadow(const MergedRenderCommand& mrc)override;
+
     private:
 
     private:
       GLControl* m_control;
-      Camera* m_camera;
 
-
+      GLuint m_plo;
     };
   }
 }

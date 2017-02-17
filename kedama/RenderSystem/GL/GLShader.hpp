@@ -48,8 +48,12 @@ namespace Kedama
     void SetUniform(int loc,vector<uint8_t>& n)override;
     void SetUniform(int loc,vector<float>& n)override;*/
 
-      void Use();
       inline GLuint GetShader(){return m_shader;}
+      inline GLenum GetGLTypeBit()
+      {
+        static GLenum table[]={GL_VERTEX_SHADER_BIT,GL_FRAGMENT_SHADER_BIT};
+        return table[(int)m_type];
+      }
 
     private:
       GLuint m_shader;

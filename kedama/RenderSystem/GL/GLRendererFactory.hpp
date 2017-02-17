@@ -12,6 +12,7 @@ namespace Kedama
     public:
       ITexture2D* CreateTexture2D()override;
       Mesh::INative* CreateMeshNative()override;
+      Material::INative* CreateMaterialNative()override;
       Shader* CreateShader(Shader::ShaderType type,const string& src)override;
       IControl* GetControl()override;
       const string GetShaderLanguage()override;

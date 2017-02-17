@@ -2,6 +2,7 @@
 #include "GLShader.hpp"
 #include "GLTexture2D.hpp"
 #include "GLMeshNative.hpp"
+#include "GLMaterialNative.hpp"
 #include "GLControl.hpp"
 
 namespace Kedama
@@ -11,6 +12,11 @@ namespace Kedama
     Mesh::INative* GLRenderSystemFactory::CreateMeshNative()
     {
       return new GLMeshNative();
+    }
+
+    Material::INative* GLRenderSystemFactory::CreateMaterialNative()
+    {
+      return new GLMaterialNative();
     }
 
     ITexture2D* GLRenderSystemFactory::CreateTexture2D()

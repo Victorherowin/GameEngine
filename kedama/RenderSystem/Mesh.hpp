@@ -47,6 +47,11 @@ namespace Kedama
     inline const vector<vec3>& GetTangents()const
     {return m_tangent;}
 
+    inline const INative* GetNativePtr()const
+    {return m_native;}
+
+    void Update();
+
   private:
     vector<vec2> m_uvs;
     vector<vec3> m_vertices;

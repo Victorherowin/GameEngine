@@ -12,5 +12,21 @@ namespace Kedama {
     {
 
     }
+
+    //TODO: GLDeferredRenderer
+    void GLDeferredRenderer::Render(const RenderCommand &rc)
+    {
+
+    }
+
+    void GLDeferredRenderer::Render(const MergedRenderCommand &mrc)
+    {
+
+    }
+    //TODO:光照阶段
+    void GLDeferredRenderer::Finish()
+    {
+
+    }
   }
 }

@@ -27,60 +27,75 @@ namespace Kedama
   {
     //TODO:其他渲染设置
     DrawMode draw_mode=DrawMode::NORMAL;
-    Shader* m_vertex_shader;
-    Shader* m_fragment_shader;
+    Shader* vertex_shader;
+    Shader* fragment_shader;
   };
 
   class KEDAMA_API Material
   {
   public:
+    class INative;
+    struct Value;
+
+  public:
     Material();
     ~Material();
 
-    void SetColor(const string& property,const u8vec4& color);//RGBA
+    void SetVector3(const string& property,const vec3& vec);
+    void SetVector4(const string& property,const vec4& vec);
     void SetFloat(const string& property,float _float);
     void SetInt(const string& property,int _int);
     void SetMatrix(const string& property,const mat4& mat);
 
-    void SetColorArray(const string& property,vector<u8vec4>& colors);
+    void SetVector3Array(const string& property,vector<vec3>& vec);
+    void SetVector4Array(const string& property,vector<vec4>& vec);
     void SetFloatArray(const string& property,vector<float>& floats);
     void SetIntArray(const string& property,vector<int>& ints);
     void SetMatrixArray(const string& property,vector<mat4>& mat);
 
     void SetTexture(const string& property,ITexture2D*);//设置材质
 
-    u8vec4 GetColor(const string& property);
+    vec3 GetVector3(const string& property);
+    vec4 GetVector4(const string& property);
     float GetFloat(const string& property);
     int GetInt(const string& property);
     mat4 GetMatrix(const string& property);
 
-    vector<u8vec4> GetColorArray(const string& property);
+    vector<vec3> GetVector3Array(const string& property);
+    vector<vec4> GetVector4Array(const string& property);
+
     vector<float> GetFloatArray(const string &property);
     vector<int> GetIntArray(const string& property);
     ITexture2D* GetTextures(const string& property);
     vector<mat4> GetMatrixArray(const string& property);
 
-    Pass* CreatePass();
-    void RemovePass(Pass*);
+    void Update();
 
-    const list<Pass>& GetPasses()const{return m_passes;}
-  public:
-    class Native;
-    struct Value;
+    inline const INative* GetNativePtr()const
+    {return m_native;}
+
+    Pass* CreatePass();
+    void RemovePass(Pass* pass);
+
+    inline void UsePass(Pass* pass)
+    {m_current_pass=pass;}
+    inline const Pass* GetCurrentPass()const
+    {return m_current_pass;}
 
   protected:
 
-    Native* m_native=nullptr;
+    INative* m_native=nullptr;
     list<Pass> m_passes;
+    Pass* m_current_pass=nullptr;
     list<Value> m_property_list;
     map<string,Value*> m_property_value;
   };
 
-  class Material::Native
+  class Material::INative
   {
   public:
     virtual void Upload(const list<Value>&)=0;
-    virtual ~Native(){}
+    virtual ~INative(){}
   };
 
   struct Material::Value
@@ -89,7 +104,7 @@ namespace Kedama
 
     enum class Type:uint8_t
     {
-      TEXTURE,COLOR,FLOAT,INT,MATRIX/*float array*/
+      TEXTURE,VECTOR3,VECTOR4,FLOAT,INT,MATRIX/*float array*/
     };
 
     union _Internal

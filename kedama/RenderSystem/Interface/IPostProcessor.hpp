@@ -1,9 +1,10 @@
 /*!
   \file IPostProceesor.hpp
   \brief 后处理接口
-  0 color
-  1 gPostition+gDepth
-  2 gNormal
+  bind point:
+    15 color
+    16 gPostition+gDepth
+    17 gNormal
 
   \author KedamaOvO
   \date 2017.02.08

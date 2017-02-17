@@ -11,7 +11,8 @@
 
 #include "../../Include.hpp"
 #include "../RenderSystemClass.hpp"
-
+#include "../../GameObject/Light.hpp"
+#include "../../GameObject/Camera.hpp"
 
 namespace Kedama {
   enum ClearBufferBit
@@ -24,6 +25,8 @@ namespace Kedama {
   public:
     virtual ~IControl(){}
 
+    virtual void SetLights(vector<Light*>& lights)=0;
+    virtual void SetCamera(Camera* camera)=0;
     virtual void ClearColor(glm::vec4 color)=0;
     virtual void ClearDepth(float depth)=0;
     virtual void ClearStencil(int32_t s)=0;

@@ -8,42 +8,44 @@ namespace Kedama
 
   void Camera::LookAt(const glm::vec3 &position)
   {
-    m_look_target=nullptr;
+    m_type=LookType::Position;
     m_target_position=position;
   }
 
   void Camera::LookAt(GameObject* target)
   {
+    m_type=LookType::Target;
     m_look_target=target;
   }
 
-  void Camera::LookDirect(const glm::vec3 &direction)
+  void Camera::LookDirection(const glm::vec3 &direction)
   {
-    m_look_target=nullptr;
-    m_target_position=glm::normalize(direction)+GetTansform()->GetWorldPosition();
+    m_type=LookType::Direction;
+    m_direction=glm::normalize(direction);
   }
 
-  const glm::mat4& Camera::GetViewMatrix()
+  glm::mat4 Camera::GetViewMatrix()
   {
-    if(m_look_target==nullptr)
+    if(m_type==LookType::Position)
     {
-      m_view_matrix=glm::lookAt(GetTansform()->GetWorldPosition(),m_target_position,glm::vec3(0.0f,1.0f,0.0f));
+      return glm::lookAt(GetTansform()->GetWorldPosition(),m_target_position,glm::vec3(0.0f,1.0f,0.0f));
     }
-    else
+    else if(m_type==LookType::Target)
     {
-      m_view_matrix=glm::lookAt(GetTansform()->GetWorldPosition(),m_look_target->GetTansform()->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
+      return glm::lookAt(GetTansform()->GetWorldPosition(),m_look_target->GetTansform()->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }
-    return m_view_matrix;
+    else if(m_type==LookType::Direction)
+    {
+      return glm::lookAt(GetTansform()->GetWorldPosition(),m_direction+GetTansform()->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
+    }
   }
 
   void Camera::SetPerspective(float fov, float aspect, float near, float far)
   {
+    m_fov=fov;
+    m_aspect=aspect;
+    m_near=near;
+    m_far=far;
     m_projection_matrix=glm::perspective(fov,aspect,near,far);
   }
-
-  void Camera::SetOrtho(float left,float right,float buttom,float top)
-  {
-    m_projection_matrix=glm::ortho(left,right,buttom,top);
-  }
-
 }

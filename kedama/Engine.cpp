@@ -7,8 +7,7 @@ namespace Kedama
 {
   Engine::Engine(const string& api_name)
   {
-    m_renderer_factory_manager=new RendererFactoryManager();
-    m_renderer_factory=m_renderer_factory_manager->GetFactory(api_name);
+    m_renderer_factory=RendererFactoryManager::GetSingletonPtr()->GetFactory(api_name);
     m_render_system=new RenderSystem(m_renderer_factory);
     m_asset_manager=new AssetManager();
     m_scene_manager=new SceneManager(m_render_system);
@@ -19,7 +18,6 @@ namespace Kedama
     delete m_scene_manager;
     delete m_render_system;
     delete m_asset_manager;
-    delete m_renderer_factory_manager;
   }
 
   RenderSystem* Engine::GetRenderSystem()

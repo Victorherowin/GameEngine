@@ -25,6 +25,7 @@ namespace Kedama
     virtual Shader* CreateShader(Shader::ShaderType type,const string& src)=0;
 
     virtual Mesh::INative* CreateMeshNative()=0;
+    virtual Material::INative* CreateMaterialNative()=0;
 
     virtual IControl* GetControl()=0;
   };

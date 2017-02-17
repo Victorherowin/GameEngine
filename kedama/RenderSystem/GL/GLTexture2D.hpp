@@ -19,8 +19,7 @@ namespace Kedama {
       void Bind()override;
       void Unbind()override;
 
-      void TexImage(GLint level,GLint internalFormat,GLsizei width,GLsizei height,GLint border,GLenum format,GLenum type,const GLvoid * data);
-
+      void UpdateImage(GLint level,GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *data);
     private:
       bool m_compress=false;
     };

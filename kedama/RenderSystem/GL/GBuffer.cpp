@@ -2,24 +2,26 @@
 
 namespace Kedama {
   namespace GL {
-    GBuffer::GBuffer(GLint w,GLint h)
+    GBuffer::GBuffer()
     {
       glGenFramebuffers(1,&fbo);
-      glGenTextures(3,&color_specular_tex);
-      glTextureStorage2D(color_specular_tex,0,GL_RGBA16F,w,h);
-      glTextureStorage2D(postion_depth_tex,0,GL_RGBA16F,w,h);
-      glTextureStorage2D(normal_tex,0,GL_RGBA16F,w,h);
-      glTextureParameteri(color_specular_tex,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-      glTextureParameteri(color_specular_tex,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-      glTextureParameteri(postion_depth_tex,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-      glTextureParameteri(postion_depth_tex,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-      glTextureParameteri(normal_tex,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-      glTextureParameteri(normal_tex,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    }
+
+    void GBuffer::AddTexture(GLint w, GLint h, GLenum format,GLenum attach_target)
+    {
+      GLuint tex;
+      glGenTextures(1,&tex);
+      glTextureStorage2D(tex,0,format,w,h);
+      glTextureParameteri(tex,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+      glTextureParameteri(tex,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+      glNamedFramebufferTexture(fbo,attach_target,tex,0);
+      texs.push_back(tex);
     }
 
     GBuffer::~GBuffer()
     {
-      glDeleteTextures(3,&color_specular_tex);
+      for(auto tex:texs)
+        glDeleteTextures(1,&tex);
       glDeleteFramebuffers(1,&fbo);
     }
   }

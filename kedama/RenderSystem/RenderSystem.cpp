@@ -33,8 +33,11 @@ namespace Kedama
   void RenderSystem::SetCamera(Camera* camera)
   {
     m_main_camera=camera;
-    m_forward_renderer->SetCamera(camera);
-    m_deferred_renderer->SetCamera(camera);
+  }
+
+  void RenderSystem::SetLights(vector<Light*>& lights)
+  {
+    m_lights=lights;
   }
 
   void RenderSystem::Render(CommandBuffer &cb)
@@ -49,7 +52,7 @@ namespace Kedama
     else throw runtime_error("No Window");
 
     if(m_control->GetDeferredRenderer()!=nullptr)
-        m_deferred_renderer=m_control->GetDeferredRenderer();
+      m_deferred_renderer=m_control->GetDeferredRenderer();
 
     if(m_use_deferred_render==true&&m_deferred_renderer==nullptr)
       throw runtime_error("No Implement Deferred Renderer");
@@ -59,9 +62,39 @@ namespace Kedama
     else
       throw runtime_error("No Camera!");
 
-    //渲染
+    m_control->SetCamera(m_main_camera);
+    m_control->SetLights(m_lights);
+
+    //渲染阴影贴图
+
+    if(cb.GetDeferredCommands().size()>0)
+    {
+      for(auto& rc:cb.GetDeferredCommands())
+        m_forward_renderer->RenderShadow(rc);
+    }
+
+    if(cb.GetMergedRenderCommans().size()>0)
+    {
+      for(auto& mrc:cb.GetMergedRenderCommans())
+        m_forward_renderer->RenderShadow(mrc);
+    }
+
+    if(cb.GetForwardCommands().size()>0)
+    {
+      for(auto& rc:cb.GetForwardCommands())
+        m_forward_renderer->RenderShadow(rc);
+    }
+
+    //透明物体不生成阴影
+    /*  if(cb.GetAlphaForwardCommands().size()>0)
+      {
+        for(auto& rc:cb.GetAlphaForwardCommands())
+          m_forward_renderer->RenderShadow(rc);
+      }*/
+
     if(m_use_deferred_render)
     {
+      //渲染
       if(cb.GetDeferredCommands().size()>0)
       {
         for(auto& rc:cb.GetDeferredCommands())
@@ -90,10 +123,11 @@ namespace Kedama
     }
     else
     {
+      //渲染
       if(cb.GetDeferredCommands().size()>0)
       {
         for(auto& rc:cb.GetDeferredCommands())
-           m_forward_renderer->Render(rc);
+          m_forward_renderer->Render(rc);
       }
 
       if(cb.GetForwardCommands().size()>0)
@@ -115,6 +149,7 @@ namespace Kedama
       }
     }
 
+    //后处理
     if(cb.GetPostProcessCommands().size()>0)
     {
       for(auto& ppc:cb.GetPostProcessCommands())

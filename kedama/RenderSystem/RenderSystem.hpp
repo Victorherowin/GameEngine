@@ -20,7 +20,7 @@
 
 namespace Kedama
 {
-  using std::string;
+  using namespace std;
   class IRendererFactory;
 
   class RenderSystem
@@ -30,6 +30,7 @@ namespace Kedama
     ~RenderSystem(){}
     void UseDeferredRender(bool use);
     void SetCamera(Camera* camera);
+    void SetLights(vector<Light*>& lights);
 
     void Render(CommandBuffer& cb);
     void Clear();
@@ -44,6 +45,7 @@ namespace Kedama
     IControl* m_control=nullptr;
 
     Camera* m_main_camera=nullptr;
+    std::vector<Light*> m_lights;
 
     bool m_use_deferred_render=false;
   };

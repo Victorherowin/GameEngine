@@ -13,9 +13,8 @@ namespace Kedama {
       ~GLMeshNative();
       void Upload(const Mesh& mesh)override;
 
-    private:
-      GLuint m_vao;
-      GLuint m_vbo,m_ibo;
+      GLuint vao;
+      GLuint vbo,ibo;
     };
   }
 }

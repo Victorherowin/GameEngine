@@ -8,26 +8,17 @@ namespace Kedama {
       size_t size=0;
       for(const Material::Value& value:property_list)
       {
-        switch(value.type)
-        {
-          case Material::Value::Type::TEXTURE:break;
-          case Material::Value::Type::COLOR://4*4
-          case Material::Value::Type::MATRIX://16*4
-            size+=16*value.data.size()/4;
-            break;
-          case Material::Value::Type::FLOAT://4
-          case Material::Value::Type::INT:
-            size+=16*value.data.size();
-            break;
-
-        }
+        if(value.type==Material::Value::Type::TEXTURE)continue;
+        if(value.type==Material::Value::Type::VECTOR3&&value.is_array==false)
+          size+=4;
+        size+=sizeof(GLfloat)*value.data.size();
       }
       return size;
     }
 
     GLMaterialNative::GLMaterialNative()
     {
-      glGenBuffers(1,&m_ubo);
+      glCreateBuffers(1,&m_ubo);
     }
 
     GLMaterialNative::~GLMaterialNative()
@@ -41,30 +32,22 @@ namespace Kedama {
       m_textures.clear();
       size_t size=GetUniformBlockSize(property_list);
 
-      glNamedBufferData(m_ubo,size*4,nullptr,GL_STATIC_DRAW);
-      uint8_t* ubo_mem=(uint8_t*)glMapNamedBuffer(m_ubo,GL_WRITE_ONLY);
+      glNamedBufferStorage(m_ubo,size,nullptr,GL_MAP_WRITE_BIT);
+      uint8_t* ubo_mem=(uint8_t*)glMapNamedBufferRange(m_ubo,0,size,GL_MAP_WRITE_BIT);
 
       int offset=0;
       for(const Material::Value& value:property_list)
       {
-        switch(value.type)
+        if(value.type!=Material::Value::Type::TEXTURE)
         {
-          case Material::Value::Type::TEXTURE:
-            m_textures.push_back(make_pair(value.property_name,value._texture));
-            break;
-          case Material::Value::Type::MATRIX:
-          case Material::Value::Type::COLOR:
-            memcpy(ubo_mem+offset,value.data.data(),value.data.size()*4);
-            offset+=value.data.size()*4;
-            break;
-          case Material::Value::Type::FLOAT:
-          case Material::Value::Type::INT:
-            for(auto& obj:value.data)
-            {
-              memcpy(ubo_mem+offset,&obj,4);
-              offset+=16;
-            }
-            break;
+          memcpy(ubo_mem+offset,value.data.data(),value.data.size()*4);
+          if(value.type==Material::Value::Type::VECTOR3&&value.is_array==false)
+            offset+=4;
+          offset+=value.data.size()*4;
+        }
+        else
+        {
+          m_textures.push_back(make_pair(value.property_name,value._texture));
         }
       }
       glUnmapNamedBuffer(m_ubo);

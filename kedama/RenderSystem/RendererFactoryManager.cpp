@@ -2,6 +2,8 @@
 
 namespace Kedama
 {
+  static RendererFactoryManager __manager__;
+
   int32_t RendererFactoryManager::RegisterFactory(const string& name,IRendererFactory* irsf)
   {
     auto it=m_render_system_factory_map.find(name);
