@@ -5,3 +5,33 @@ Texture不能放在Uniform Block里，因此推迟到渲染时绑定(GLMaterialN
 
 TODO:
 
+Render(MergedRenderCommand& cb)
+{
+	
+      glVertexArrayVertexBuffer(nmesh->vao,MODEL_MATRIX_INDEX,m_model_matrix_ubo,0,sizeof(mat4));
+	  
+      glVertexArrayAttribBinding(nmesh->vao,MODEL_MATRIX_INDEX,MODEL_MATRIX_INDEX);
+      glVertexArrayAttribFormat(nmesh->vao,MODEL_MATRIX_INDEX,4,GL_FLOAT,GL_FALSE,0);
+	  
+	  glVertexArrayAttribBinding(nmesh->vao,MODEL_MATRIX_INDEX+1,MODEL_MATRIX_INDEX);
+	  glVertexArrayAttribFormat(nmesh->vao,MODEL_MATRIX_INDEX+1,4,GL_FLOAT,GL_FALSE,sizeof(vec4));
+	  
+	  glVertexArrayAttribBinding(nmesh->vao,MODEL_MATRIX_INDEX+2,MODEL_MATRIX_INDEX);
+	  glVertexArrayAttribFormat(nmesh->vao,MODEL_MATRIX_INDEX+2,4,GL_FLOAT,GL_FALSE,sizeof(vec4)*2);
+	  
+	  glVertexArrayAttribBinding(nmesh->vao,MODEL_MATRIX_INDEX+3,MODEL_MATRIX_INDEX);
+	  glVertexArrayAttribFormat(nmesh->vao,MODEL_MATRIX_INDEX+3,4,GL_FLOAT,GL_FALSE,sizeof(vec4)3);
+
+	  VertexArrayBindingDivisor(nmesh->vao,MODEL_MATRIX_INDEX,1);
+}
+
+Render(RenderCommand& cb)
+{
+	MergedRenderCommand mrc;
+	mrc.transforms.push_back(cb.transform);
+	mrc.materials.push_back(material);
+	mrc.mesh=mesh;
+	RenderCommand(mrc)；
+};//节省代码
+
+Shader修改 http://stackoverflow.com/questions/2344265/can-you-have-multiple-pixel-fragment-shaders-in-the-same-program

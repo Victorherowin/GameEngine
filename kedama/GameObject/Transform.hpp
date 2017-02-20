@@ -30,7 +30,7 @@ namespace Kedama
     void SetScale(const glm::vec3& scale);
 
     inline const glm::vec3& GetRelativePosition(){return m_position;}
-    inline const glm::quat& GetRelativeAngle(){return m_angle;}
+    inline const glm::quat GetRelativeAngle(){return glm::quat_cast(m_angle);}
     inline const glm::mat4& GetRelativeMatrix(){return m_relative_matrix;}
     inline const glm::vec3& GetScale(){return m_scale;}
 
@@ -56,7 +56,7 @@ namespace Kedama
 
     //相对位置
     glm::vec3 m_position;
-    glm::quat m_angle;
+    glm::mat3 m_angle;
     glm::vec3 m_scale;
 
     glm::mat4 m_relative_matrix;//相对位置矩阵

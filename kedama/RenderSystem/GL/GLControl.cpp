@@ -86,47 +86,47 @@ namespace Kedama {
       glCreateBuffers(1,&m_directional_lights_ubo);
       glCreateBuffers(1,&m_point_lights_ubo);
       glCreateBuffers(1,&m_spot_lights_ubo);
-      glNamedBufferStorage(m_point_lights_ubo,452,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      glNamedBufferStorage(m_directional_lights_ubo,116,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      glNamedBufferStorage(m_spot_lights_ubo,516,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_point_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_point_lights_ubo,0,452,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_directional_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_directional_lights_ubo,0,116,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_spot_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_spot_lights_ubo,0,516,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_point_lights_ubo,516,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_directional_lights_ubo,132,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_spot_lights_ubo,772,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_point_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_point_lights_ubo,0,516,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_directional_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_directional_lights_ubo,0,132,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_spot_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_spot_lights_ubo,0,772,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
 
       //Creame UBO
       glCreateBuffers(1,&m_camera_ubo);
-      glNamedBufferStorage(m_camera_ubo,sizeof(mat4)*2,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_camera_ubo_data=(GLubyte*)glMapNamedBufferRange(m_camera_ubo,0,sizeof(mat4)*2,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-    }
+      glNamedBufferStorage(m_camera_ubo,sizeof(mat4)*3,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_camera_ubo_data=(GLubyte*)glMapNamedBufferRange(m_camera_ubo,0,sizeof(mat4)*3,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+
+      }
 
     /// \brief
     /// std430
-    /// layout(std430,binding=1)uniform DirectionalLights
+    /// layout(std140,binding=3)uniform DirectionalLights
     /// {
-    ///   int num;
-    ///   vec3 directional[4];
-    ///   vec4 light_color[4];
+    ///   int num;//0
+    ///   vec3 directional[4];//4
+    ///   vec4 light_color[4];//68
     /// }
     ///
-    /// layout(std430,binding=2)uniform PointLights
+    /// layout(std140,binding=4)uniform PointLights
+    /// {
+    ///   int num;//0
+    ///   vec3 postion[16];//4
+    ///   vec4 light_color[16];//260
+    /// }
+    ///
+    /// layout(std140,binding=5)uniform Spotlights
     /// {
     ///   int num;
     ///   vec3 postion[16];
     ///   vec4 light_color[16];
-    /// }
-    ///
-    /// layout(std430,binding=3)uniform Spotlights
-    /// {
-    ///   int num;
-    ///   vec3 postion[16];
-    ///   vec4 light_color[16];
-    ///   float radius[16];
+    ///   float radius[16];//516
     /// }
     void GLControl::SetLights(vector<Light *> &lights)
     {
       m_lights=lights;
       if(m_point_lights_ubo==0||m_directional_lights_ubo==0||m_spot_lights_ubo==0)throw runtime_error("GL No Init");
-      //TODO:Lights UBO
       GLint num[3]={0,0,0};
       vector<vec3> position[3];
       vector<vec4> color[3];
@@ -152,16 +152,18 @@ namespace Kedama {
       memcpy(m_point_lights_ubo_data+4,position[(int)LightType::PointLight].data(),position[(int)LightType::PointLight].size()*sizeof(vec3));
       memcpy(m_spot_lights_ubo_data+4,position[(int)LightType::SpotLight].data(),position[(int)LightType::SpotLight].size()*sizeof(vec3));
 
-      memcpy(m_directional_lights_ubo_data+52,color[(int)LightType::DirectionalLight].data(),color[(int)LightType::DirectionalLight].size()*sizeof(vec4));
-      memcpy(m_point_lights_ubo_data+196,color[(int)LightType::PointLight].data(),color[(int)LightType::PointLight].size()*sizeof(vec4));
-      memcpy(m_spot_lights_ubo_data+196,color[(int)LightType::SpotLight].data(),color[(int)LightType::SpotLight].size()*sizeof(vec4));
+      memcpy(m_directional_lights_ubo_data+68,color[(int)LightType::DirectionalLight].data(),color[(int)LightType::DirectionalLight].size()*sizeof(vec4));
+      memcpy(m_point_lights_ubo_data+260,color[(int)LightType::PointLight].data(),color[(int)LightType::PointLight].size()*sizeof(vec4));
+      memcpy(m_spot_lights_ubo_data+260,color[(int)LightType::SpotLight].data(),color[(int)LightType::SpotLight].size()*sizeof(vec4));
 
-      memcpy(m_spot_lights_ubo_data+452,radius.data(),radius.size()*sizeof(float));
+      vec4* tmp=(vec4*)(m_spot_lights_ubo_data+516);
+      for(auto f:radius)
+        tmp++->x=f;
     }
 
     /// \brief
-    /// std430
-    /// layout(std430,binding=0)uniform Camera
+    /// std140
+    /// layout(std140,binding=1)uniform Camera
     /// {
     ///    mat4 view_matrix;
     ///    mat4 projection_matrix;
@@ -169,9 +171,10 @@ namespace Kedama {
     /// }
     void GLControl::SetCamera(Camera *camera)
     {
-      memcpy(m_camera_ubo_data,glm::value_ptr(camera->GetViewMatrix()),sizeof(mat4));
-      memcpy(m_camera_ubo_data+sizeof(mat4),glm::value_ptr(camera->GetProjectionMatrix()),sizeof(mat4));
-      memcpy(m_camera_ubo_data+sizeof(mat4)*2,glm::value_ptr(camera->GetProjectionMatrix()*camera->GetViewMatrix()),sizeof(mat4));
+      mat4* tmp=(mat4*)m_camera_ubo_data;
+      memcpy(tmp,glm::value_ptr(camera->GetViewMatrix()),sizeof(mat4));
+      memcpy(tmp+1,glm::value_ptr(camera->GetProjectionMatrix()),sizeof(mat4));
+      memcpy(tmp+2,glm::value_ptr(camera->GetProjectionMatrix()*camera->GetViewMatrix()),sizeof(mat4));
     }
 
     void GLControl::ClearColor(glm::vec4 color)

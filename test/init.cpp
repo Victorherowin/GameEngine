@@ -24,28 +24,25 @@ using namespace Kedama::GL;
 
 string vs_shader_src=
 R"(#version 450 core
-   layout(std140)uniform Camera
-   {
-      mat4 kedama_view_matrix;
-      mat4 kedama_projection_matrix;
-      mat4 kedama_view_projection_matrix;
-   };
-
+   layout(location = 4)in mat4 kedama_model_matrix;
    layout(location = 0)in vec4 pos;
    layout(location = 1)in vec4 uv;
-   out vec2 f_uv;
-   void main()
+   out vec4 f_uv;
+   layout(std140)uniform Model{mat4 model_matrix[1000];};
+   layout(std140)uniform Camera{mat4 view_matrix;mat4 projection_matrix;mat4 view_projection;};
+   void VS_main()
    {
-    gl_Position=pos;
-    f_uv=uv.xy;
+    gl_Position=view_projection*model_matrix[gl_InstanceID]*pos;
+    f_uv=pos;
    })";
 string fs_shader_src=R"(
    #version 450 core
-   in vec2 f_uv;
+   in vec4 f_uv;
+   out vec4 color;
    layout(binding = 0)uniform sampler2D kedama_tex;
-   void main()
+   void FS_main()
    {
-     gl_FragColor=vec4(1.0,0.0,1.0,1.0);
+     color=vec4(f_uv.xyz,1.0);
    }
 )";
 
@@ -65,26 +62,24 @@ int32_t main(int32_t argc,char** argv)
     win->Create("ForwardRender",800,600);
 
     GameObject obj;
+    obj.GetTansform()->SetWorldPosition(vec3(0.0f,0.5f,0.0f));
     Camera camera("TestCamera");
     Mesh test_mesh;
     Material test_material;
-    Shader* vs=Engine::GetSingletonPtr()->GetRendererFactory()->CreateShader(Shader::ShaderType::VERTEX_SHADER,vs_shader_src);
-    Shader* fs=Engine::GetSingletonPtr()->GetRendererFactory()->CreateShader(Shader::ShaderType::FRAGMENT_SHADER,fs_shader_src);
+    IShader* shader=Engine::GetSingletonPtr()->GetRendererFactory()->CreateShader();
+    shader->SetFragmentShaderSource(fs_shader_src);
+    shader->SetVertexShaderSource(vs_shader_src);
+    shader->Compile();
 
     test_mesh.SetIndices(index);
     test_mesh.SetVertices(tri_vertex);
     test_mesh.Update();
     Pass* pass=test_material.CreatePass();
     test_material.UsePass(pass);
-    pass->fragment_shader=fs;
-    pass->vertex_shader=vs;
-    camera.GetTansform()->Move(vec3(1.0,0.0,1.0));
+    pass->shader=shader;
+    camera.GetTansform()->Move(vec3(1.0,0.0,10.0));
     camera.SetPerspective(45.0f,800.0f/600.0f,0.1f,1000.0f);
     camera.LookAt(&obj);
-
-
-    CommandBuffer cb;
-    cb.AddForwardRenderCommand(obj.GetTansform(),&test_mesh,&test_material);
 
     RenderSystem* rs=Engine::GetSingletonPtr()->GetRenderSystem();
 
@@ -97,10 +92,15 @@ int32_t main(int32_t argc,char** argv)
       {
         if(ev.type==SDL_QUIT)quit=true;
       }
+      obj.GetTansform()->Rotate(vec3(0,1,0),0.1f/glm::pi<float>());
+
+      CommandBuffer cb;
+      cb.AddRenderCommand(obj.GetTansform(),&test_mesh,&test_material);
+
       rs->Clear();
       rs->Render(cb);
       rs->SwapBuffer();
-      this_thread::sleep_for(chrono::milliseconds(50));
+      this_thread::sleep_for(chrono::milliseconds(33));
     }
 
     return 0;

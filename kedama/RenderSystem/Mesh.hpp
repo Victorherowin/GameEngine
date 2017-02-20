@@ -12,7 +12,6 @@ namespace Kedama
   {
   public:
     class INative;
-  //TODO 顶点 UVs TBN...
   public:
     Mesh();
     ~Mesh();

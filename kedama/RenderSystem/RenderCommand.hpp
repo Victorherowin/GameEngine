@@ -16,14 +16,14 @@ namespace Kedama {
   struct RenderCommand
   {
     Transform* transform;
-    Mesh* mesh;
     Material* material;
+    Mesh* mesh;
   };
 
   struct MergedRenderCommand
   {
     vector<Transform*> transforms;
-    vector<Material*> materials;
+    Material* material;
     Mesh* mesh;
   };
 

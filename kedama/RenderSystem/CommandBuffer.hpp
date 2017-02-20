@@ -11,17 +11,15 @@ namespace Kedama {
   class KEDAMA_API CommandBuffer
   {
   private:
-    //启用延迟渲染时此前向渲染队列缓存透明物体RenderCommand，并会在排序后渲染
-    vector<RenderCommand> m_forward_commands;
-    vector<RenderCommand> m_deferred_commands;
+
+    vector<RenderCommand> m_commands;
     vector<RenderCommand> m_alpha_forward_commands;
 
     //同一mesh command合并后
     vector<MergedRenderCommand> m_merged_commands;
     vector<PostProcessCommand> m_post_process_commands;
   public:
-    void AddForwardRenderCommand(Transform* transform,Mesh* mesh,Material* material);
-    void AddDeferredRenderCommand(Transform* transform,Mesh* mesh,Material* material);
+    void AddRenderCommand(Transform* transform,Mesh* mesh,Material* material);
     void AddAlphaRenderCommand(Transform* transform,Mesh* mesh,Material* material);
     void AddPostProcessCommand(Material* material);
 
@@ -30,16 +28,13 @@ namespace Kedama {
     //合并相同Mesh
     void Merge();
 
-    inline const vector<RenderCommand>& GetForwardCommands()const
-    {return m_forward_commands;}
-
-    inline const vector<RenderCommand>& GetDeferredCommands()const
-    {return m_deferred_commands;}
+    inline const vector<RenderCommand>& GetCommands()const
+    {return m_commands;}
 
     inline const vector<RenderCommand>& GetAlphaForwardCommands()const
     {return m_alpha_forward_commands;}
 
-    inline const vector<MergedRenderCommand>& GetMergedRenderCommans()const
+    inline const vector<MergedRenderCommand>& GetMergedRenderCommands()const
     {return m_merged_commands;}
 
     inline const vector<PostProcessCommand>& GetPostProcessCommands()const

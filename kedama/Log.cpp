@@ -41,6 +41,7 @@ namespace Kedama
       {
         (*m_outstream)<<str<<std::flush;
       }
+    m_outstream->flush();
   }
 
   void Log::EPrint(const LogInfo& info,string str)
@@ -56,6 +57,7 @@ namespace Kedama
       {
         (*m_errorstream)<<str<<std::flush;
       }
+    m_errorstream->flush();
   }
 
   int Log::printf(const LogInfo& info,const char* fmt,...)

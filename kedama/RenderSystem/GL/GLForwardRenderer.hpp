@@ -24,6 +24,8 @@ namespace Kedama {
       GLControl* m_control;
 
       GLuint m_plo;
+      GLuint m_model_matrix_ubo;
+      mat4* m_model_matrix_ubo_data;
     };
   }
 }

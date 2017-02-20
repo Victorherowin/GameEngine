@@ -57,6 +57,7 @@ namespace Kedama
     if(m_use_deferred_render==true&&m_deferred_renderer==nullptr)
       throw runtime_error("No Implement Deferred Renderer");
 
+    cb.Merge();
     if(m_main_camera)
       cb.Sort(m_main_camera);
     else
@@ -67,22 +68,16 @@ namespace Kedama
 
     //渲染阴影贴图
 
-    if(cb.GetDeferredCommands().size()>0)
+    if(cb.GetCommands().size()>0)
     {
-      for(auto& rc:cb.GetDeferredCommands())
+      for(auto& rc:cb.GetCommands())
         m_forward_renderer->RenderShadow(rc);
     }
 
-    if(cb.GetMergedRenderCommans().size()>0)
+    if(cb.GetMergedRenderCommands().size()>0)
     {
-      for(auto& mrc:cb.GetMergedRenderCommans())
+      for(auto& mrc:cb.GetMergedRenderCommands())
         m_forward_renderer->RenderShadow(mrc);
-    }
-
-    if(cb.GetForwardCommands().size()>0)
-    {
-      for(auto& rc:cb.GetForwardCommands())
-        m_forward_renderer->RenderShadow(rc);
     }
 
     //透明物体不生成阴影
@@ -95,25 +90,19 @@ namespace Kedama
     if(m_use_deferred_render)
     {
       //渲染
-      if(cb.GetDeferredCommands().size()>0)
+      if(cb.GetCommands().size()>0)
       {
-        for(auto& rc:cb.GetDeferredCommands())
+        for(auto& rc:cb.GetCommands())
           m_deferred_renderer->Render(rc);
       }
 
-      if(cb.GetMergedRenderCommans().size()>0)
+      if(cb.GetMergedRenderCommands().size()>0)
       {
-        for(auto& mrc:cb.GetMergedRenderCommans())
+        for(auto& mrc:cb.GetMergedRenderCommands())
           m_deferred_renderer->Render(mrc);
       }
 
       m_deferred_renderer->Finish();
-
-      if(cb.GetForwardCommands().size()>0)
-      {
-        for(auto& rc:cb.GetForwardCommands())
-          m_forward_renderer->Render(rc);
-      }
 
       if(cb.GetAlphaForwardCommands().size()>0)
       {
@@ -124,21 +113,15 @@ namespace Kedama
     else
     {
       //渲染
-      if(cb.GetDeferredCommands().size()>0)
+      if(cb.GetCommands().size()>0)
       {
-        for(auto& rc:cb.GetDeferredCommands())
+        for(auto& rc:cb.GetCommands())
           m_forward_renderer->Render(rc);
       }
 
-      if(cb.GetForwardCommands().size()>0)
+      if(cb.GetMergedRenderCommands().size()>0)
       {
-        for(auto& rc:cb.GetForwardCommands())
-          m_forward_renderer->Render(rc);
-      }
-
-      if(cb.GetMergedRenderCommans().size()>0)
-      {
-        for(auto& mrc:cb.GetMergedRenderCommans())
+        for(auto& mrc:cb.GetMergedRenderCommands())
           m_forward_renderer->Render(mrc);
       }
 

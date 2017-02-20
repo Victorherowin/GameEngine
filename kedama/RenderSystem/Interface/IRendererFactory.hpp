@@ -3,7 +3,7 @@
 
 #include <string>
 #include "../RenderSystem.hpp"
-#include "../Shader.hpp"
+#include "../Interface/IShader.hpp"
 #include "ITexture2D.hpp"
 #include "../MeshRenderer.hpp"
 #include "IControl.hpp"
@@ -22,7 +22,7 @@ namespace Kedama
     virtual const string GetShaderLanguage()=0;
 
     virtual ITexture2D* CreateTexture2D()=0;
-    virtual Shader* CreateShader(Shader::ShaderType type,const string& src)=0;
+    virtual IShader* CreateShader()=0;
 
     virtual Mesh::INative* CreateMeshNative()=0;
     virtual Material::INative* CreateMaterialNative()=0;

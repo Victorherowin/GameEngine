@@ -24,11 +24,9 @@ namespace Kedama
       return new GLTexture2D();
     }
 
-    Shader* GLRenderSystemFactory::CreateShader(Shader::ShaderType type,const string& src)
+    IShader* GLRenderSystemFactory::CreateShader()
     {
-      GLShader* r_shader=new GLShader(type);
-      r_shader->SetSource(src);
-      return r_shader;
+      return new GLShader();
     }
 
     IControl* GLRenderSystemFactory::GetControl()

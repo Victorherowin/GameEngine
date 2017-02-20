@@ -27,27 +27,33 @@ namespace Kedama {
 
   void Transform::SetWorldPosition(const glm::vec3& position)
   {
-    const Transform* parent=m_object->GetParent()->GetTansform();
-    m_position=glm::vec3(glm::inverse(parent->m_world_matrix)*glm::vec4(position,1.0f));
-    m_need_update=true;
+    if(m_object->GetParent()!=nullptr)
+    {
+      const Transform* parent=m_object->GetParent()->GetTansform();
+      m_position=glm::vec3(glm::inverse(parent->m_world_matrix)*glm::vec4(position,1.0f));
+      m_need_update=true;
+    }
+    else
+      SetRelativePosition(position);
+
   }
 
   void Transform::SetRelativeAngle(const glm::quat& angle)
   {
-    m_angle=angle;
+    m_angle=glm::mat3_cast(angle);
     m_need_update=true;
   }
 
   void Transform::SetRelativeAngle(const glm::mat3& angle)
   {
-    m_angle=glm::quat_cast(angle);
+    m_angle=angle;
     m_need_update=true;
   }
 
   void Transform::SetWorldAngle(const glm::mat3& angle)
   {
     const Transform* parent=m_object->GetParent()->GetTansform();
-    m_angle=glm::quat_cast(glm::transpose(glm::mat3(parent->m_world_matrix)*angle));
+    m_angle=glm::transpose(glm::mat3(parent->m_world_matrix)*angle);
     m_need_update=true;
   }
 
@@ -69,7 +75,7 @@ namespace Kedama {
 
   void Transform::Rotate(const glm::mat3& angle)
   {
-    m_angle=glm::quat_cast(glm::mat3_cast(m_angle)*angle);
+    m_angle=angle*m_angle;
     m_need_update=true;
   }
 
@@ -131,6 +137,9 @@ namespace Kedama {
       if(!node->GetTansform()->m_need_update)
       {
         node->GetTansform()->m_need_update=true;
+      }
+      if(node->GetTansform()->m_need_update)
+      {
         node->GetTansform()->SetChildrenNeedUpdateFlag();
       }
     }
@@ -150,7 +159,7 @@ namespace Kedama {
     if(m_need_update)
     {
       //更新自己
-      m_relative_matrix=glm::mat4_cast(m_angle);
+      m_relative_matrix=glm::mat4(m_angle);
       m_relative_matrix[3]=glm::vec4(m_position,1.0f);
 
       if(m_object->GetParent()!=nullptr)
@@ -158,9 +167,6 @@ namespace Kedama {
       else
         m_world_matrix=m_relative_matrix;
       m_need_update=false;
-
-      m_position=glm::vec3();
-      m_angle=glm::quat();
     }
   }
 

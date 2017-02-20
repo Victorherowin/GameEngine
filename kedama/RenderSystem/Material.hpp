@@ -12,7 +12,7 @@
 #include "Interface/ITexture2D.hpp"
 #include "../Include.hpp"
 #include "../Define.hpp"
-#include "Shader.hpp"
+#include "Interface/IShader.hpp"
 
 namespace Kedama
 {
@@ -27,8 +27,7 @@ namespace Kedama
   {
     //TODO:其他渲染设置
     DrawMode draw_mode=DrawMode::NORMAL;
-    Shader* vertex_shader;
-    Shader* fragment_shader;
+    IShader* shader;
   };
 
   class KEDAMA_API Material
@@ -41,6 +40,7 @@ namespace Kedama
     Material();
     ~Material();
 
+    void SetBool(const string& property,bool b);
     void SetVector3(const string& property,const vec3& vec);
     void SetVector4(const string& property,const vec4& vec);
     void SetFloat(const string& property,float _float);
@@ -55,6 +55,7 @@ namespace Kedama
 
     void SetTexture(const string& property,ITexture2D*);//设置材质
 
+    bool GetBool(const string& property);
     vec3 GetVector3(const string& property);
     vec4 GetVector4(const string& property);
     float GetFloat(const string& property);
@@ -104,7 +105,7 @@ namespace Kedama
 
     enum class Type:uint8_t
     {
-      TEXTURE,VECTOR3,VECTOR4,FLOAT,INT,MATRIX/*float array*/
+      TEXTURE,VECTOR3,VECTOR4,FLOAT,INT,MATRIX,BOOL/*float array*/
     };
 
     union _Internal

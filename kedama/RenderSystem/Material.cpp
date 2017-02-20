@@ -68,6 +68,12 @@ namespace Kedama {
     delete m_native;
   }
 
+  void Material::SetBool(const string &property, bool b)
+  {
+    int _b=b;
+    SETPROPERTY(BOOL,property,_b);
+  }
+
   void Material::SetVector3(const string& property,const vec3& vec)
   {
     SETPROPERTYARRAY(VECTOR3,property,vec,3);

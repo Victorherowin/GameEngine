@@ -1,7 +1,7 @@
 #ifndef GLSHADER
 #define GLSHADER
 
-#include "../Shader.hpp"
+#include "../Interface/IShader.hpp"
 
 #include "../../Include.hpp"
 
@@ -13,14 +13,15 @@ namespace Kedama
   namespace GL
   {
     using namespace std;
-    //TODO:UBO的管理
-    class GLShader:public Shader
+    class GLShader:public IShader
     {
     public:
-      GLShader(ShaderType type);
+      GLShader();
       ~GLShader();
 
-      void SetSource(const string& src)override;
+      void SetVertexShaderSource(const string& src)override;
+      void SetFragmentShaderSource(const string& src)override;
+      void Compile()override;
       //TODO 与Shader通信
       /*   void SetUniform(int loc,mat2& mat)override;
     void SetUniform(int loc,mat3& mat)override;
@@ -49,14 +50,15 @@ namespace Kedama
     void SetUniform(int loc,vector<float>& n)override;*/
 
       inline GLuint GetShader(){return m_shader;}
-      inline GLenum GetGLTypeBit()
-      {
-        static GLenum table[]={GL_VERTEX_SHADER_BIT,GL_FRAGMENT_SHADER_BIT};
-        return table[(int)m_type];
-      }
 
     private:
+      GLuint m_vs;
+      GLuint m_fs;
       GLuint m_shader;
+
+      static int count;
+      static GLuint FsShaderLibrary;
+      static GLuint VsShaderLibrary;
     };
   }
 }
