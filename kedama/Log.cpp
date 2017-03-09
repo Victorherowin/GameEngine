@@ -1,7 +1,10 @@
 #include "Log.hpp"
 
+#include "Include.hpp"
+
 #include <cstdio>
 #include <cstdarg>
+#include <ctime>
 
 namespace Kedama
 {
@@ -30,34 +33,50 @@ namespace Kedama
 
   void Log::Print(const LogInfo& info,string str)
   {
+    char buf[128];
+    time_t timer;
+    time(&timer);
+    struct tm* t = localtime(&timer);
+
+    strftime(buf,128,"[%H:%M:%S]",t);
+    (*m_outstream)<<"[thread:"<<std::this_thread::get_id()<<"]"<<std::flush;
+    (*m_outstream)<<buf<<std::flush;
+
     if(m_hook_func)
-      {
-        if(m_hook_func(info,str))
-          {
-            (*m_outstream)<<str<<std::flush;
-          }
-      }
-    else
+    {
+      if(m_hook_func(info,str))
       {
         (*m_outstream)<<str<<std::flush;
       }
-    m_outstream->flush();
+    }
+    else
+    {
+      (*m_outstream)<<str<<std::flush;
+    }
   }
 
   void Log::EPrint(const LogInfo& info,string str)
   {
+    char buf[128];
+    time_t timer;
+    time(&timer);
+    struct tm* t = localtime(&timer);
+
+    strftime(buf,128,"[%H:%M:%S]",t);
+    (*m_errorstream)<<"[thread:"<<std::this_thread::get_id()<<"]"<<std::flush;
+    (*m_errorstream)<<buf<<std::flush;
+
     if(m_hook_func)
-      {
-        if(m_hook_func(info,str))
-          {
-            (*m_errorstream)<<str<<std::flush;
-          }
-      }
-    else
+    {
+      if(m_hook_func(info,str))
       {
         (*m_errorstream)<<str<<std::flush;
       }
-    m_errorstream->flush();
+    }
+    else
+    {
+      (*m_errorstream)<<str<<std::flush;
+    }
   }
 
   int Log::printf(const LogInfo& info,const char* fmt,...)

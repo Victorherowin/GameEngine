@@ -2,6 +2,7 @@
 #define _H_GL_FORWARDRENDERER
 
 #include "../Interface/IForwardRenderer.hpp"
+#include "GLShader.hpp"
 #include "GLRenderSystemClass.hpp"
 
 namespace Kedama {
@@ -22,6 +23,7 @@ namespace Kedama {
 
     private:
       GLControl* m_control;
+      GLShader m_default_shader;
 
       GLuint m_plo;
       GLuint m_model_matrix_ubo;

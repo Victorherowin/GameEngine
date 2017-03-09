@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 project(Kedama_GLRenderSystem)
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/lib/glm)
-include_directories(${PROJECT_SOURCE_DIR}/src/GL/Shader)
+#external libs header
+include_directories("${PROJECT_ROOT_DIR}/lib/msvc/glew/include"
+					"${PROJECT_ROOT_DIR}/lib/msvc/SDL2/include")
+#external libs
+link_directories("${PROJECT_ROOT_DIR}/lib/msvc/glew//lib/Release/Win32"
+				 "${PROJECT_ROOT_DIR}/lib/msvc/SDL2/lib/x86")
 
+file(GLOB GLRENDERSYSTEM_SOURCES . "*.cpp" "*.hpp" "*.inl")
 
-aux_source_directory(. GLRENDERSYSTEM_SOURCE)
+add_library(Kedama_GLRenderSystem ${BUILD_TYPE} ${GLRENDERSYSTEM_SOURCES})
 
-add_library(Kedama_GLRenderSystem ${BUILD_TYPE} ${GLRENDERSYSTEM_SOURCE})
-
-message("${BUILD_TYPE}")
-
-target_link_libraries(Kedama_GLRenderSystem KedamaEngine SDL2 SDL2main SDL2_image opengl32 glew32)
+target_link_libraries(Kedama_GLRenderSystem KedamaEngine SDL2 SDL2main opengl32 glew32)

@@ -3,7 +3,8 @@
 
 #include "GLRenderSystemClass.hpp"
 #include "../Interface/IControl.hpp"
-#include "SDL2/SDL.h"
+#include <GL/glew.h>
+#include <SDL.h>
 
 namespace Kedama {
   namespace GL{

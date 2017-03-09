@@ -1,6 +1,7 @@
 #ifndef ITEXTURE2D
 #define ITEXTURE2D
 
+#include "../../Include.hpp"
 #include "../../Define.hpp"
 #include "../TextureEnum.hpp"
 
@@ -10,8 +11,7 @@ namespace Kedama
   {
   public:
     virtual void Create(TextureFormat foramt,int w,int h)=0;
-    virtual void CreateCompressFromPixels(TextureCompressFormat compress_format,TextureFormat format,int level,
-                                        void* pixels,int w,int h)
+    virtual void CreateCompressFromPixels(TextureCompressFormat compress_format,TextureFormat format,int level,void* pixels,int w,int h)
     {
       throw std::runtime_error("No Implement");
     }

@@ -1,33 +1,45 @@
-#ifndef LOCALFILESYSTEM
-#define LOCALFILESYSTEM
+#ifndef _H_LOCALFILESYSTEM
+#define _H_LOCALFILESYSTEM
 
-#include "../Include.hpp"
+#include "../Define.hpp"
 
-#include "IFileSystem.hpp"
+#include "Interface/IFileSystem.hpp"
+#include <map>
+#include <list>
 
-namespace Kedama {
-
-  class LocalFileSystem:public IFileSystem
-  {
-  public:
-
-    class LocalFile:public File
-    {
-    public:
-      explicit LocalFile(const string& path);
-      void Seek(SeekMode mode,int32_t offset)override;
-      void Read(void*data,int32_t size)override;
-      void Write(const void *data, int32_t size)override;
-      bool Eof()override;
-    private:
-      fstream m_file;
-    };
-
-  public:
-    File* Open(const string& path,OpenMode access)override;
-    void Close(File *file)override;
-  };
-
+namespace Kedama
+{
+	namespace File
+	{
+		class LocalFile;
+		struct Node;
+		
+		class KEDAMA_API LocalFileSystem:public IFileSystem
+		{
+			public:
+			LocalFileSystem(const string& path);
+			~LocalFileSystem();
+			
+            IFile* Open(const string& file,AccessFlag flag)override;
+			void Close(IFile* file)override;
+			bool Opening(IFile* fp)override;
+            const string& GetFileType()override;
+			
+			bool Exist(const string& path);
+			void Mount(const string& path,IFileSystem* filesystem);
+			
+			private:
+			
+			Node* Find(const string& path);
+			void ScanDirectory(Node* node,const string& path);
+			
+			private:
+			string m_path;
+			list<IFileSystem*> m_fs_list;
+			map<string,list<LocalFile*>> m_opening_files;
+			Node* m_root;
+		};
+	}
 }
 
 #endif

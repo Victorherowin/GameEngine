@@ -43,10 +43,10 @@ namespace Kedama {
 
   void CommandBuffer::Merge()
   {
-    map<pair<Mesh*,Material*>,MergedRenderCommand> merge_map;
+    map<tuple<Mesh*,Material*,int,int>,MergedRenderCommand> merge_map;
     for(RenderCommand& rc:m_commands)
     {
-      pair<Mesh*,Material*> tmp(rc.mesh,rc.material);
+      tuple<Mesh*,Material*,int,int> tmp(rc.mesh,rc.material,rc.offset,rc.count);
       auto it=merge_map.find(tmp);
 
       if(it==merge_map.end())
@@ -54,6 +54,8 @@ namespace Kedama {
         MergedRenderCommand mrc;
         mrc.material=rc.material;
         mrc.mesh=rc.mesh;
+        mrc.offset=rc.offset;
+        mrc.count=rc.count;
         mrc.transforms.push_back(rc.transform);
         merge_map[tmp]=mrc;
       }
@@ -65,19 +67,23 @@ namespace Kedama {
 
     m_commands.clear();
 
-    for(auto& p:merge_map)
+    for(auto it=merge_map.begin();it!=merge_map.end();)
     {
-      if(p.second.transforms.size()==1)
+      if(it->second.transforms.size()==1)
       {
         RenderCommand rc;
-        rc.transform=p.second.transforms[0];
-        rc.mesh=p.second.mesh;
-        rc.material=p.second.material;
+        rc.transform=it->second.transforms[0];
+        rc.mesh=it->second.mesh;
+        rc.material=it->second.material;
+        rc.offset=it->second.offset;
+        rc.count=it->second.count;
         m_commands.push_back(rc);
+        it=merge_map.erase(it);
       }
       else
       {
-        m_merged_commands.push_back(p.second);
+        m_merged_commands.push_back(it->second);
+        ++it;
       }
     }
   }

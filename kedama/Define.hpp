@@ -12,7 +12,7 @@
 #define _DEFINE_H
 
 #if defined(_WIN32) && defined(_MSC_VER)
-    #ifndef KEDAMA_BUILD
+    #ifdef KEDAMA_EXPORTS
         #define KEDAMA_API __declspec(dllexport)
     #else
         #define KEDAMA_API __declspec(dllimport)

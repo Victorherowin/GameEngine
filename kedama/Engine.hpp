@@ -14,7 +14,7 @@
 namespace Kedama
 {
   using std::string;
-  class Engine:public Singleton<Engine>
+  class KEDAMA_API Engine:public Singleton<Engine>
   {
   public:
     Engine(const string& render_system_name);

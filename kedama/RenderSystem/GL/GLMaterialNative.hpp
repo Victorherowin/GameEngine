@@ -3,6 +3,7 @@
 
 #include "../../Include.hpp"
 #include "../Material.hpp"
+#include "GL/glew.h"
 
 namespace Kedama {
   namespace GL
@@ -21,7 +22,8 @@ namespace Kedama {
       {return m_textures;}
 
     protected:
-      GLuint m_ubo;
+      GLuint m_ubo=0;
+      int m_last_size=0;
 
       vector<pair<string,ITexture2D*>> m_textures;
     };

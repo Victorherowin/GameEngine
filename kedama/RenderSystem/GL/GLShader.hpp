@@ -8,6 +8,13 @@
 #include <string>
 #include <GL/glew.h>
 
+#define MODEL_BINDING 0
+#define CAMERA_BINDING 1
+#define POINT_LIGHTS_BINDING 2
+#define SPOT_LIGHTS_BINDING 3
+#define DIRECTION_LIGHTS_BINDING 4
+#define MATERIAL_BINDING 5
+
 namespace Kedama
 {
   namespace GL
@@ -52,9 +59,9 @@ namespace Kedama
       inline GLuint GetShader(){return m_shader;}
 
     private:
-      GLuint m_vs;
-      GLuint m_fs;
-      GLuint m_shader;
+      GLuint m_vs=0;
+      GLuint m_fs=0;
+      GLuint m_shader=0;
 
       static int count;
       static GLuint FsShaderLibrary;

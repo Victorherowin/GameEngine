@@ -23,7 +23,7 @@ namespace Kedama
   using namespace std;
   class IRendererFactory;
 
-  class RenderSystem
+  class KEDAMA_API RenderSystem
   {
   public:
     RenderSystem(IRendererFactory* factory);

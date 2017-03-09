@@ -155,6 +155,38 @@ namespace Kedama
 
       glDeleteShader(m_fs);
       glDeleteShader(m_vs);
+
+      GLuint model_ubo_index=glGetUniformBlockIndex(m_shader,"Model");
+      GLuint camera_ubo_index=glGetUniformBlockIndex(m_shader,"Camera");
+      GLuint material_ubo_index=glGetUniformBlockIndex(m_shader,"Material");
+      GLuint point_lights_ubo_index=glGetUniformBlockIndex(m_shader,"PointLights");
+      GLuint spot_lights_ubo_index=glGetUniformBlockIndex(m_shader,"SpotLights");
+      GLuint directional_lights_ubo_index=glGetUniformBlockIndex(m_shader,"DirectionalLights");
+
+      if(model_ubo_index!=GL_INVALID_INDEX)
+      {
+        glUniformBlockBinding(m_shader,model_ubo_index,MODEL_BINDING);
+      }
+      if(camera_ubo_index!=GL_INVALID_INDEX)
+      {
+        glUniformBlockBinding(m_shader,camera_ubo_index,CAMERA_BINDING);
+      }
+      if(point_lights_ubo_index!=GL_INVALID_INDEX)
+      {
+        glUniformBlockBinding(m_shader,point_lights_ubo_index,POINT_LIGHTS_BINDING);
+      }
+      if(spot_lights_ubo_index!=GL_INVALID_INDEX)
+      {
+        glUniformBlockBinding(m_shader,spot_lights_ubo_index,SPOT_LIGHTS_BINDING);
+      }
+      if(spot_lights_ubo_index!=GL_INVALID_INDEX)
+      {
+        glUniformBlockBinding(m_shader,directional_lights_ubo_index,DIRECTION_LIGHTS_BINDING);
+      }
+      if(spot_lights_ubo_index!=GL_INVALID_INDEX)
+      {
+        glUniformBlockBinding(m_shader,material_ubo_index,MATERIAL_BINDING);
+      }
     }
   }
 }

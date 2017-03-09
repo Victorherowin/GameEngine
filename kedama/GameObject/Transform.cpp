@@ -3,34 +3,34 @@
 
 namespace Kedama {
 
-  Transform::Transform(GameObject* obj):m_object(obj),m_scale(glm::vec3(1.0f,1.0f,1.0f))
+  Transform::Transform(GameObject* obj):m_object(obj),m_scale(vec3(1.0f,1.0f,1.0f))
   {
   }
 
-  void Transform::SetRelativeMatrix(const glm::mat4 &mat)
+  void Transform::SetRelativeMatrix(const mat4 &mat)
   {
     m_relative_matrix=mat;
     m_need_update=true;
   }
 
-  void Transform::SetWorldMatrix(const glm::mat4 &mat)
+  void Transform::SetWorldMatrix(const mat4 &mat)
   {
     m_world_matrix=mat;
     m_need_update=true;
   }
 
-  void Transform::SetRelativePosition(const glm::vec3& position)
+  void Transform::SetRelativePosition(const vec3& position)
   {
     m_position=position;
     m_need_update=true;
   }
 
-  void Transform::SetWorldPosition(const glm::vec3& position)
+  void Transform::SetWorldPosition(const vec3& position)
   {
     if(m_object->GetParent()!=nullptr)
     {
       const Transform* parent=m_object->GetParent()->GetTansform();
-      m_position=glm::vec3(glm::inverse(parent->m_world_matrix)*glm::vec4(position,1.0f));
+      m_position=vec3(inverse(parent->m_world_matrix)*vec4(position,1.0f));
       m_need_update=true;
     }
     else
@@ -38,78 +38,78 @@ namespace Kedama {
 
   }
 
-  void Transform::SetRelativeAngle(const glm::quat& angle)
+  void Transform::SetRelativeAngle(const quat& angle)
   {
-    m_angle=glm::mat3_cast(angle);
+    m_angle=mat3_cast(angle);
     m_need_update=true;
   }
 
-  void Transform::SetRelativeAngle(const glm::mat3& angle)
+  void Transform::SetRelativeAngle(const mat3& angle)
   {
-    m_angle=angle;
-    m_need_update=true;
+	  m_angle=angle;
+	  m_need_update=true;
   }
 
-  void Transform::SetWorldAngle(const glm::mat3& angle)
+  void Transform::SetWorldAngle(const mat3& angle)
   {
     const Transform* parent=m_object->GetParent()->GetTansform();
-    m_angle=glm::transpose(glm::mat3(parent->m_world_matrix)*angle);
+    m_angle=transpose(mat3(parent->m_world_matrix)*angle);
     m_need_update=true;
   }
 
-  void Transform::SetWorldAngle(const glm::quat& angle)
+  void Transform::SetWorldAngle(const quat& angle)
   {
-    SetWorldAngle(glm::mat3_cast(angle));
+    SetWorldAngle(mat3_cast(angle));
   }
 
-  void Transform::SetScale(const glm::vec3 &scale)
+  void Transform::SetScale(const vec3 &scale)
   {
     m_scale=scale;//缩放不对子节点生效
   }
 
-  void Transform::Move(const glm::vec3& distance)
+  void Transform::Move(const vec3& distance)
   {
     m_position+=distance;
     m_need_update=true;
   }
 
-  void Transform::Rotate(const glm::mat3& angle)
+  void Transform::Rotate(const mat3& angle)
   {
     m_angle=angle*m_angle;
     m_need_update=true;
   }
 
-  void Transform::Rotate(const glm::vec3 &axis, float rad)
+  void Transform::Rotate(const vec3 &axis, float rad)
   {
-    Rotate(glm::mat3(glm::rotate(rad,axis)));
+    Rotate(mat3(rotate(rad,axis)));
   }
 
-  void Transform::Rotate(const glm::quat& angle)
+  void Transform::Rotate(const quat& angle)
   {
-    Rotate(glm::mat3_cast(angle));
+    Rotate(mat3_cast(angle));
   }
 
-  glm::vec3 Transform::GetWorldPosition()
-  {
-    if(m_need_update)
-    {
-      UpdateSelf();
-      SetChildrenNeedUpdateFlag();
-    }
-    return glm::vec3(m_world_matrix[3]);
-  }
-
-  glm::quat Transform::GetWorldAngle()
+  vec3 Transform::GetWorldPosition()
   {
     if(m_need_update)
     {
       UpdateSelf();
       SetChildrenNeedUpdateFlag();
     }
-    return glm::quat_cast(glm::mat3(m_world_matrix));
+    return vec3(m_world_matrix[3]);
   }
 
-  const glm::mat4& Transform::GetWorldMatrix()
+  quat Transform::GetWorldAngle()
+  {
+    if(m_need_update)
+    {
+      UpdateSelf();
+      SetChildrenNeedUpdateFlag();
+    }
+    return quat_cast(mat3(m_world_matrix));
+  }
+
+  const mat4& Transform::GetWorldMatrix()
   {
     if(m_need_update)
     {
@@ -119,14 +119,14 @@ namespace Kedama {
     return m_world_matrix;
   }
 
-  const glm::mat4& Transform::GetModelMatrix()
+  const mat4& Transform::GetModelMatrix()
   {
     if(m_need_update)
     {
       UpdateSelf();
       SetChildrenNeedUpdateFlag();
     }
-    m_model_matirx=glm::scale(m_world_matrix,m_scale);
+    m_model_matirx=scale(m_world_matrix,m_scale);
     return m_model_matirx;
   }
 
@@ -159,8 +159,8 @@ namespace Kedama {
     if(m_need_update)
     {
       //更新自己
-      m_relative_matrix=glm::mat4(m_angle);
-      m_relative_matrix[3]=glm::vec4(m_position,1.0f);
+      m_relative_matrix=mat4(m_angle);
+      m_relative_matrix[3]=vec4(m_position,1.0f);
 
       if(m_object->GetParent()!=nullptr)
         m_world_matrix=m_object->GetParent()->GetTansform()->m_world_matrix*m_relative_matrix;

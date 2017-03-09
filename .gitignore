@@ -28,9 +28,10 @@
 
 # C4Droid
 .c4droid
+.vs
 
 *.user
 build
-
+CMakeSettings.json
 
 *.app

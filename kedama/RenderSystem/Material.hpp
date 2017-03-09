@@ -11,6 +11,7 @@
 
 #include "Interface/ITexture2D.hpp"
 #include "../Include.hpp"
+#include "../GLMInclude.hpp"
 #include "../Define.hpp"
 #include "Interface/IShader.hpp"
 
@@ -67,7 +68,7 @@ namespace Kedama
 
     vector<float> GetFloatArray(const string &property);
     vector<int> GetIntArray(const string& property);
-    ITexture2D* GetTextures(const string& property);
+    ITexture2D* GetTexture(const string& property);
     vector<mat4> GetMatrixArray(const string& property);
 
     void Update();
@@ -119,6 +120,27 @@ namespace Kedama
     bool is_array=false;
     ITexture2D* _texture=nullptr;
     vector<_Internal> data;
+  };
+
+  class DefaultMaterial:public Material
+  {
+  public:
+    DefaultMaterial();
+    inline void SetColor(const vec4& color){SetVector4("color",color);}
+    inline void SetAmbient(const vec3& ambient,float strength=0.1f){SetVector4("ambient",vec4(ambient,strength));}
+    inline void SetDiffuse(const vec3& diffuse){SetVector3("diffuse",diffuse);}
+    inline void SetSpecular(const vec3& specular,float strength=0.5f){SetVector4("specular",vec4(specular,strength));}
+    inline void SetShininess(float shininess){SetFloat("shininess",shininess);}
+    inline void SetTexture(ITexture2D* tex){Material::SetTexture("texture0",tex);}
+
+    inline vec4 GetColor(){return GetVector4("color");}
+    inline vec4 GetAmbient(){return GetVector4("ambient");}
+    inline vec3 GetDiffuse(){return GetVector3("diffuse");}
+    inline vec4 GetSpecular(){return GetVector4("specular");}
+    inline float GetShininess(){return GetFloat("shininess");}
+    inline ITexture2D* GetTexture(){return Material::GetTexture("texture0");}
+
+    inline void Update(){Material::Update();}
   };
 }
 

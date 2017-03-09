@@ -43,6 +43,7 @@
   v.property_name=property;\
   v.type=Value::Type::_type;\
   Value::_Internal* p=(Value::_Internal*)&val[0];\
+  v.data.clear();\
   v.data.insert(v.data.begin(),p,p+size);\
   auto it=m_property_value.find(property);\
   if(it==m_property_value.end())\
@@ -218,7 +219,7 @@ namespace Kedama {
     return v;
   }
 
-  ITexture2D* Material::GetTextures(const string& property)
+  ITexture2D* Material::GetTexture(const string& property)
   {
     auto it=m_property_value.find(property);
     if(it==m_property_value.end())
@@ -249,4 +250,17 @@ namespace Kedama {
     m_native->Upload(m_property_list);
   }
 
+}
+
+namespace Kedama {
+  DefaultMaterial::DefaultMaterial()
+  {
+    SetBool("use_texture",false);
+    SetVector4("color",vec4(0.1f,0.2f,0.3f,1.0f));
+    SetVector4("ambient",vec4(0.1f,0.2f,0.3f,0.1f));
+    SetVector3("diffuse",vec3(0.4f,0.5f,0.6f));
+    SetVector4("specular",vec4(0.7f,0.8f,0.9f,0.5f));
+    SetFloat("shininess",0.8);
+    Update();
+  }
 }

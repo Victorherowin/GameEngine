@@ -2,6 +2,7 @@
 #define SHADER
 
 #include "../../Include.hpp"
+#include "../../GLMInclude.hpp"
 #include "../../Define.hpp"
 
 namespace Kedama

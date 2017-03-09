@@ -4,6 +4,7 @@
 #include "GLMaterialNative.hpp"
 #include "GLShader.hpp"
 #include "GLControl.hpp"
+#include "Shader/ForwardRenderDefaultShader.hpp"
 
 #define MODEL_MATRIX_INDEX 4
 
@@ -14,6 +15,10 @@ namespace Kedama {
       glCreateBuffers(1,&m_model_matrix_ubo);
       glNamedBufferStorage(m_model_matrix_ubo,sizeof(mat4)*1000,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
       m_model_matrix_ubo_data=(mat4*)glMapNamedBufferRange(m_model_matrix_ubo,0,sizeof(mat4)*1000,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+
+      m_default_shader.SetVertexShaderSource(default_vs_shader);
+      m_default_shader.SetFragmentShaderSource(default_fs_shader);
+      m_default_shader.Compile();
     }
 
     GLForwardRenderer::~GLForwardRenderer()
@@ -35,7 +40,12 @@ namespace Kedama {
       const GLMeshNative* nmesh = static_cast<const GLMeshNative*>(mrc.mesh->GetNativePtr());
       const GLMaterialNative* nmaterial=static_cast<const GLMaterialNative*>(mrc.material->GetNativePtr());
       const Pass* pass = mrc.material->GetCurrentPass();
-      GLShader* program=static_cast<GLShader*>(pass->shader);
+      GLShader* program=&m_default_shader;;
+      if(pass!=nullptr&&pass->shader!=nullptr)
+      {
+        program=static_cast<GLShader*>(pass->shader);
+      }
+
 
       mat4* i=m_model_matrix_ubo_data;
       for(Transform* t:mrc.transforms)
@@ -43,6 +53,13 @@ namespace Kedama {
         memcpy(i,glm::value_ptr(t->GetModelMatrix()),sizeof(mat4));
         ++i;
       }
+
+      glBindBufferBase(GL_UNIFORM_BUFFER,MODEL_BINDING,m_model_matrix_ubo);
+      glBindBufferBase(GL_UNIFORM_BUFFER,CAMERA_BINDING,m_control->GetCameraUBO());
+      glBindBufferBase(GL_UNIFORM_BUFFER,POINT_LIGHTS_BINDING,m_control->GetPointLightsUBO());
+      glBindBufferBase(GL_UNIFORM_BUFFER,SPOT_LIGHTS_BINDING,m_control->GetSpotLightsUBO());
+      glBindBufferBase(GL_UNIFORM_BUFFER,DIRECTION_LIGHTS_BINDING,m_control->GetDirectionalLightsUBO());
+      glBindBufferBase(GL_UNIFORM_BUFFER,MATERIAL_BINDING,nmaterial->GetUBO());
 
       GLint bindindex=0;
       for(auto& tex:nmaterial->GetTextures())
@@ -56,53 +73,14 @@ namespace Kedama {
         }
       }
 
-      GLuint model_ubo_index=glGetUniformBlockIndex(program->GetShader(),"Model");
-      GLuint camera_ubo_index=glGetUniformBlockIndex(program->GetShader(),"Camera");
-      GLuint material_ubo_index=glGetUniformBlockIndex(program->GetShader(),"Material");
-      GLuint point_lights_ubo_index=glGetUniformBlockIndex(program->GetShader(),"PointLights");
-      GLuint spot_lights_ubo_index=glGetUniformBlockIndex(program->GetShader(),"SpotLights");
-      GLuint directional_lights_ubo_index=glGetUniformBlockIndex(program->GetShader(),"DirectionalLights");
-      if(model_ubo_index!=GL_INVALID_INDEX)
-      {
-        glUniformBlockBinding(program->GetShader(),model_ubo_index,0);
-        glBindBufferBase(GL_UNIFORM_BUFFER,0,m_model_matrix_ubo);
-      }
-      if(camera_ubo_index!=GL_INVALID_INDEX)
-      {
-        glUniformBlockBinding(program->GetShader(),camera_ubo_index,1);
-        glBindBufferBase(GL_UNIFORM_BUFFER,1,m_control->GetCameraUBO());
-      }
-      if(point_lights_ubo_index!=GL_INVALID_INDEX)
-      {
-        glUniformBlockBinding(program->GetShader(),point_lights_ubo_index,2);
-        glBindBufferBase(GL_UNIFORM_BUFFER,2,m_control->GetPointLightsUBO());
-      }
-      if(spot_lights_ubo_index!=GL_INVALID_INDEX)
-      {
-        glUniformBlockBinding(program->GetShader(),spot_lights_ubo_index,3);
-        glBindBufferBase(GL_UNIFORM_BUFFER,3,m_control->GetSpotLightsUBO());
-      }
-      if(spot_lights_ubo_index!=GL_INVALID_INDEX)
-      {
-        glUniformBlockBinding(program->GetShader(),directional_lights_ubo_index,4);
-        glBindBufferBase(GL_UNIFORM_BUFFER,4,m_control->GetDirectionalLightsUBO());
-      }
-      if(spot_lights_ubo_index!=GL_INVALID_INDEX)
-      {
-        glUniformBlockBinding(program->GetShader(),material_ubo_index,5);
-        glBindBufferBase(GL_UNIFORM_BUFFER,5,nmaterial->GetUBO());
-      }
-
       glUseProgram(program->GetShader());
 
       glBindVertexArray(nmesh->vao);
-      if(pass->draw_mode==DrawMode::LINES)
-        glDrawElementsInstanced(GL_LINES,mrc.mesh->GetIndices().size(),GL_UNSIGNED_INT,nullptr,mrc.transforms.size());
-      else if(pass->draw_mode==DrawMode::NORMAL)
-        glDrawElementsInstanced(GL_TRIANGLES,mrc.mesh->GetIndices().size(),GL_UNSIGNED_INT,nullptr,mrc.transforms.size());
-      glBindVertexArray(0);
-      //glUseProgram(0);
-
+      GLsizei count=mrc.count==-1?mrc.mesh->GetIndices().size():mrc.count;
+      if(pass&&pass->draw_mode==DrawMode::LINES)
+        glDrawElementsInstanced(GL_LINES,count,GL_UNSIGNED_INT,(void*)mrc.offset,mrc.transforms.size());
+      else
+        glDrawElementsInstanced(GL_TRIANGLES,count,GL_UNSIGNED_INT,(void*)mrc.offset,mrc.transforms.size());
     }
 
     //TODO:渲染阴影到阴影贴图

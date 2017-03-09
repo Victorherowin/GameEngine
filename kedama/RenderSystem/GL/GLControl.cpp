@@ -86,12 +86,12 @@ namespace Kedama {
       glCreateBuffers(1,&m_directional_lights_ubo);
       glCreateBuffers(1,&m_point_lights_ubo);
       glCreateBuffers(1,&m_spot_lights_ubo);
-      glNamedBufferStorage(m_point_lights_ubo,516,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      glNamedBufferStorage(m_directional_lights_ubo,132,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      glNamedBufferStorage(m_spot_lights_ubo,772,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_point_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_point_lights_ubo,0,516,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_directional_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_directional_lights_ubo,0,132,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_spot_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_spot_lights_ubo,0,772,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_point_lights_ubo,528,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_directional_lights_ubo,144,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      glNamedBufferStorage(m_spot_lights_ubo,790,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_point_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_point_lights_ubo,0,528,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_directional_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_directional_lights_ubo,0,144,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
+      m_spot_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_spot_lights_ubo,0,790,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
 
       //Creame UBO
       glCreateBuffers(1,&m_camera_ubo);
@@ -100,8 +100,7 @@ namespace Kedama {
 
       }
 
-    /// \brief
-    /// std430
+    /// std130
     /// layout(std140,binding=3)uniform DirectionalLights
     /// {
     ///   int num;//0
@@ -148,20 +147,19 @@ namespace Kedama {
       memcpy(m_point_lights_ubo_data,&num[(int)LightType::PointLight],sizeof(GLint));
       memcpy(m_spot_lights_ubo_data,&num[(int)LightType::SpotLight],sizeof(GLint));
 
-      memcpy(m_directional_lights_ubo_data+4,position[(int)LightType::DirectionalLight].data(),position[(int)LightType::DirectionalLight].size()*sizeof(vec3));
-      memcpy(m_point_lights_ubo_data+4,position[(int)LightType::PointLight].data(),position[(int)LightType::PointLight].size()*sizeof(vec3));
-      memcpy(m_spot_lights_ubo_data+4,position[(int)LightType::SpotLight].data(),position[(int)LightType::SpotLight].size()*sizeof(vec3));
+      memcpy(m_directional_lights_ubo_data+16,position[(int)LightType::DirectionalLight].data(),position[(int)LightType::DirectionalLight].size()*sizeof(vec3));
+      memcpy(m_point_lights_ubo_data+16,position[(int)LightType::PointLight].data(),position[(int)LightType::PointLight].size()*sizeof(vec3));
+      memcpy(m_spot_lights_ubo_data+16,position[(int)LightType::SpotLight].data(),position[(int)LightType::SpotLight].size()*sizeof(vec3));
 
-      memcpy(m_directional_lights_ubo_data+68,color[(int)LightType::DirectionalLight].data(),color[(int)LightType::DirectionalLight].size()*sizeof(vec4));
-      memcpy(m_point_lights_ubo_data+260,color[(int)LightType::PointLight].data(),color[(int)LightType::PointLight].size()*sizeof(vec4));
-      memcpy(m_spot_lights_ubo_data+260,color[(int)LightType::SpotLight].data(),color[(int)LightType::SpotLight].size()*sizeof(vec4));
+      memcpy(m_directional_lights_ubo_data+80,color[(int)LightType::DirectionalLight].data(),color[(int)LightType::DirectionalLight].size()*sizeof(vec4));
+      memcpy(m_point_lights_ubo_data+272,color[(int)LightType::PointLight].data(),color[(int)LightType::PointLight].size()*sizeof(vec4));
+      memcpy(m_spot_lights_ubo_data+272,color[(int)LightType::SpotLight].data(),color[(int)LightType::SpotLight].size()*sizeof(vec4));
 
-      vec4* tmp=(vec4*)(m_spot_lights_ubo_data+516);
+      vec4* tmp=(vec4*)(m_spot_lights_ubo_data+528);
       for(auto f:radius)
         tmp++->x=f;
     }
 
-    /// \brief
     /// std140
     /// layout(std140,binding=1)uniform Camera
     /// {

@@ -7,7 +7,7 @@
 
 namespace Kedama{
 
-  class Camera:public GameObject
+  class KEDAMA_API Camera:public GameObject
   {
   private:
     enum class LookType

@@ -9,7 +9,7 @@
 namespace Kedama
 {
   using namespace std;
-  class AssetManager
+  class KEDAMA_API AssetManager
   {
   public:
     void AddMesh(const string& name,Mesh* mesh);

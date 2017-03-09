@@ -1,7 +1,9 @@
 #ifndef _H_MESH
 #define _H_MESH
 
+#include "../Define.hpp"
 #include "../Include.hpp"
+#include "../GLMInclude.hpp"
 #include "Material.hpp"
 
 namespace Kedama

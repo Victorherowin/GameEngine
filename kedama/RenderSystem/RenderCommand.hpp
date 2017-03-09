@@ -18,6 +18,8 @@ namespace Kedama {
     Transform* transform;
     Material* material;
     Mesh* mesh;
+    int offset=0;
+    int count=-1;
   };
 
   struct MergedRenderCommand
@@ -25,6 +27,8 @@ namespace Kedama {
     vector<Transform*> transforms;
     Material* material;
     Mesh* mesh;
+    int offset=0;
+    int count=-1;
   };
 
   struct PostProcessCommand

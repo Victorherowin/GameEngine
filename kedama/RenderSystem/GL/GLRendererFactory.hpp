@@ -2,12 +2,13 @@
 #define GLRENDERERFACTORY
 
 #include "../Interface/IRendererFactory.hpp"
+#include "../../Define.hpp"
 
 namespace Kedama
 {
   namespace GL
   {
-    class GLRenderSystemFactory:public IRendererFactory
+    class KEDAMA_API GLRenderSystemFactory:public IRendererFactory
     {
     public:
       ITexture2D* CreateTexture2D()override;

@@ -1,6 +1,7 @@
 #ifndef FILEMANAGER
 #define FILEMANAGER
 
+#include "../Define.hpp"
 #include "../utility/Singleton.hpp"
 
 #include "../Include.hpp"
@@ -8,7 +9,7 @@
 
 namespace Kedama
 {
-    class FileManager:public Singleton<FileManager>
+    class KEDAMA_API FileManager:public Singleton<FileManager>
     {
     public:
         void Mount(const string& mount_point32_t,IFileSystem* ifs);

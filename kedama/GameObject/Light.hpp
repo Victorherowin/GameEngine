@@ -10,7 +10,7 @@ namespace Kedama {
     DirectionalLight=0,PointLight=1,SpotLight=2
   };
 
-  class Light:public GameObject
+  class KEDAMA_API Light:public GameObject
   {
   protected:
     Light(const string& name,LightType type);

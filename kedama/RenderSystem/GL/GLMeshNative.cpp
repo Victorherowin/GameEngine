@@ -16,8 +16,6 @@ namespace Kedama {
   namespace GL {
     GLMeshNative::GLMeshNative()
     {
-      glCreateBuffers(1,&vbo);
-      glCreateBuffers(1,&ibo);
       glCreateVertexArrays(1,&vao);
     }
 
@@ -46,9 +44,20 @@ namespace Kedama {
       size_t total_size=vert_size+uvs_size+normals_size;
       size_t indices_size=GetByteCount(mesh.GetIndices());
 
-
-      glNamedBufferStorage(vbo,total_size,nullptr,GL_MAP_WRITE_BIT);
-      glNamedBufferStorage(ibo,indices_size,nullptr,GL_MAP_WRITE_BIT);
+      if(m_lase_vertex_size!=total_size)
+      {
+        if(vbo!=0)
+          glDeleteBuffers(1,&vbo);
+        glCreateBuffers(1,&vbo);
+        glNamedBufferStorage(vbo,total_size,nullptr,GL_MAP_WRITE_BIT);
+      }
+      if(m_lase_indices_size!=indices_size)
+      {
+        if(ibo!=0)
+          glDeleteBuffers(1,&ibo);
+        glCreateBuffers(1,&ibo);
+        glNamedBufferStorage(ibo,indices_size,nullptr,GL_MAP_WRITE_BIT);
+      }
       vec3* mvbo=(vec3*)glMapNamedBufferRange(vbo,0,total_size,GL_MAP_WRITE_BIT);
       vec3* mibo=(vec3*)glMapNamedBufferRange(ibo,0,indices_size,GL_MAP_WRITE_BIT);
 

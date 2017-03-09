@@ -2,7 +2,7 @@
 #define SDLWINDOW
 
 #include <string>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "GLRenderSystemClass.hpp"
 #include "../Interface/IWindow.hpp"

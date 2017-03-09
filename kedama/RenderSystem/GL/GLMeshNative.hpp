@@ -3,6 +3,7 @@
 
 #include "../../Include.hpp"
 #include "../Mesh.hpp"
+#include <GL/glew.h>
 
 namespace Kedama {
   namespace GL {
@@ -14,7 +15,10 @@ namespace Kedama {
       void Upload(const Mesh& mesh)override;
 
       GLuint vao;
-      GLuint vbo,ibo;
+      GLuint vbo=0,ibo=0;
+
+    private:
+      int m_lase_vertex_size=0,m_lase_indices_size=0;
     };
   }
 }
