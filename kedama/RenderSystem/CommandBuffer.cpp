@@ -22,7 +22,7 @@ namespace Kedama {
     m_alpha_forward_commands.push_back(rc);
   }
 
-  void CommandBuffer::AddPostProcessCommand(Material *material)
+  void CommandBuffer::AddPostProcessCommand(PostProcessMaterial *material)
   {
     PostProcessCommand ppc;
     ppc.material=material;
@@ -35,18 +35,18 @@ namespace Kedama {
     std::sort(m_alpha_forward_commands.begin(),m_alpha_forward_commands.end(),[camera]
     (const RenderCommand& a,const RenderCommand& b)
     {
-      float a_len=glm::length(a.transform->GetWorldPosition()-camera->GetTansform()->GetWorldPosition());
-      float b_len=glm::length(b.transform->GetWorldPosition()-camera->GetTansform()->GetWorldPosition());
+      float a_len=glm::length(a.transform->GetWorldPosition()-camera->GetWorldPosition());
+      float b_len=glm::length(b.transform->GetWorldPosition()-camera->GetWorldPosition());
       return a_len>b_len;
     });
   }
 
   void CommandBuffer::Merge()
   {
-    map<tuple<Mesh*,Material*,int,int>,MergedRenderCommand> merge_map;
+    map<tuple<Mesh*,Material*>,MergedRenderCommand> merge_map;
     for(RenderCommand& rc:m_commands)
     {
-      tuple<Mesh*,Material*,int,int> tmp(rc.mesh,rc.material,rc.offset,rc.count);
+      tuple<Mesh*,Material*> tmp(rc.mesh,rc.material);
       auto it=merge_map.find(tmp);
 
       if(it==merge_map.end())
@@ -54,8 +54,6 @@ namespace Kedama {
         MergedRenderCommand mrc;
         mrc.material=rc.material;
         mrc.mesh=rc.mesh;
-        mrc.offset=rc.offset;
-        mrc.count=rc.count;
         mrc.transforms.push_back(rc.transform);
         merge_map[tmp]=mrc;
       }
@@ -75,8 +73,6 @@ namespace Kedama {
         rc.transform=it->second.transforms[0];
         rc.mesh=it->second.mesh;
         rc.material=it->second.material;
-        rc.offset=it->second.offset;
-        rc.count=it->second.count;
         m_commands.push_back(rc);
         it=merge_map.erase(it);
       }

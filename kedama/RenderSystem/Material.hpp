@@ -21,14 +21,19 @@ namespace Kedama
 
   enum class DrawMode
   {
-    LINES,NORMAL
+    LINES,TRIANGLES,POINT
   };
 
   struct KEDAMA_API Pass
   {
     //TODO:其他渲染设置
-    DrawMode draw_mode=DrawMode::NORMAL;
-    IShader* shader;
+    DrawMode draw_mode=DrawMode::TRIANGLES;
+    IShader* shader=nullptr;
+  };
+
+  enum class MaterialType
+  {
+    Normal,PostProcess
   };
 
   class KEDAMA_API Material
@@ -36,6 +41,8 @@ namespace Kedama
   public:
     class INative;
     struct Value;
+  protected:
+    Material(MaterialType type);
 
   public:
     Material();
@@ -71,6 +78,8 @@ namespace Kedama
     ITexture2D* GetTexture(const string& property);
     vector<mat4> GetMatrixArray(const string& property);
 
+    inline MaterialType GetType(){return m_type;}
+
     void Update();
 
     inline const INative* GetNativePtr()const
@@ -86,6 +95,10 @@ namespace Kedama
 
   protected:
 
+    MaterialType m_type;
+
+    static Pass default_pass;
+
     INative* m_native=nullptr;
     list<Pass> m_passes;
     Pass* m_current_pass=nullptr;
@@ -93,7 +106,7 @@ namespace Kedama
     map<string,Value*> m_property_value;
   };
 
-  class Material::INative
+  class KEDAMA_API Material::INative
   {
   public:
     virtual void Upload(const list<Value>&)=0;
@@ -120,6 +133,13 @@ namespace Kedama
     bool is_array=false;
     ITexture2D* _texture=nullptr;
     vector<_Internal> data;
+  };
+
+
+  class PostProcessMaterial:public Material
+  {
+  public:
+    PostProcessMaterial();
   };
 
   class DefaultMaterial:public Material

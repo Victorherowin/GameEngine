@@ -14,7 +14,7 @@ namespace Kedama
 		class LocalFile;
 		struct Node;
 		
-		class KEDAMA_API LocalFileSystem:public IFileSystem
+        class KEDAMA_API LocalFileSystem:public IFileSystem
 		{
 			public:
 			LocalFileSystem(const string& path);
@@ -26,7 +26,7 @@ namespace Kedama
             const string& GetFileType()override;
 			
 			bool Exist(const string& path);
-			void Mount(const string& path,IFileSystem* filesystem);
+            void Mount(const string& path,IFileSystem* filesystem);
 			
 			private:
 			
@@ -35,7 +35,7 @@ namespace Kedama
 			
 			private:
 			string m_path;
-			list<IFileSystem*> m_fs_list;
+            list<IFileSystem*> m_fs_list;
 			map<string,list<LocalFile*>> m_opening_files;
 			Node* m_root;
 		};

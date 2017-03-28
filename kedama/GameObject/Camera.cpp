@@ -28,15 +28,15 @@ namespace Kedama
   {
     if(m_type==LookType::Position)
     {
-      return glm::lookAt(GetTansform()->GetWorldPosition(),m_target_position,glm::vec3(0.0f,1.0f,0.0f));
+      return glm::lookAt(GetWorldPosition(),m_target_position,glm::vec3(0.0f,1.0f,0.0f));
     }
     else if(m_type==LookType::Target)
     {
-      return glm::lookAt(GetTansform()->GetWorldPosition(),m_look_target->GetTansform()->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
+      return glm::lookAt(GetWorldPosition(),m_look_target->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }
     else if(m_type==LookType::Direction)
     {
-      return glm::lookAt(GetTansform()->GetWorldPosition(),m_direction+GetTansform()->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
+      return glm::lookAt(GetWorldPosition(),m_direction+GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }
   }
 

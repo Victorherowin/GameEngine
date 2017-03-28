@@ -3,7 +3,7 @@
 
 namespace Kedama {
 
-  Transform::Transform(GameObject* obj):m_object(obj),m_scale(vec3(1.0f,1.0f,1.0f))
+  Transform::Transform():m_scale(vec3(1.0f,1.0f,1.0f))
   {
   }
 
@@ -27,10 +27,9 @@ namespace Kedama {
 
   void Transform::SetWorldPosition(const vec3& position)
   {
-    if(m_object->GetParent()!=nullptr)
+    if(m_parent!=nullptr)
     {
-      const Transform* parent=m_object->GetParent()->GetTansform();
-      m_position=vec3(inverse(parent->m_world_matrix)*vec4(position,1.0f));
+      m_position=vec3(inverse(m_parent->m_world_matrix)*vec4(position,1.0f));
       m_need_update=true;
     }
     else
@@ -46,14 +45,13 @@ namespace Kedama {
 
   void Transform::SetRelativeAngle(const mat3& angle)
   {
-	  m_angle=angle;
-	  m_need_update=true;
+    m_angle=angle;
+    m_need_update=true;
   }
 
   void Transform::SetWorldAngle(const mat3& angle)
   {
-    const Transform* parent=m_object->GetParent()->GetTansform();
-    m_angle=transpose(mat3(parent->m_world_matrix)*angle);
+    m_angle=transpose(mat3(m_parent->m_world_matrix)*angle);
     m_need_update=true;
   }
 
@@ -132,25 +130,25 @@ namespace Kedama {
 
   void Transform::SetChildrenNeedUpdateFlag()
   {
-    for(GameObject* node:m_object->GetChildren())
+    for(Transform* node:m_children)
     {
-      if(!node->GetTansform()->m_need_update)
+      if(!node->m_need_update)
       {
-        node->GetTansform()->m_need_update=true;
+        node->m_need_update=true;
       }
-      if(node->GetTansform()->m_need_update)
+      if(node->m_need_update)
       {
-        node->GetTansform()->SetChildrenNeedUpdateFlag();
+        node->SetChildrenNeedUpdateFlag();
       }
     }
   }
 
   void Transform::UpdateChildren()
   {
-    for(GameObject* node:m_object->GetChildren())
+    for(Transform* node:m_children)
     {
-      node->GetTansform()->UpdateSelf();
-      node->GetTansform()->UpdateChildren();
+      node->UpdateSelf();
+      node->UpdateChildren();
     }
   }
 
@@ -162,11 +160,15 @@ namespace Kedama {
       m_relative_matrix=mat4(m_angle);
       m_relative_matrix[3]=vec4(m_position,1.0f);
 
-      if(m_object->GetParent()!=nullptr)
-        m_world_matrix=m_object->GetParent()->GetTansform()->m_world_matrix*m_relative_matrix;
+      if(m_parent!=nullptr)
+        m_world_matrix=m_parent->m_world_matrix*m_relative_matrix;
       else
         m_world_matrix=m_relative_matrix;
       m_need_update=false;
+      for (auto& p : m_listeners)
+      {
+        p.second(*this);
+      }
     }
   }
 
@@ -175,6 +177,51 @@ namespace Kedama {
     UpdateSelf();
     SetChildrenNeedUpdateFlag();
     UpdateChildren();
+  }
+
+  void Transform::AddUpdateListener(const string& name, const UpdateListener& listener)
+  {
+    m_listeners[name] = listener;
+  }
+
+  void Transform::RemoveUpdateListener(const string& name)
+  {
+    auto it = m_listeners.find(name);
+    if (it == m_listeners.end())
+      throw runtime_error("No Found Listener!");
+    m_listeners.erase(it);
+  }
+
+  void Transform::AddChildren(Transform *c)
+  {
+    if(c==this)throw std::runtime_error("Can't add self");
+    c->m_parent=this;
+    m_children.push_back(c);
+  }
+
+  bool Transform::RemoveNode(Transform* node,bool disconnect)
+  {
+    for(Transform* cnode:m_children)
+    {
+      if(cnode==node)
+      {
+        cnode->m_parent=nullptr;
+        cnode->SetRelativeMatrix(cnode->GetWorldMatrix());
+        cnode->SetRelativePosition(glm::vec3(cnode->GetRelativeMatrix()[3]));
+        cnode->SetRelativeAngle(glm::quat_cast(glm::mat3(cnode->GetRelativeMatrix())));
+        if(disconnect==true)
+        {
+          for(Transform* t:cnode->m_children)
+          {
+            m_children.push_back(t);
+          }
+          cnode->m_children.clear();
+        }
+        return true;
+      }
+
+    }
+    return false;
   }
 
 }

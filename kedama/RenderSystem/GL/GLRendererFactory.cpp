@@ -3,6 +3,7 @@
 #include "GLTexture2D.hpp"
 #include "GLMeshNative.hpp"
 #include "GLMaterialNative.hpp"
+#include "GLLightNative.hpp"
 #include "GLControl.hpp"
 
 namespace Kedama
@@ -18,6 +19,11 @@ namespace Kedama
     {
       return new GLMaterialNative();
     }
+
+	Light::INative* GLRenderSystemFactory::CraeteLightNative()
+	{
+		return new GLLightNative();
+	}
 
     ITexture2D* GLRenderSystemFactory::CreateTexture2D()
     {

@@ -18,20 +18,11 @@ namespace Kedama
     Mesh();
     ~Mesh();
 
-    inline void SetVertices(vector<vec3>& vertices)
-    {m_vertices=vertices;}
-
-    inline void SetIndices(vector<uint32_t>& indices)
-    {m_indices=indices;}
-
-    inline void SetUVs(vector<vec2>& uvs)
-    {m_uvs=uvs;}
-
-    inline void SetNormals(vector<vec3>& normals)
-    {m_normals=normals;}
-
-    inline void SetTangents(vector<vec3>& tangent)
-    {m_tangent=tangent;}
+    void SetVertices(vector<vec3>& vertices);
+    void SetIndices(vector<uint32_t>& indices);
+    void SetUVs(vector<vec2>& uvs);
+    void SetNormals(vector<vec3>& normals);
+    void SetTangents(vector<vec3>& tangent);
 
     inline const vector<vec3>& GetVertices()const
     {return m_vertices;}
@@ -50,9 +41,6 @@ namespace Kedama
 
     inline const INative* GetNativePtr()const
     {return m_native;}
-
-    void Update();
-
   private:
     vector<vec2> m_uvs;
     vector<vec3> m_vertices;
@@ -62,11 +50,15 @@ namespace Kedama
     INative* m_native;
   };
 
-  class Mesh::INative
+  class KEDAMA_API Mesh::INative
   {
   public:
     ~INative(){}
-    virtual void Upload(const Mesh& mesh)=0;
+    virtual void UploadVertices(const vector<vec3>& vertices)=0;
+    virtual void UploadIndices(const vector<uint32_t>& indices)=0;
+    virtual void UploadNormals(const vector<vec3>& normals)=0;
+    virtual void UploadUVs(const vector<vec2>& uvs)=0;
+    virtual void UploadTangents(const vector<vec3>& tangents)=0;
   };
 }
 

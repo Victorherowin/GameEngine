@@ -2,9 +2,10 @@
 #define _H_GLCONTROL
 
 #include "GLRenderSystemClass.hpp"
+#include "GBuffer.hpp"
 #include "../Interface/IControl.hpp"
 #include <GL/glew.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 namespace Kedama {
   namespace GL{
@@ -30,10 +31,8 @@ namespace Kedama {
 
       void InitGL();
 
-      inline GBuffer& GetGBuffer();
-      inline GLuint GetDirectionalLightsUBO(){return m_directional_lights_ubo;}
-      inline GLuint GetPointLightsUBO(){return m_point_lights_ubo;}
-      inline GLuint GetSpotLightsUBO(){return m_spot_lights_ubo;}
+	  inline const vector<Light*>& GetLights() { return m_lights; }
+      inline const unique_ptr<GBuffer>& GetGBuffer() { return m_gbuffer; }
       inline GLuint GetCameraUBO(){return m_camera_ubo;}
 
     private:
@@ -50,17 +49,9 @@ namespace Kedama {
       GLuint m_camera_ubo=0;
       GLubyte* m_camera_ubo_data=nullptr;
 
-      GLuint m_directional_lights_ubo=0;
-      GLuint m_point_lights_ubo=0;
-      GLuint m_spot_lights_ubo=0;
+	  vector<Light*> m_lights;
 
-      GLubyte* m_directional_lights_ubo_data=nullptr;
-      GLubyte* m_point_lights_ubo_data=nullptr;
-      GLubyte* m_spot_lights_ubo_data=nullptr;
-
-      vector<Light*> m_lights;
-
-      GBuffer* m_gbuffer=nullptr;
+      unique_ptr<GBuffer> m_gbuffer=nullptr;
 
       SDL_GLContext m_glcontext=nullptr;
     };

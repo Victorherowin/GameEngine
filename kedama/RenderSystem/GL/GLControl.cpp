@@ -10,6 +10,16 @@
 #include "sstream"
 
 namespace Kedama {
+
+  namespace detail {
+    inline unique_ptr<GL::GBuffer> InitGBuffer()
+    {
+      unique_ptr<GL::GBuffer> gbuffer(new GL::GBuffer());
+      //gbuffer->AddTexture();
+      return gbuffer;
+    }
+  }
+
   namespace GL {
     GLControl::GLControl()
     {
@@ -18,27 +28,12 @@ namespace Kedama {
 
     GLControl::~GLControl()
     {
-      if(m_gbuffer)delete m_gbuffer;
       if(m_camera_ubo)
       {
         glUnmapNamedBuffer(m_camera_ubo);
         glDeleteBuffers(1,&m_camera_ubo);
       }
-      if(m_directional_lights_ubo)
-      {
-        glUnmapNamedBuffer(m_directional_lights_ubo);
-        glDeleteBuffers(1,&m_directional_lights_ubo);
-      }
-      if(m_point_lights_ubo)
-      {
-        glUnmapNamedBuffer(m_point_lights_ubo);
-        glDeleteBuffers(1,&m_point_lights_ubo);
-      }
-      if(m_spot_lights_ubo)
-      {
-        glUnmapNamedBuffer(m_spot_lights_ubo);
-        glDeleteBuffers(1,&m_spot_lights_ubo);
-      }
+
       if(m_forward_renderer)delete m_forward_renderer;
       if(m_deferrf_renderer)delete m_deferrf_renderer;
       if(m_post_processor)delete m_post_processor;
@@ -65,10 +60,10 @@ namespace Kedama {
       glewInit();
       glClearColor(0.4f,0.6f,0.8f,1.0f);
       glClearDepth(0.0f);
- //     glEnable(GL_DEPTH_TEST);
- //     glDepthFunc(GL_LESS);
-     // glEnable(GL_CULL_FACE);
-   //   glCullFace(GL_BACK);
+      //     glEnable(GL_DEPTH_TEST);
+      //     glDepthFunc(GL_LESS);
+      // glEnable(GL_CULL_FACE);
+      //   glCullFace(GL_BACK);
 
 #ifdef DEBUG
       glDebugMessageCallback(&GLControl::DebugOutput,nullptr);
@@ -80,84 +75,19 @@ namespace Kedama {
       m_post_processor=new GLPostProcessor(this);
       int32_t w,h;
       m_window->GetSize(&w,&h);
-      m_gbuffer=new GBuffer();
-
-      //Light UBO
-      glCreateBuffers(1,&m_directional_lights_ubo);
-      glCreateBuffers(1,&m_point_lights_ubo);
-      glCreateBuffers(1,&m_spot_lights_ubo);
-      glNamedBufferStorage(m_point_lights_ubo,528,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      glNamedBufferStorage(m_directional_lights_ubo,144,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      glNamedBufferStorage(m_spot_lights_ubo,790,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_point_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_point_lights_ubo,0,528,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_directional_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_directional_lights_ubo,0,144,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
-      m_spot_lights_ubo_data=(GLubyte*)glMapNamedBufferRange(m_spot_lights_ubo,0,790,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
 
       //Creame UBO
       glCreateBuffers(1,&m_camera_ubo);
       glNamedBufferStorage(m_camera_ubo,sizeof(mat4)*3,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
       m_camera_ubo_data=(GLubyte*)glMapNamedBufferRange(m_camera_ubo,0,sizeof(mat4)*3,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
 
-      }
+      m_gbuffer=detail::InitGBuffer();
+      //TODO:GBuffer
+    }
 
-    /// std130
-    /// layout(std140,binding=3)uniform DirectionalLights
-    /// {
-    ///   int num;//0
-    ///   vec3 directional[4];//4
-    ///   vec4 light_color[4];//68
-    /// }
-    ///
-    /// layout(std140,binding=4)uniform PointLights
-    /// {
-    ///   int num;//0
-    ///   vec3 postion[16];//4
-    ///   vec4 light_color[16];//260
-    /// }
-    ///
-    /// layout(std140,binding=5)uniform Spotlights
-    /// {
-    ///   int num;
-    ///   vec3 postion[16];
-    ///   vec4 light_color[16];
-    ///   float radius[16];//516
-    /// }
     void GLControl::SetLights(vector<Light *> &lights)
     {
-      m_lights=lights;
-      if(m_point_lights_ubo==0||m_directional_lights_ubo==0||m_spot_lights_ubo==0)throw runtime_error("GL No Init");
-      GLint num[3]={0,0,0};
-      vector<vec3> position[3];
-      vector<vec4> color[3];
-      vector<float> radius;
-
-      for(Light* light:lights)
-      {
-        int type=(int)light->GetType();
-        position[type].push_back(light->GetTansform()->GetWorldPosition());
-        color[type].push_back(light->GetColor());
-        ++num[type];
-        if(light->GetType()==LightType::SpotLight)
-        {
-          SpotLight* sl=static_cast<SpotLight*>(light);
-          radius.push_back(sl->GetRadius());
-        }
-      }
-      memcpy(m_directional_lights_ubo_data,&num[(int)LightType::PointLight],sizeof(GLint));
-      memcpy(m_point_lights_ubo_data,&num[(int)LightType::PointLight],sizeof(GLint));
-      memcpy(m_spot_lights_ubo_data,&num[(int)LightType::SpotLight],sizeof(GLint));
-
-      memcpy(m_directional_lights_ubo_data+16,position[(int)LightType::DirectionalLight].data(),position[(int)LightType::DirectionalLight].size()*sizeof(vec3));
-      memcpy(m_point_lights_ubo_data+16,position[(int)LightType::PointLight].data(),position[(int)LightType::PointLight].size()*sizeof(vec3));
-      memcpy(m_spot_lights_ubo_data+16,position[(int)LightType::SpotLight].data(),position[(int)LightType::SpotLight].size()*sizeof(vec3));
-
-      memcpy(m_directional_lights_ubo_data+80,color[(int)LightType::DirectionalLight].data(),color[(int)LightType::DirectionalLight].size()*sizeof(vec4));
-      memcpy(m_point_lights_ubo_data+272,color[(int)LightType::PointLight].data(),color[(int)LightType::PointLight].size()*sizeof(vec4));
-      memcpy(m_spot_lights_ubo_data+272,color[(int)LightType::SpotLight].data(),color[(int)LightType::SpotLight].size()*sizeof(vec4));
-
-      vec4* tmp=(vec4*)(m_spot_lights_ubo_data+528);
-      for(auto f:radius)
-        tmp++->x=f;
+      m_lights = lights;
     }
 
     /// std140

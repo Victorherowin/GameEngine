@@ -12,13 +12,23 @@ namespace Kedama {
     public:
       GLMeshNative();
       ~GLMeshNative();
-      void Upload(const Mesh& mesh)override;
+      void UploadIndices(const vector<uint32_t>& uvs)override final;
+      void UploadVertices(const vector<vec3>& vertices)override final;
+      void UploadNormals(const vector<vec3>& normals)override final;
+      void UploadTangents(const vector<vec3>& tangents)override final;
+      void UploadUVs(const vector<vec2>& uvs)override final;
+
 
       GLuint vao;
       GLuint vbo=0,ibo=0;
 
     private:
-      int m_lase_vertex_size=0,m_lase_indices_size=0;
+      void ApplyVBO();
+      void ApplyIBO();
+    private:
+      int m_old_vertices_num=0,m_old_indices_num=0;
+      uint8_t* m_vbo_mem=nullptr;
+      uint32_t* m_ibo_mem=nullptr;
     };
   }
 }

@@ -59,9 +59,16 @@
 
 namespace Kedama {
 
-  Material::Material()
+  Pass Material::default_pass;
+
+  Material::Material(MaterialType type):m_type(type)
   {
     m_native=Engine::GetSingleton().GetRendererFactory()->CreateMaterialNative();
+    m_current_pass=&default_pass;
+  }
+
+  Material::Material():Material(MaterialType::Normal)
+  {
   }
 
   Material::~Material()
@@ -250,6 +257,12 @@ namespace Kedama {
     m_native->Upload(m_property_list);
   }
 
+}
+
+namespace Kedama {
+  PostProcessMaterial::PostProcessMaterial():Material(MaterialType::PostProcess)
+  {
+  }
 }
 
 namespace Kedama {

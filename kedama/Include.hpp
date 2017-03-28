@@ -4,6 +4,11 @@
 //使用弧度
 #define GLM_FORCE_RADIANS
 
+#ifdef _MSC_VER
+	#pragma warning(disable: 4251)
+	#pragma warning(disable: 4996)
+#endif
+
 #include <cstdint>
 
 #include <string>

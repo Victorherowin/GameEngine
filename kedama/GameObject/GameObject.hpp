@@ -11,33 +11,20 @@ namespace Kedama
 {
   using namespace std;
 
-  class KEDAMA_API GameObject
+  class KEDAMA_API GameObject:public Transform
   {
   public:
 
-    GameObject(const string& name=string());
+    GameObject(const string& name="");
     virtual ~GameObject();
-    Transform* GetTansform();
 
-    inline const string& GetName()
+    inline const string& GetName()const
     {return m_name;}
 
-    void AddNode(GameObject* node);
-    bool RemoveNode(GameObject* node);
-
     GameObject* GetChild(const string& name);
-    std::list<GameObject*>& GetChildren()
-    {return m_children;}
-
-    inline GameObject* GetParent()
-    {return m_parent;}
 
   private:
     string m_name;
-    Transform m_transform;
-
-    GameObject* m_parent=nullptr;
-    std::list<GameObject*> m_children;
   };
 }
 

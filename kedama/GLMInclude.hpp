@@ -1,5 +1,9 @@
 #ifndef _H_GLM_INCLUDE
 
+#ifdef _MSC_VER
+#pragma warning(disable: 4251)
+#endif
+
 #include <glm/integer.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>

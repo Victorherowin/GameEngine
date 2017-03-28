@@ -14,7 +14,7 @@ namespace Kedama
   using namespace std;
   using namespace glm;
 
-  class IRendererFactory
+  class KEDAMA_API IRendererFactory
   {
   public:
     virtual ~IRendererFactory(){}
@@ -26,6 +26,7 @@ namespace Kedama
 
     virtual Mesh::INative* CreateMeshNative()=0;
     virtual Material::INative* CreateMaterialNative()=0;
+	virtual Light::INative* CraeteLightNative() = 0;
 
     virtual IControl* GetControl()=0;
   };

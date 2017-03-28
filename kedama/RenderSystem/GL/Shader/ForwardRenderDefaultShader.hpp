@@ -46,34 +46,23 @@ out vec4 out_color;
 layout(std140)uniform Material
 {
 	bool use_texture;
-	vec4 color;
+    vec4 color;
     vec4 ambient;
     vec3 diffuse;
     vec4 specular;
     float shininess;
 }material;
 
-layout(std140)uniform PointLights
+layout(std140)uniform Lights
 {
-	int num;
-	vec3 postion[16];
-	vec4 light_color[16];
-}point_lights;
-
-layout(std140)uniform SpotLights
-{
-	int num;
-	vec3 postion[16];
-	vec4 light_color[16];
-	float radius[16];
-}spot_ligths;
-
-layout(std140,binding=3)uniform DirectionalLights
-{
-	int num;
-	vec3 directional[4];
-	vec4 light_color[4];
-}directional_lights;
+    int type;
+    float phi;
+    vec4 direction;
+    vec4 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+}ights;
 
 uniform sampler2D texture0;
 

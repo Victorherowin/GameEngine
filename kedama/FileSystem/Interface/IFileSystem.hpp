@@ -1,6 +1,8 @@
 #ifndef _H_IFILESYSTEM
 #define _H_IFILESYSTEM
 
+#include "../../Define.hpp"
+
 #include "IFile.hpp"
 #include <string>
 
@@ -15,7 +17,7 @@ namespace Kedama
       Read=1,Write=2,Create=4
     };
 
-    class IFileSystem
+    class KEDAMA_API IFileSystem
     {
     public:
       virtual ~IFileSystem(){}

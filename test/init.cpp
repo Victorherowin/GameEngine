@@ -1,7 +1,3 @@
-#if defined(_WIN32) && defined(_MSC_VER)
-#ifndef KEDAMA_BUILD
-#endif
-
 #include <Engine.hpp>
 #include <FileSystem/LocalFileSystem.hpp>
 #include <RenderSystem/RendererFactoryManager.hpp>
@@ -17,7 +13,7 @@
 
 #include <GL/glew.h>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #undef main
 
@@ -76,8 +72,10 @@ int32_t main(int32_t argc,char** argv)
     IWindow* win=irs->GetWindow();
     win->Create("ForwardRender",800,600);
 
-    GameObject obj;
-    obj.GetTansform()->SetWorldPosition(vec3(0.0f,0.5f,0.0f));
+    GameObject obj,obj2;
+    obj.SetWorldPosition(vec3(0.0f,0.5f,0.0f));
+    obj.AddChildren(&obj2);
+    obj2.SetWorldPosition(vec3(2.5,0.0,0.5));
     Camera camera("TestCamera");
     Mesh test_mesh;
     DefaultMaterial test_material;
@@ -88,34 +86,36 @@ int32_t main(int32_t argc,char** argv)
 
     test_mesh.SetIndices(index);
     test_mesh.SetVertices(tri_vertex);
-    test_mesh.Update();
 
     test_material.SetAmbient(vec3(0.0f,1.0f,1.0f));
     test_material.Update();
     //Pass* pass=test_material.CreatePass();
     //test_material.UsePass(pass);
     //pass->shader=shader;
-    camera.GetTansform()->Move(vec3(1.0,0.0,10.0));
+    camera.Move(vec3(1.0,0.0,10.0));
     camera.SetPerspective(45.0f,800.0f/600.0f,0.1f,1000.0f);
     camera.LookAt(&obj);
 
     RenderSystem* rs=Engine::GetSingletonPtr()->GetRenderSystem();
     KEDAMALOG("Init Engine\n");
-    KEDAMALOG("%d\n",sizeof(GLboolean));
 
     bool quit=false;
     SDL_Event ev;
     rs->SetCamera(&camera);
+    int t=0;
     while(!quit)
     {
       while(SDL_PollEvent(&ev))
       {
         if(ev.type==SDL_QUIT)quit=true;
       }
-      obj.GetTansform()->Rotate(vec3(0,1,0),0.1f/glm::pi<float>());
+      obj.Rotate(vec3(0,1,0),0.1f/glm::pi<float>());
 
       CommandBuffer cb;
-      cb.AddRenderCommand(obj.GetTansform(),&test_mesh,&test_material);
+      cb.AddRenderCommand(&obj,&test_mesh,&test_material);
+      cb.AddRenderCommand(&obj2,&test_mesh,&test_material);
+      obj2.Move(vec3(sin(t++*0.05)*0.5,0,0));
+      obj.Update();
 
       rs->Clear();
       rs->Render(cb);
@@ -125,4 +125,3 @@ int32_t main(int32_t argc,char** argv)
 
     return 0;
 }
-#endif

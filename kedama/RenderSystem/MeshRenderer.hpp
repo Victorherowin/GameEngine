@@ -30,7 +30,7 @@ namespace Kedama
 
   private:
     bool m_enable=true;
-    DrawMode m_draw_mode=DrawMode::NORMAL;
+    DrawMode m_draw_mode=DrawMode::TRIANGLES;
     Mesh* m_mesh=nullptr;
     Material* material=nullptr;
   };

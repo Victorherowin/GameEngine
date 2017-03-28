@@ -21,7 +21,7 @@ namespace Kedama {
   public:
     void AddRenderCommand(Transform* transform,Mesh* mesh,Material* material);
     void AddAlphaRenderCommand(Transform* transform,Mesh* mesh,Material* material);
-    void AddPostProcessCommand(Material* material);
+    void AddPostProcessCommand(PostProcessMaterial* material);
 
     //排序m_alpha_forward_command
     void Sort(Camera* camera);

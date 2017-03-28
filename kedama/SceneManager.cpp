@@ -24,6 +24,6 @@ namespace Kedama
   void SceneManager::Update()
   {
     //TODO:其他的一些更新
-    m_object_root->GetTansform()->Update();
+    m_object_root->Update();
   }
 }

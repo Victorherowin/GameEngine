@@ -2,13 +2,14 @@
 #define _H_IFILE
 
 #include "../../Include.hpp"
+#include "../../Define.hpp"
 
 namespace Kedama
 {
   namespace File
   {
     using std::string;
-    class IFile
+    class KEDAMA_API IFile
     {
     public:
 

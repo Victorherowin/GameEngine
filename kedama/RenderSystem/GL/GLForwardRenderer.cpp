@@ -4,6 +4,7 @@
 #include "GLMaterialNative.hpp"
 #include "GLShader.hpp"
 #include "GLControl.hpp"
+#include "GLLightNative.hpp"
 #include "Shader/ForwardRenderDefaultShader.hpp"
 
 #define MODEL_MATRIX_INDEX 4
@@ -41,7 +42,7 @@ namespace Kedama {
       const GLMaterialNative* nmaterial=static_cast<const GLMaterialNative*>(mrc.material->GetNativePtr());
       const Pass* pass = mrc.material->GetCurrentPass();
       GLShader* program=&m_default_shader;;
-      if(pass!=nullptr&&pass->shader!=nullptr)
+      if(pass->shader!=nullptr)
       {
         program=static_cast<GLShader*>(pass->shader);
       }
@@ -56,9 +57,6 @@ namespace Kedama {
 
       glBindBufferBase(GL_UNIFORM_BUFFER,MODEL_BINDING,m_model_matrix_ubo);
       glBindBufferBase(GL_UNIFORM_BUFFER,CAMERA_BINDING,m_control->GetCameraUBO());
-      glBindBufferBase(GL_UNIFORM_BUFFER,POINT_LIGHTS_BINDING,m_control->GetPointLightsUBO());
-      glBindBufferBase(GL_UNIFORM_BUFFER,SPOT_LIGHTS_BINDING,m_control->GetSpotLightsUBO());
-      glBindBufferBase(GL_UNIFORM_BUFFER,DIRECTION_LIGHTS_BINDING,m_control->GetDirectionalLightsUBO());
       glBindBufferBase(GL_UNIFORM_BUFFER,MATERIAL_BINDING,nmaterial->GetUBO());
 
       GLint bindindex=0;
@@ -76,11 +74,33 @@ namespace Kedama {
       glUseProgram(program->GetShader());
 
       glBindVertexArray(nmesh->vao);
-      GLsizei count=mrc.count==-1?mrc.mesh->GetIndices().size():mrc.count;
-      if(pass&&pass->draw_mode==DrawMode::LINES)
-        glDrawElementsInstanced(GL_LINES,count,GL_UNSIGNED_INT,(void*)mrc.offset,mrc.transforms.size());
+
+      if (m_control->GetLights().size() != 0)
+      {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        for (Light* light : m_control->GetLights())
+        {
+          GLLightNative* gln = static_cast<GLLightNative*>(light->GetNative());
+          glBindBufferBase(GL_UNIFORM_BUFFER, LIGHTS_BINDING, gln->GetUBO());
+          if(pass->draw_mode == DrawMode::POINT)
+            glDrawArraysInstanced(GL_POINTS,0,mrc.mesh->GetVertices().size(),mrc.transforms.size());
+          else if (pass->draw_mode == DrawMode::LINES)
+            glDrawElementsInstanced(GL_LINES,mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT,0, mrc.transforms.size());
+          else
+            glDrawElementsInstanced(GL_TRIANGLES, mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
+        }
+        glDisable(GL_BLEND);
+      }
       else
-        glDrawElementsInstanced(GL_TRIANGLES,count,GL_UNSIGNED_INT,(void*)mrc.offset,mrc.transforms.size());
+      {
+        if(pass->draw_mode == DrawMode::POINT)
+          glDrawArraysInstanced(GL_POINTS,0,mrc.mesh->GetVertices().size(),mrc.transforms.size());
+        else if (pass->draw_mode == DrawMode::LINES)
+          glDrawElementsInstanced(GL_LINES, mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
+        else
+          glDrawElementsInstanced(GL_TRIANGLES, mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
+      }
     }
 
     //TODO:渲染阴影到阴影贴图
