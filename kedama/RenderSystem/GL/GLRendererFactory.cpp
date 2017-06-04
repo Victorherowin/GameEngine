@@ -1,18 +1,24 @@
+#include "GLSkinner.hpp"
 #include "GLRendererFactory.hpp"
 #include "GLShader.hpp"
 #include "GLTexture2D.hpp"
-#include "GLMeshNative.hpp"
 #include "GLMaterialNative.hpp"
 #include "GLLightNative.hpp"
 #include "GLControl.hpp"
+#include "GLMeshbuffer.hpp"
 
 namespace Kedama
 {
   namespace GL
   {
-    Mesh::INative* GLRenderSystemFactory::CreateMeshNative()
+    IMeshBuffer* GLRenderSystemFactory::CreateMeshBuffer(size_t vertex_num,size_t index_num)
     {
-      return new GLMeshNative();
+      return new GLMeshBuffer(vertex_num,index_num);
+    }
+
+    ISkinner* GLRenderSystemFactory::CreateSkinner(IMeshBuffer* mesh,Joint* joint)
+    {
+      return new GLSkinner(mesh,joint);
     }
 
     Material::INative* GLRenderSystemFactory::CreateMaterialNative()

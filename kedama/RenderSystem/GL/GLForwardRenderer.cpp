@@ -1,8 +1,7 @@
 #include "GLForwardRenderer.hpp"
 #include "GLTexture2D.hpp"
-#include "GLMeshNative.hpp"
 #include "GLMaterialNative.hpp"
-#include "GLShader.hpp"
+#include "GLMeshBuffer.hpp"
 #include "GLControl.hpp"
 #include "GLLightNative.hpp"
 #include "Shader/ForwardRenderDefaultShader.hpp"
@@ -17,8 +16,8 @@ namespace Kedama {
       glNamedBufferStorage(m_model_matrix_ubo,sizeof(mat4)*1000,nullptr,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
       m_model_matrix_ubo_data=(mat4*)glMapNamedBufferRange(m_model_matrix_ubo,0,sizeof(mat4)*1000,GL_MAP_WRITE_BIT|GL_MAP_PERSISTENT_BIT|GL_MAP_COHERENT_BIT);
 
-      m_default_shader.SetVertexShaderSource(default_vs_shader);
-      m_default_shader.SetFragmentShaderSource(default_fs_shader);
+      m_default_shader.SetVertexShaderSource(GLSL::default_vs_shader);
+      m_default_shader.SetFragmentShaderSource(GLSL::default_fs_shader);
       m_default_shader.Compile();
     }
 
@@ -38,7 +37,7 @@ namespace Kedama {
 
     void GLForwardRenderer::Render(const MergedRenderCommand &mrc)
     {
-      const GLMeshNative* nmesh = static_cast<const GLMeshNative*>(mrc.mesh->GetNativePtr());
+      const GLBaseMeshBuffer* nmesh = dynamic_cast<const GLBaseMeshBuffer*>(mrc.mesh);
       const GLMaterialNative* nmaterial=static_cast<const GLMaterialNative*>(mrc.material->GetNativePtr());
       const Pass* pass = mrc.material->GetCurrentPass();
       GLShader* program=&m_default_shader;;
@@ -46,7 +45,6 @@ namespace Kedama {
       {
         program=static_cast<GLShader*>(pass->shader);
       }
-
 
       mat4* i=m_model_matrix_ubo_data;
       for(Transform* t:mrc.transforms)
@@ -72,9 +70,8 @@ namespace Kedama {
       }
 
       glUseProgram(program->GetShader());
-
-      glBindVertexArray(nmesh->vao);
-
+      glBindVertexArray(nmesh->GetVAO());
+      
       if (m_control->GetLights().size() != 0)
       {
         glEnable(GL_BLEND);
@@ -84,22 +81,22 @@ namespace Kedama {
           GLLightNative* gln = static_cast<GLLightNative*>(light->GetNative());
           glBindBufferBase(GL_UNIFORM_BUFFER, LIGHTS_BINDING, gln->GetUBO());
           if(pass->draw_mode == DrawMode::POINT)
-            glDrawArraysInstanced(GL_POINTS,0,mrc.mesh->GetVertices().size(),mrc.transforms.size());
+            glDrawArraysInstanced(GL_POINTS,0,nmesh->GetVertexNumber(),mrc.transforms.size());
           else if (pass->draw_mode == DrawMode::LINES)
-            glDrawElementsInstanced(GL_LINES,mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT,0, mrc.transforms.size());
+            glDrawElementsInstanced(GL_LINES,nmesh->GetIndexNumber(), GL_UNSIGNED_INT,0, mrc.transforms.size());
           else
-            glDrawElementsInstanced(GL_TRIANGLES, mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
+            glDrawElementsInstanced(GL_TRIANGLES, nmesh->GetIndexNumber(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
         }
         glDisable(GL_BLEND);
       }
       else
       {
         if(pass->draw_mode == DrawMode::POINT)
-          glDrawArraysInstanced(GL_POINTS,0,mrc.mesh->GetVertices().size(),mrc.transforms.size());
+          glDrawArraysInstanced(GL_POINTS,0,nmesh->GetVertexNumber(),mrc.transforms.size());
         else if (pass->draw_mode == DrawMode::LINES)
-          glDrawElementsInstanced(GL_LINES, mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
+          glDrawElementsInstanced(GL_LINES, nmesh->GetIndexNumber(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
         else
-          glDrawElementsInstanced(GL_TRIANGLES, mrc.mesh->GetIndices().size(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
+          glDrawElementsInstanced(GL_TRIANGLES, nmesh->GetIndexNumber(), GL_UNSIGNED_INT, 0, mrc.transforms.size());
       }
     }
 

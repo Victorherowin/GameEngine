@@ -1,5 +1,5 @@
-#ifndef _H_BONE
-#define _H_BONE
+#ifndef _H_JOINT
+#define _H_JOINT
 
 #include "../Define.hpp"
 #include "../GLMInclude.hpp"
@@ -12,11 +12,11 @@ namespace Kedama
   using namespace glm;
   using namespace std;
 
-  class KEDAMA_API Bone:public Transform
+  class KEDAMA_API Joint:public Transform
   {
   public:
-    Bone(const string& name);
-    ~Bone();
+    Joint(const string& name);
+    ~Joint();
 
     inline dualquat GetWorldDualQuat(){return m_world_dq;}
 

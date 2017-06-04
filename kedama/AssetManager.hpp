@@ -12,11 +12,11 @@ namespace Kedama
   class KEDAMA_API AssetManager
   {
   public:
-    void AddMesh(const string& name,Mesh* mesh);
-    Mesh* CreateMesh(const string& name);
-    Mesh* GetMesh(const string& name);
+    StaticMesh* CreateStaticMesh(const string& name);
+
+    StaticMesh* GetStaticMesh(const string& name);
   private:
-    map<string,Mesh*> m_mesh_map;
+    map<string,StaticMesh*> m_mesh_map;
   };
 }
 

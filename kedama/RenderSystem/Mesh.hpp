@@ -5,61 +5,59 @@
 #include "../Include.hpp"
 #include "../GLMInclude.hpp"
 #include "Material.hpp"
+#include "Interface/IMeshBuffer.hpp"
 
-namespace Kedama
-{
-  using namespace glm;
-  using namespace std;
-  class Mesh
-  {
-  public:
-    class INative;
-  public:
-    Mesh();
-    ~Mesh();
+namespace Kedama {
+    using namespace glm;
+    using namespace std;
 
-    void SetVertices(vector<vec3>& vertices);
-    void SetIndices(vector<uint32_t>& indices);
-    void SetUVs(vector<vec2>& uvs);
-    void SetNormals(vector<vec3>& normals);
-    void SetTangents(vector<vec3>& tangent);
+    class KEDAMA_API StaticMesh {
+    public:
+        StaticMesh(size_t vertex_num,size_t index_num);
 
-    inline const vector<vec3>& GetVertices()const
-    {return m_vertices;}
+        virtual ~StaticMesh();
 
-    inline const vector<uint32_t>& GetIndices()const
-    {return m_indices;}
+        void SetPositions(const vector<vec3> &positions);
+        void SetIndices(const vector<uint32_t> &indices);
+        void SetUVs(const vector<vec2> &uvs);
+        void SetNormals(const vector<vec3> &normals);
+        void SetTangents(const vector<vec3> &tangent);
 
-    inline const vector<vec2>& GetUVs()const
-    {return m_uvs;}
+        inline const vector<vec3> &GetPositions() const { return m_positions; }
+        inline const vector<uint32_t> &GetIndices() const { return m_indices; }
+        inline const vector<vec2> &GetUVs() const { return m_uvs; }
+        inline const vector<vec3> &GetNormals() const { return m_normals; }
+        inline const vector<vec3> &GetTangents() const { return m_tangent; }
 
-    inline const vector<vec3>& GetNormals()const
-    {return m_normals;}
+        inline const IAbstractMeshBuffer* GetMeshBuffer()const{return m_mesh_buff;}
 
-    inline const vector<vec3>& GetTangents()const
-    {return m_tangent;}
+    private:
+        vector<vec2> m_uvs;
+        vector<vec3> m_positions;
+        vector<vec3> m_normals;
+        vector<vec3> m_tangent;
+        vector<uint32_t> m_indices;
+    protected:
+        IMeshBuffer *m_mesh_buff;
+    };
+}
 
-    inline const INative* GetNativePtr()const
-    {return m_native;}
-  private:
-    vector<vec2> m_uvs;
-    vector<vec3> m_vertices;
-    vector<vec3> m_normals;
-    vector<vec3> m_tangent;
-    vector<uint32_t> m_indices;
-    INative* m_native;
-  };
 
-  class KEDAMA_API Mesh::INative
-  {
-  public:
-    ~INative(){}
-    virtual void UploadVertices(const vector<vec3>& vertices)=0;
-    virtual void UploadIndices(const vector<uint32_t>& indices)=0;
-    virtual void UploadNormals(const vector<vec3>& normals)=0;
-    virtual void UploadUVs(const vector<vec2>& uvs)=0;
-    virtual void UploadTangents(const vector<vec3>& tangents)=0;
-  };
+namespace Kedama {
+    class KEDAMA_API SkinningMesh : public StaticMesh {
+    public:
+        SkinningMesh(size_t vertex_num,size_t index_num);
+
+        void SetWeights(const vector<vec4> &weights);
+        void SetBoneIndices(const vector<uvec4> &bone_indices);
+
+        inline const vector<vec4> &GetWeights() const { return m_weights; }
+        inline const vector<uvec4> &GetBoneIndices() const { return m_bone_indices; }
+
+    protected:
+        vector<vec4> m_weights;
+        vector<uvec4> m_bone_indices;
+    };
 }
 
 #endif

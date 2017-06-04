@@ -2,7 +2,7 @@
 
 namespace Kedama {
 
-  void CommandBuffer::AddRenderCommand(Transform *transform, Mesh *mesh, Material *material)
+  void CommandBuffer::AddRenderCommand(Transform *transform,const IAbstractMeshBuffer *mesh,Material *material)
   {
     RenderCommand rc;
     rc.transform=transform;
@@ -12,7 +12,7 @@ namespace Kedama {
     m_commands.push_back(rc);
   }
 
-  void CommandBuffer::AddAlphaRenderCommand(Transform *transform, Mesh *mesh, Material *material)
+  void CommandBuffer::AddAlphaRenderCommand(Transform *transform,const IAbstractMeshBuffer *mesh,Material *material)
   {
     RenderCommand rc;
     rc.transform=transform;
@@ -43,10 +43,10 @@ namespace Kedama {
 
   void CommandBuffer::Merge()
   {
-    map<tuple<Mesh*,Material*>,MergedRenderCommand> merge_map;
+    map<tuple<const IAbstractMeshBuffer*,Material*>,MergedRenderCommand> merge_map;
     for(RenderCommand& rc:m_commands)
     {
-      tuple<Mesh*,Material*> tmp(rc.mesh,rc.material);
+      tuple<const IAbstractMeshBuffer*,Material*> tmp(rc.mesh,rc.material);
       auto it=merge_map.find(tmp);
 
       if(it==merge_map.end())

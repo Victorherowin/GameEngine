@@ -34,57 +34,68 @@ namespace Kedama {
     }
     else
       SetRelativePosition(position);
-
   }
 
   void Transform::SetRelativeAngle(const quat& angle)
-  {
-    m_angle=mat3_cast(angle);
-    m_need_update=true;
-  }
-
-  void Transform::SetRelativeAngle(const mat3& angle)
   {
     m_angle=angle;
     m_need_update=true;
   }
 
+  void Transform::SetRelativeAngle(const mat3& angle)
+  {
+    m_angle=quat_cast(angle);
+    m_need_update=true;
+  }
+
   void Transform::SetWorldAngle(const mat3& angle)
   {
-    m_angle=transpose(mat3(m_parent->m_world_matrix)*angle);
-    m_need_update=true;
+    SetWorldAngle(quat_cast(angle));
   }
 
   void Transform::SetWorldAngle(const quat& angle)
   {
-    SetWorldAngle(mat3_cast(angle));
-  }
-
-  void Transform::SetScale(const vec3 &scale)
-  {
-    m_scale=scale;//缩放不对子节点生效
-  }
-
-  void Transform::Move(const vec3& distance)
-  {
-    m_position+=distance;
+    m_angle=quat(m_parent->m_inverse_world_matrix)*angle;
     m_need_update=true;
   }
 
-  void Transform::Rotate(const mat3& angle)
+  void Transform::SetScale(float sx,float sy,float sz)
   {
-    m_angle=angle*m_angle;
+    m_scale=vec3(sx,sy,sz);//缩放不对子节点生效
+  }
+
+  void Transform::Move(const vec3& distance,SpaceType type)
+  {
+    if(type==SpaceType::Model)
+    {
+      m_position+=distance;
+    }
+    else
+    {
+      m_position=vec3(m_inverse_world_matrix*(m_world_matrix[3]+vec4(distance,0.0f)));
+    }
     m_need_update=true;
   }
 
-  void Transform::Rotate(const vec3 &axis, float rad)
+  void Transform::Rotate(const vec3 &axis, float rad,SpaceType type)
   {
-    Rotate(mat3(rotate(rad,axis)));
+    vec3 naxis=normalize(axis);
+    float sino=glm::sin(rad*0.5f);
+    float coso=glm::cos(rad*0.5f);
+    Rotate(quat(coso,naxis*sino),type);
   }
 
-  void Transform::Rotate(const quat& angle)
+  void Transform::Rotate(const quat& angle,SpaceType type)
   {
-    Rotate(mat3_cast(angle));
+    if(type==SpaceType::Model)
+    {
+      m_angle=angle*m_angle;
+    }
+    else
+    {
+      m_angle=(quat(m_parent->m_inverse_world_matrix)*angle)*m_angle;
+    }
+    m_need_update=true;
   }
 
   vec3 Transform::GetWorldPosition()
@@ -157,13 +168,14 @@ namespace Kedama {
     if(m_need_update)
     {
       //更新自己
-      m_relative_matrix=mat4(m_angle);
+      m_relative_matrix=mat4_cast(m_angle);
       m_relative_matrix[3]=vec4(m_position,1.0f);
 
       if(m_parent!=nullptr)
         m_world_matrix=m_parent->m_world_matrix*m_relative_matrix;
       else
         m_world_matrix=m_relative_matrix;
+      m_inverse_world_matrix=glm::inverse(m_world_matrix);
       m_need_update=false;
       for (auto& p : m_listeners)
       {

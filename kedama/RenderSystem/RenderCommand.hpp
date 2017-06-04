@@ -13,24 +13,21 @@
 
 namespace Kedama {
 
-  struct RenderCommand
-  {
-    Transform* transform;
-    Material* material;
-    Mesh* mesh;
-  };
+    struct RenderCommand {
+        Transform *transform;
+        Material *material;
+        const IAbstractMeshBuffer *mesh;
+    };
 
-  struct MergedRenderCommand
-  {
-    vector<Transform*> transforms;
-    Material* material;
-    Mesh* mesh;
-  };
+    struct MergedRenderCommand {
+        vector<Transform *> transforms;
+        Material *material;
+        const IAbstractMeshBuffer *mesh;
+    };
 
-  struct PostProcessCommand
-  {
-    PostProcessMaterial* material;
-  };
+    struct PostProcessCommand {
+        PostProcessMaterial *material;
+    };
 }
 
 #endif

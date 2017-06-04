@@ -19,8 +19,8 @@ namespace Kedama {
     vector<MergedRenderCommand> m_merged_commands;
     vector<PostProcessCommand> m_post_process_commands;
   public:
-    void AddRenderCommand(Transform* transform,Mesh* mesh,Material* material);
-    void AddAlphaRenderCommand(Transform* transform,Mesh* mesh,Material* material);
+    void AddRenderCommand(Transform* transform,const IAbstractMeshBuffer* mesh,Material* material);
+    void AddAlphaRenderCommand(Transform* transform,const IAbstractMeshBuffer* mesh,Material* material);
     void AddPostProcessCommand(PostProcessMaterial* material);
 
     //排序m_alpha_forward_command

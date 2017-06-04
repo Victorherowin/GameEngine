@@ -2,8 +2,9 @@
 
 namespace Kedama
 {
-    const std::string default_vs_shader=
-R"(#version 450 core
+    namespace GLSL {
+        const std::string default_vs_shader =
+                R"(#version 450 core
 layout(location=0)in vec4 v_pos;
 layout(location=1)in vec4 v_uv;
 layout(location=2)in vec4 v_normal;
@@ -33,10 +34,10 @@ void VS_main()
 	gl_Position=pos;
 }
 	)";
-	
-	
-    const std::string default_fs_shader=
-R"(#version 450 core
+
+
+        const std::string default_fs_shader =
+                R"(#version 450 core
 in vec3 f_position;
 in vec3 f_normal;
 in vec2 f_uv;
@@ -62,7 +63,7 @@ layout(std140)uniform Lights
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-}ights;
+}lights;
 
 uniform sampler2D texture0;
 
@@ -76,5 +77,5 @@ void FS_main()
 	out_color=color;
 }
 	)";
-	
+    }
 }

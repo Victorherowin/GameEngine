@@ -24,9 +24,15 @@ namespace Kedama
     LINES,TRIANGLES,POINT
   };
 
+  enum class PassType
+  {
+    Normal,Transparent
+  };
+
   struct KEDAMA_API Pass
   {
     //TODO:其他渲染设置
+    PassType pass_type;
     DrawMode draw_mode=DrawMode::TRIANGLES;
     IShader* shader=nullptr;
   };

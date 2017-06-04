@@ -8,7 +8,7 @@ namespace Kedama {
     class VertexConverter
     {
     public:
-      VertexConverter(Mesh* mesh):m_mesh(mesh){}
+      VertexConverter(StaticMesh* mesh):m_mesh(mesh){}
 
       pair<vec3,vec3> GetBoundSize()
       {
@@ -86,7 +86,7 @@ namespace Kedama {
       }
 
     private:
-      Mesh* m_mesh;
+      StaticMesh* m_mesh;
       bool m_is_call_getboundsize=false;
       pair<vec3,vec3> m_bound_box;
     };

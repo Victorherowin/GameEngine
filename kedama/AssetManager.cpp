@@ -4,24 +4,18 @@
 
 namespace Kedama
 {
-  void AssetManager::AddMesh(const string &name, Mesh *mesh)
-  {
-    CHECK_EXIST(Mesh,m_mesh_map,name)
-    m_mesh_map[name]=mesh;
-  }
-
-  Mesh* AssetManager::CreateMesh(const string &name)
+  /*StaticMesh* AssetManager::CreateStaticMesh(const string &name)
   {
     CHECK_EXIST(Mesh,m_mesh_map,name);
-    Mesh* mesh=new Mesh;
+    StaticMesh* mesh=new StaticMesh();
     m_mesh_map[name]=mesh;
     return mesh;
   }
 
-  Mesh* AssetManager::GetMesh(const string &name)
+  StaticMesh* AssetManager::GetStaticMesh(const string &name)
   {
     auto it=m_mesh_map.find(name);
     if(it!=m_mesh_map.end())return it->second;
     else throw runtime_error("Not Found");
-  }
+  }*/
 }

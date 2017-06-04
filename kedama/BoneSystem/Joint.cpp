@@ -1,8 +1,8 @@
-#include "Bone.hpp"
+#include "Joint.hpp"
 
 namespace Kedama
 {
-  Bone::Bone(const string& name):m_name(name)
+  Joint::Joint(const string& name):m_name(name)
   {
     AddUpdateListener("__bone_updater__",[this](Transform& t)
     {
@@ -10,7 +10,7 @@ namespace Kedama
     });
   }
 
-  Bone::~Bone()
+  Joint::~Joint()
   {
   }
 }

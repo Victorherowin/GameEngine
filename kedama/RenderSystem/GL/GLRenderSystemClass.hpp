@@ -7,7 +7,8 @@ namespace Kedama {
   namespace GL {
     class GLControl;
     class GLMaterialNative;
-    class GLMeshNative;
+    class GLStaticMeshNative;
+    class GLSkinnyMeshNative;
     class GLRendererFactory;
     class GLShader;
     class GLTexture;

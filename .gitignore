@@ -35,3 +35,6 @@ build
 CMakeSettings.json
 
 *.app
+cmake-build-debug/
+
+\.idea/

@@ -25,13 +25,13 @@ namespace Kedama
 
     inline void SetDrawMode(DrawMode mode){m_draw_mode=mode;}
 
-    inline void SetMesh(Mesh* mesh){m_mesh=mesh;}
-    inline Mesh* GetMesh(){return m_mesh;}
+    inline void SetMesh(StaticMesh* mesh){m_mesh=mesh;}
+    inline StaticMesh* GetMesh(){return m_mesh;}
 
   private:
     bool m_enable=true;
     DrawMode m_draw_mode=DrawMode::TRIANGLES;
-    Mesh* m_mesh=nullptr;
+    StaticMesh* m_mesh=nullptr;
     Material* material=nullptr;
   };
 

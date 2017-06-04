@@ -76,8 +76,9 @@ int32_t main(int32_t argc,char** argv)
     obj.SetWorldPosition(vec3(0.0f,0.5f,0.0f));
     obj.AddChildren(&obj2);
     obj2.SetWorldPosition(vec3(2.5,0.0,0.5));
+    obj2.SetScale(1.0,2.0,1.0);
     Camera camera("TestCamera");
-    Mesh test_mesh;
+    StaticMesh test_mesh(tri_vertex.size(),index.size());
     DefaultMaterial test_material;
     IShader* shader=irsf->CreateShader();
     shader->SetFragmentShaderSource(fs_shader_src);
@@ -85,7 +86,7 @@ int32_t main(int32_t argc,char** argv)
     shader->Compile();
 
     test_mesh.SetIndices(index);
-    test_mesh.SetVertices(tri_vertex);
+    test_mesh.SetPositions(tri_vertex);
 
     test_material.SetAmbient(vec3(0.0f,1.0f,1.0f));
     test_material.Update();
@@ -112,8 +113,8 @@ int32_t main(int32_t argc,char** argv)
       obj.Rotate(vec3(0,1,0),0.1f/glm::pi<float>());
 
       CommandBuffer cb;
-      cb.AddRenderCommand(&obj,&test_mesh,&test_material);
-      cb.AddRenderCommand(&obj2,&test_mesh,&test_material);
+      cb.AddRenderCommand(&obj,test_mesh.GetMeshBuffer(),&test_material);
+      cb.AddRenderCommand(&obj2,test_mesh.GetMeshBuffer(),&test_material);
       obj2.Move(vec3(sin(t++*0.05)*0.5,0,0));
       obj.Update();
 

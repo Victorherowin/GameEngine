@@ -49,7 +49,7 @@ namespace Kedama {
       SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
       SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
       SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-      SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+      SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
       SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
       SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 #ifdef DEBUG
@@ -59,11 +59,10 @@ namespace Kedama {
       m_glcontext=SDL_GL_CreateContext(m_window->GetNativePtr());
       glewInit();
       glClearColor(0.4f,0.6f,0.8f,1.0f);
-      glClearDepth(0.0f);
-      //     glEnable(GL_DEPTH_TEST);
-      //     glDepthFunc(GL_LESS);
-      // glEnable(GL_CULL_FACE);
-      //   glCullFace(GL_BACK);
+      glEnable(GL_DEPTH_TEST);
+      //glEnable(GL_CULL_FACE);
+      glDepthFunc(GL_LESS);
+      //glCullFace(GL_BACK);
 
 #ifdef DEBUG
       glDebugMessageCallback(&GLControl::DebugOutput,nullptr);
