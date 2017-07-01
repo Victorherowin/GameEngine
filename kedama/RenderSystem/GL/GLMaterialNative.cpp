@@ -3,7 +3,7 @@
 namespace Kedama {
   namespace GL
   {
-    size_t GetUniformBlockSize(const list<Material::Value> &property_list)//std140
+    size_t GetUniformBlockSize(const list<AbstractPropertyValue> &property_list)//std140
     {
       size_t size=0;
       int count=0;
@@ -56,7 +56,7 @@ namespace Kedama {
       glDeleteBuffers(1,&m_ubo);
     }
 
-    void GLMaterialNative::Upload(const list<Material::Value> &property_list)
+    void GLMaterialNative::Init(const list<AbstractPropertyValue> &property_list)
     {
       m_textures.clear();
       size_t size=GetUniformBlockSize(property_list);

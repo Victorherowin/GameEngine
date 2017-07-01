@@ -25,5 +25,6 @@
 #include <tuple>
 #include <algorithm>
 #include <thread>
+#include <initializer_list>
 
 #endif

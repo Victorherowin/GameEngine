@@ -14,47 +14,89 @@
 #include "../GLMInclude.hpp"
 #include "../Define.hpp"
 #include "Interface/IShader.hpp"
+#include "PropertyValue.hpp"
 
-namespace Kedama
-{
-  using namespace glm;
+namespace Kedama {
+    using namespace glm;
 
-  enum class DrawMode
-  {
-    LINES,TRIANGLES,POINT
-  };
+    enum class DrawMode {
+        LINES, TRIANGLES, POINT
+    };
 
-  enum class PassType
-  {
-    Normal,Transparent
-  };
+    enum class PassType {
+        Normal, Transparent
+    };
 
-  struct KEDAMA_API Pass
-  {
-    //TODO:其他渲染设置
-    PassType pass_type;
-    DrawMode draw_mode=DrawMode::TRIANGLES;
-    IShader* shader=nullptr;
-  };
+    struct KEDAMA_API Pass {
+        //TODO:其他渲染设置
+        PassType pass_type;
+        DrawMode draw_mode = DrawMode::TRIANGLES;
+        IShader* shader = nullptr;
+    };
 
-  enum class MaterialType
-  {
-    Normal,PostProcess
-  };
+    enum class MaterialType {
+        Normal, PostProcess
+    };
 
-  class KEDAMA_API Material
-  {
-  public:
-    class INative;
-    struct Value;
-  protected:
-    Material(MaterialType type);
+    class KEDAMA_API Material
+    {
+    public:
+        class INative;
+    protected:
+        Material(MaterialType type);
 
-  public:
-    Material();
-    ~Material();
+    public:
+        Material();
 
-    void SetBool(const string& property,bool b);
+        ~Material();
+
+        template<typename T>
+        Material &AddProperty(const string &name, const T &default_value)
+        {
+            m_property_list.push_back(PropertyValue<T>(name,default_value));
+            m_property_value[name]=&m_property_list.back();
+            return *this;
+        }
+
+        template<typename T>
+        Material &AddProperty(const string &name)
+        {
+            m_property_list.push_back(PropertyValue<T>(name));
+            m_property_value[name]=&m_property_list.back();
+            return *this;
+        }
+
+        template<typename T>
+        Material &AddPropertyArray(const string &name, size_t length)
+        {
+            m_property_list.push_back(PropertyValueArray<T>(name,length));
+            m_property_value[name]=&m_property_list.back();
+            return *this;
+        }
+
+        template<typename T>
+        Material &AddPropertyArray(const string &name, size_t length, const initializer_list<T>& default_value)
+        {
+            m_property_list.push_back(PropertyValue<T>(name));
+            m_property_value[name]=&m_property_list.back();
+            return *this;
+        }
+
+        void Final();
+
+        template<typename T>
+        PropertyValue<T> GetProperty(const string &name)
+        {
+            return *static_cast<PropertyValue<T>*>(m_property_value[name]);
+        }
+
+        template<typename T>
+        PropertyValueArray<T> GetPropertyArray(const string &name)
+        {
+            return *static_cast<PropertyValueArray<T>*>(m_property_value[name]);
+        }
+
+/*    void SetBool(const string& property,bool b);
     void SetVector3(const string& property,const vec3& vec);
     void SetVector4(const string& property,const vec4& vec);
     void SetFloat(const string& property,float _float);
@@ -82,92 +124,80 @@ namespace Kedama
     vector<float> GetFloatArray(const string &property);
     vector<int> GetIntArray(const string& property);
     ITexture2D* GetTexture(const string& property);
-    vector<mat4> GetMatrixArray(const string& property);
+    vector<mat4> GetMatrixArray(const string& property);*/
 
-    inline MaterialType GetType(){return m_type;}
+        inline MaterialType GetType() { return m_type; }
 
-    void Update();
+        void Update();
 
-    inline const INative* GetNativePtr()const
-    {return m_native;}
+        inline const INative* GetNativePtr() const { return m_native; }
 
-    Pass* CreatePass();
-    void RemovePass(Pass* pass);
+        Pass* CreatePass();
 
-    inline void UsePass(Pass* pass)
-    {m_current_pass=pass;}
-    inline const Pass* GetCurrentPass()const
-    {return m_current_pass;}
+        void RemovePass(Pass* pass);
 
-  protected:
+        inline void UsePass(Pass* pass) { m_current_pass = pass; }
 
-    MaterialType m_type;
+        inline const Pass* GetCurrentPass() const { return m_current_pass; }
 
-    static Pass default_pass;
+    protected:
 
-    INative* m_native=nullptr;
-    list<Pass> m_passes;
-    Pass* m_current_pass=nullptr;
-    list<Value> m_property_list;
-    map<string,Value*> m_property_value;
-  };
+        MaterialType m_type;
 
-  class KEDAMA_API Material::INative
-  {
-  public:
-    virtual void Upload(const list<Value>&)=0;
-    virtual ~INative(){}
-  };
+        static Pass default_pass;
 
-  struct Material::Value
-  {
-    Value():data(1){}
-
-    enum class Type:uint8_t
-    {
-      TEXTURE,VECTOR3,VECTOR4,FLOAT,INT,MATRIX,BOOL/*float array*/
+        INative* m_native = nullptr;
+        list <Pass> m_passes;
+        Pass* m_current_pass = nullptr;
+        list <AbstractPropertyValue> m_property_list;
+        map<string, AbstractPropertyValue*> m_property_value;
     };
 
-    union _Internal
-    {
-      float _flaot;
-      int _int;//int or color
+    class KEDAMA_API Material::INative {
+    public:
+        virtual void Init(const list <AbstractPropertyValue>&)=0;
+
+        virtual ~INative() {}
     };
 
-    string property_name;
-    Type type;
-    bool is_array=false;
-    ITexture2D* _texture=nullptr;
-    vector<_Internal> data;
-  };
 
+    class PostProcessMaterial : public Material {
+    public:
+        PostProcessMaterial();
+    };
 
-  class PostProcessMaterial:public Material
-  {
-  public:
-    PostProcessMaterial();
-  };
+    class DefaultMaterial : public Material {
+    public:
+        DefaultMaterial();
 
-  class DefaultMaterial:public Material
-  {
-  public:
-    DefaultMaterial();
-    inline void SetColor(const vec4& color){SetVector4("color",color);}
-    inline void SetAmbient(const vec3& ambient,float strength=0.1f){SetVector4("ambient",vec4(ambient,strength));}
-    inline void SetDiffuse(const vec3& diffuse){SetVector3("diffuse",diffuse);}
-    inline void SetSpecular(const vec3& specular,float strength=0.5f){SetVector4("specular",vec4(specular,strength));}
-    inline void SetShininess(float shininess){SetFloat("shininess",shininess);}
-    inline void SetTexture(ITexture2D* tex){Material::SetTexture("texture0",tex);}
+        inline void SetColor(const vec4 &color) {  GetProperty<vec4>("color")=color; }
 
-    inline vec4 GetColor(){return GetVector4("color");}
-    inline vec4 GetAmbient(){return GetVector4("ambient");}
-    inline vec3 GetDiffuse(){return GetVector3("diffuse");}
-    inline vec4 GetSpecular(){return GetVector4("specular");}
-    inline float GetShininess(){return GetFloat("shininess");}
-    inline ITexture2D* GetTexture(){return Material::GetTexture("texture0");}
+        inline void SetAmbient(const vec3 &ambient, float strength = 0.1f) {
+            GetProperty<vec4>("ambient")=vec4(ambient, strength);
+        }
 
-    inline void Update(){Material::Update();}
-  };
+        inline void SetDiffuse(const vec3 &diffuse) { GetProperty<vec3>("diffuse")=diffuse; }
+
+        inline void SetSpecular(const vec3 &specular, float strength = 0.5f) {
+            GetProperty<vec4>("specular")=vec4(specular, strength);
+        }
+
+        inline void SetShininess(float shininess) { GetProperty<float>("shininess")=shininess; }
+
+        inline void SetTexture(ITexture2D* tex) { GetProperty<ITexture2D*>("texture0")=tex; }
+
+        inline vec4 GetColor() { return GetProperty<vec4>("color"); }
+
+        inline vec4 GetAmbient() { return GetProperty<vec4>("ambient"); }
+
+        inline vec3 GetDiffuse() { return GetProperty<vec3>("diffuse"); }
+
+        inline vec4 GetSpecular() { return GetProperty<vec4>("specular"); }
+
+        inline float GetShininess() { return GetProperty<float>("shininess"); }
+
+        inline ITexture2D* GetTexture() { return GetProperty<ITexture2D*>("texture0"); }
+    };
 }
 
 #endif
