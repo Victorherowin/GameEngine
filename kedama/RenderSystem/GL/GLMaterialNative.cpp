@@ -3,7 +3,7 @@
 namespace Kedama {
   namespace GL
   {
-    size_t GetUniformBlockSize(const list<AbstractPropertyValue> &property_list)//std140
+/*    size_t GetUniformBlockSize(const list<AbstractPropertyValue> &property_list)//std140
     {
       size_t size=0;
       int count=0;
@@ -45,15 +45,6 @@ namespace Kedama {
         }
       }
       return size;
-    }
-
-    GLMaterialNative::GLMaterialNative()
-    {
-    }
-
-    GLMaterialNative::~GLMaterialNative()
-    {
-      glDeleteBuffers(1,&m_ubo);
     }
 
     void GLMaterialNative::Init(const list<AbstractPropertyValue> &property_list)
@@ -141,6 +132,20 @@ namespace Kedama {
         }
       }
       glUnmapNamedBuffer(m_ubo);
-    }
+    }*/
+
+      GLMaterialNative::GLMaterialNative()
+      {
+      }
+
+      GLMaterialNative::~GLMaterialNative()
+      {
+        glDeleteBuffers(1,&m_ubo);
+      }
+
+      void GLMaterialNative::Init(const list<AbstractPropertyValue*> &property_list)
+      {
+
+      }
   }
 }

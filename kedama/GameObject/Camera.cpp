@@ -34,7 +34,7 @@ namespace Kedama
     {
       return glm::lookAt(GetWorldPosition(),m_look_target->GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }
-    else if(m_type==LookType::Direction)
+    else
     {
       return glm::lookAt(GetWorldPosition(),m_direction+GetWorldPosition(),glm::vec3(0.0f,1.0f,0.0f));
     }

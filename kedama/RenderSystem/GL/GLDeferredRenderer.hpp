@@ -1,5 +1,5 @@
 #ifndef _H_GL_DEFERREDENDERER
-#define _H_GL_DEFERREDRENDERER
+#define _H_GL_DEFERREDENDERER
 
 #include "../Interface/IDeferredRenderer.hpp"
 #include "GLRenderSystemClass.hpp"

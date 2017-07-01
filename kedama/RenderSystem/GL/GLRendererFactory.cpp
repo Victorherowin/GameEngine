@@ -5,7 +5,6 @@
 #include "GLMaterialNative.hpp"
 #include "GLLightNative.hpp"
 #include "GLControl.hpp"
-#include "GLMeshbuffer.hpp"
 
 namespace Kedama
 {

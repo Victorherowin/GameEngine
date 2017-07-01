@@ -1,5 +1,5 @@
-#ifndef _H_LOCALFOLESTREAM
-#define _H_LOCALFOLESTREAM
+#ifndef _H_LOCALFILESTREAM
+#define _H_LOCALFILESTREAM
 
 #include "../Define.hpp"
 

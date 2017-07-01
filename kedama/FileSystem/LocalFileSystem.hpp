@@ -22,8 +22,8 @@ namespace Kedama
             Stream* Open(const string& file,AccessFlag flag)override;
             const string& GetFileSystemType()override;
 			
-			bool Exist(const string& path);
-            void Mount(const string& path,FileSystem* filesystem);
+			bool Exist(const string& path)override;
+            void Mount(const string& path,FileSystem* filesystem)override;
             void Unmount(const string& path)override;
 
 			private:

@@ -5,6 +5,7 @@
 #include <RenderSystem/Interface/IRendererFactory.hpp>
 #include <RenderSystem/Interface/IWindow.hpp>
 #include <RenderSystem/CommandBuffer.hpp>
+#include <RenderSystem/PropertyValue.hpp>
 #include <Log.hpp>
 
 #include <string>
@@ -79,7 +80,7 @@ int32_t main(int32_t argc,char** argv)
     obj2.SetScale(1.0,2.0,1.0);
     Camera camera("TestCamera");
     StaticMesh test_mesh(tri_vertex.size(),index.size());
-    DefaultMaterial test_material;
+    /*DefaultMaterial test_material;
     IShader* shader=irsf->CreateShader();
     shader->SetFragmentShaderSource(fs_shader_src);
     shader->SetVertexShaderSource(vs_shader_src);
@@ -89,7 +90,8 @@ int32_t main(int32_t argc,char** argv)
     test_mesh.SetPositions(tri_vertex);
 
     test_material.SetAmbient(vec3(0.0f,1.0f,1.0f));
-    test_material.Update();
+    test_material.Update();*/
+
     //Pass* pass=test_material.CreatePass();
     //test_material.UsePass(pass);
     //pass->shader=shader;
@@ -113,8 +115,8 @@ int32_t main(int32_t argc,char** argv)
       obj.Rotate(vec3(0,1,0),0.1f/glm::pi<float>());
 
       CommandBuffer cb;
-      cb.AddRenderCommand(&obj,test_mesh.GetMeshBuffer(),&test_material);
-      cb.AddRenderCommand(&obj2,test_mesh.GetMeshBuffer(),&test_material);
+     /* cb.AddRenderCommand(&obj,test_mesh.GetMeshBuffer(),&test_material);
+      cb.AddRenderCommand(&obj2,test_mesh.GetMeshBuffer(),&test_material);*/
       obj2.Move(vec3(sin(t++*0.05)*0.5,0,0));
       obj.Update();
 

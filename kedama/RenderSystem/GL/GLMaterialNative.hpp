@@ -14,7 +14,7 @@ namespace Kedama {
     public:
       GLMaterialNative();
       ~GLMaterialNative();
-      void Init(const list<AbstractPropertyValue>&)override;
+      void Init(const list<AbstractPropertyValue*>&)override;
       inline GLuint GetUBO()const
       {return m_ubo;}
 

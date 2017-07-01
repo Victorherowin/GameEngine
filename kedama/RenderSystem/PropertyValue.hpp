@@ -22,16 +22,17 @@ namespace Kedama
     public:
         using PropertyValueChanged=function<void(const AbstractPropertyValue&)>;
 
-        AbstractPropertyValue(const string& property_name,const string& type):m_property_name(property_name),m_value_type(type){}
+        AbstractPropertyValue(const string& property_name,const string& type);
+        virtual ~AbstractPropertyValue();
         inline const string& GetValueType()const{return m_value_type;}
         inline const string& GetPropertyValue()const{return m_property_name;}
-        inline void AddValueChangedListener(const PropertyValueChanged& listener){listener(*this);m_value_changed_listeners.push_back(listener);}
+        void AddValueChangedListener(const PropertyValueChanged& listener);
 
         virtual const void* GetValueData()const=0;
         template<typename T>
         inline const T* GetValueData()const{return (const T*)GetValueData();}
     protected:
-        inline void NotifyValueChanged(){for(auto listener:m_value_changed_listeners)listener(*this);}
+        void NotifyValueChanged();
 
     private:
         string m_property_name;
@@ -46,11 +47,11 @@ namespace Kedama
     public:
         static const string ValueType;
 
-        PropertyValue(const string& property_name,const T& default_value=T()):AbstractPropertyValue(property_name,ValueType),m_value(default_value){}
-        inline void SetValue(const T& value){m_value=value;NotifyValueChanged();}
+        PropertyValue(const string& property_name,const T& default_value=T());
+        void SetValue(const T& value);
         inline const T& GetValue(){return m_value;}
-        inline PropertyValue& operator =(const T& value){m_value=value;NotifyValueChanged();return *this;}
-        inline PropertyValue& operator =(PropertyValue& value){m_value=value.m_value;NotifyValueChanged();return *this;}
+        PropertyValue& operator =(const T& value);
+        PropertyValue& operator =(PropertyValue& value);
         inline operator T(){return m_value;}
         inline operator const T()const{return m_value;}
 
@@ -117,18 +118,17 @@ namespace Kedama
 
         static const string ValueType;
 
-        PropertyValueArray(const string& property_name,size_t size,const initializer_list<T>& default_value={}):AbstractPropertyValue(property_name,ValueType),m_size(size),m_value_array(new T[size])
-        {
-            int i=0;
-            for(auto&& value:default_value)
-                m_value_array[i++]=value;
-        }
+        PropertyValueArray(const string& property_name,size_t size,const initializer_list<T>& default_value={});
+        ~PropertyValueArray();
 
-        ~PropertyValueArray(){delete[] m_value_array;}
-        inline void AddElementChangedListener(const ElementChanged& listener){m_element_changed_listeners.push_back(listener);}
+        inline void AddElementChangedListener(const ElementChanged& listener)
+        {m_element_changed_listeners.push_back(listener);}
 
-        inline PropertyElementProxy operator [](int index){return PropertyElementProxy(*this,index,m_value_array[index]);}
-        inline const PropertyElementProxy operator [](int index)const{return PropertyElementProxy(const_cast<PropertyValueArray&>(*this),index,m_value_array[index]);}
+        inline PropertyElementProxy operator [](int index)
+        {return PropertyElementProxy(*this,index,m_value_array[index]);}
+
+        inline const PropertyElementProxy operator [](int index)const
+        {return PropertyElementProxy(const_cast<PropertyValueArray&>(*this),index,m_value_array[index]);}
 
         inline size_t Size(){return m_size;}
         inline PropertyElementIterator begin(){return PropertyElementIterator(*this,0);}
@@ -137,20 +137,13 @@ namespace Kedama
         const void* GetValueData()const override{return m_value_array;}
 
     private:
-        inline void NotifyElementChanged(int pos){for(auto& listener:m_element_changed_listeners)listener(pos,*this);}
+        void NotifyElementChanged(int pos);
 
     private:
         size_t m_size;
         T* m_value_array;
         list<ElementChanged> m_element_changed_listeners;
     };
-
-    template<> class PropertyValueArray<ITexture2DArray>;
-    template<> class PropertyValueArray<ITexture2D>;
-    template<> class PropertyValueArray<ITextureCube>;
-    template<> class PropertyValueArray<ITextureCubeArray>;
-    template<> class PropertyValueArray<ITexture3D>;
-
 
     template<typename T>
     const string PropertyValue<T>::ValueType=typeid(T).name();

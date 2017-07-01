@@ -1,4 +1,4 @@
-#include "LocalFile.hpp"
+#include "LocalFileStream.hpp"
 
 namespace Kedama
 {

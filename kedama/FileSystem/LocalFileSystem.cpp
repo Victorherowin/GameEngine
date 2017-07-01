@@ -1,5 +1,5 @@
 #include "LocalFileSystem.hpp"
-#include "LocalFile.hpp"
+#include "LocalFileStream.hpp"
 #include <sys/stat.h>
 
 namespace Kedama
