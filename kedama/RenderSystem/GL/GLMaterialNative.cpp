@@ -1,8 +1,9 @@
 #include "GLMaterialNative.hpp"
 
-namespace Kedama {
-  namespace GL
-  {
+namespace Kedama
+{
+    namespace GL
+    {
 /*    size_t GetUniformBlockSize(const list<AbstractPropertyValue> &property_list)//std140
     {
       size_t size=0;
@@ -134,18 +135,38 @@ namespace Kedama {
       glUnmapNamedBuffer(m_ubo);
     }*/
 
-      GLMaterialNative::GLMaterialNative()
-      {
-      }
+        GLMaterialNative::GLMaterialNative()
+        {
+            glCreateBuffers(1, &m_ubo);
+        }
 
-      GLMaterialNative::~GLMaterialNative()
-      {
-        glDeleteBuffers(1,&m_ubo);
-      }
+        GLMaterialNative::~GLMaterialNative()
+        {
+            glUnmapNamedBuffer(m_ubo);
+            glDeleteBuffers(1, &m_ubo);
+        }
 
-      void GLMaterialNative::Init(const list<AbstractPropertyValue*> &property_list)
-      {
+        size_t GetUniformBlockSize_Std140(const list<AbstractPropertyValue*>& property_list)
+        {
+            for(AbstractPropertyValue* apv : property_list)
+            {
+                if(PROPERTY_VALUE_IS(apv,int32_t))
+                {
 
-      }
-  }
+                }
+                else if(PROPERTY_VALUE_IS(apv,float))
+                {
+
+                }
+            }
+        }
+
+        void GLMaterialNative::Init(const list<AbstractPropertyValue*>& property_list)
+        {
+            int size = GetUniformBlockSize_Std140(property_list);
+            glNamedBufferStorage(m_ubo,size,nullptr,GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+            m_ubo_memory=(uint8_t*)glMapNamedBufferRange(m_ubo,0,size,GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+
+        }
+    }
 }

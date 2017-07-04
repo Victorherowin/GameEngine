@@ -7,6 +7,9 @@
 
 #include "../Include.hpp"
 
+#define PROPERTY_VALUE_IS(b,d) (b->GetValueType()==PropertyValue<d>::ValueType)
+#define PROPERTY_VALUE_ARRAY_IS(b,d) (b->GetValueType()==PropertyValueArray<d>::ValueType)
+
 namespace Kedama
 {
     class ITexture2D;
@@ -31,6 +34,7 @@ namespace Kedama
         virtual const void* GetValueData()const=0;
         template<typename T>
         inline const T* GetValueData()const{return (const T*)GetValueData();}
+
     protected:
         void NotifyValueChanged();
 
@@ -146,9 +150,9 @@ namespace Kedama
     };
 
     template<typename T>
-    const string PropertyValue<T>::ValueType=typeid(T).name();
+    const string PropertyValue<T>::ValueType=string("PropertyValue_")+typeid(T).name();
 
     template<typename T>
-    const string PropertyValueArray<T>::ValueType=typeid(T[]).name();
+    const string PropertyValueArray<T>::ValueType=string("PropertyValueArray_")+typeid(T[]).name();
 }
 #endif //KEDAMA_PROPERTYVALUE_HPP

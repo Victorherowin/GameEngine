@@ -5,29 +5,33 @@
 #include "../Material.hpp"
 #include "GL/glew.h"
 
-namespace Kedama {
-  namespace GL
-  {
-    using namespace std;
-    class KEDAMA_API GLMaterialNative:public Material::INative
+namespace Kedama
+{
+    namespace GL
     {
-    public:
-      GLMaterialNative();
-      ~GLMaterialNative();
-      void Init(const list<AbstractPropertyValue*>&)override;
-      inline GLuint GetUBO()const
-      {return m_ubo;}
+        using namespace std;
 
-      inline const vector<pair<string,ITexture2D*>>& GetTextures()const
-      {return m_textures;}
+        class KEDAMA_API GLMaterialNative : public Material::INative
+        {
+        public:
+            GLMaterialNative();
 
-    protected:
-      GLuint m_ubo=0;
-      int m_last_size=0;
+            ~GLMaterialNative();
 
-      vector<pair<string,ITexture2D*>> m_textures;
-    };
-  }
+            void Init(const list<AbstractPropertyValue*>&) override;
+
+            inline GLuint GetUBO() const { return m_ubo; }
+
+            inline const vector<pair<string, ITexture2D*>>& GetTextures() const { return m_textures; }
+
+        protected:
+            GLuint m_ubo = 0;
+            uint8_t* m_ubo_memory = nullptr;
+            int m_last_size = 0;
+
+            vector<pair<string, ITexture2D*>> m_textures;
+        };
+    }
 }
 
 #endif
