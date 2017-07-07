@@ -37,6 +37,18 @@ namespace Kedama
     {
         m_native->Init(m_property_list);
     }
+
+    Material* Material::MakeDefaultMaterial()
+    {
+        return Builder()
+				.AddProperty("use_texture",false)
+                .AddProperty("color", vec4(0.1f, 0.2f, 0.3f, 1.0f))
+                .AddProperty("ambient", vec4(0.1f, 0.2f, 0.3f, 0.1f))
+                .AddProperty("diffuse", vec3(0.4f, 0.5f, 0.6f))
+                .AddProperty("specular", vec4(0.7f, 0.8f, 0.9f, 0.5f))
+                .AddProperty("shininess", 0.8f)
+                .Build();
+    }
 }
 
 namespace Kedama

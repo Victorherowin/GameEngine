@@ -5,6 +5,8 @@
 #include "../GLMInclude.hpp"
 #include "PropertyValue.hpp"
 
+#include "PropertyValueVisitor.hpp"
+
 #define DEFINE_PROPERTY_CLASS(c)\
 template class PropertyValue<c>;\
 template class PropertyValueArray<c>;
@@ -43,6 +45,12 @@ namespace Kedama
     }
 
     template <typename T>
+    void PropertyValue<T>::Accept(PropertyValueVisitor& ipvv)
+    {
+        ipvv.Visit(this);
+    }
+
+    template <typename T>
     PropertyValue<T>& PropertyValue<T>::operator=(const T& value)
     {
         m_value=value;
@@ -64,8 +72,6 @@ namespace Kedama
             listener(pos,*this);
     }
 
-
-
     template <typename T>
     PropertyValueArray<T>::PropertyValueArray(const string& property_name, size_t size,
                                            const initializer_list<T>& default_value):
@@ -77,22 +83,40 @@ namespace Kedama
     }
 
     template <typename T>
+    void PropertyValueArray<T>::Accept(PropertyValueVisitor& ipvv)
+    {
+        ipvv.Visit(this);
+    }
+
+    template <typename T>
     PropertyValueArray<T>::~PropertyValueArray()
     {
         delete[] m_value_array;
     }
 
-    DEFINE_PROPERTY_CLASS(int16_t)
     DEFINE_PROPERTY_CLASS(int32_t)
+    DEFINE_PROPERTY_CLASS(uint32_t)
     DEFINE_PROPERTY_CLASS(float)
+    DEFINE_PROPERTY_CLASS(double)
+    DEFINE_PROPERTY_CLASS(bool)
     DEFINE_PROPERTY_CLASS(vec2)
     DEFINE_PROPERTY_CLASS(vec3)
     DEFINE_PROPERTY_CLASS(vec4)
     DEFINE_PROPERTY_CLASS(ivec2)
     DEFINE_PROPERTY_CLASS(ivec3)
     DEFINE_PROPERTY_CLASS(ivec4)
+    DEFINE_PROPERTY_CLASS(bvec2)
+    DEFINE_PROPERTY_CLASS(bvec3)
+    DEFINE_PROPERTY_CLASS(bvec4)
+    DEFINE_PROPERTY_CLASS(uvec2)
+    DEFINE_PROPERTY_CLASS(uvec3)
+    DEFINE_PROPERTY_CLASS(uvec4)
+    DEFINE_PROPERTY_CLASS(dvec2)
+    DEFINE_PROPERTY_CLASS(dvec3)
+    DEFINE_PROPERTY_CLASS(dvec4)
     DEFINE_PROPERTY_CLASS(mat2)
     DEFINE_PROPERTY_CLASS(mat3)
+    DEFINE_PROPERTY_CLASS(mat3x4)
     DEFINE_PROPERTY_CLASS(mat4)
 
     DEFINE_PROPERTY_CLASS(ITexture2DArray*)

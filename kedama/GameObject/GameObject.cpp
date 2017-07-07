@@ -19,5 +19,6 @@ namespace Kedama
       if(gp->GetName()==name)
         return gp;
     }
+    return nullptr;
   }
 }

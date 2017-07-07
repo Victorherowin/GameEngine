@@ -6,8 +6,8 @@
   \date 2017.02.01
 */
 
-#ifndef MATERIAL
-#define MATERIAL
+#ifndef _MATERIAL_HPP
+#define _MATERIAL_HPP
 
 #include "Interface/ITexture2D.hpp"
 #include "../Include.hpp"
@@ -101,15 +101,23 @@ namespace Kedama
     public:
         ~Material();
 
+        static Material* MakeDefaultMaterial();
+
         template<typename T>
         PropertyValue<T> GetProperty(const string& name)
         {
-            return *static_cast<PropertyValue<T>*>(m_property_value[name]);
+			auto value = m_property_value[name];
+			if (PropertyValue<T>::ValueType != value->GetValueType())
+				throw runtime_error("type error");
+            return *static_cast<PropertyValue<T>*>(value);
         }
 
         template<typename T>
         PropertyValueArray<T> GetPropertyArray(const string& name)
         {
+			auto value = m_property_value[name];
+			if (PropertyValueArray<T>::ValueType != value->GetValueType())
+				throw runtime_error("type error");
             return *static_cast<PropertyValueArray<T>*>(m_property_value[name]);
         }
 
@@ -141,7 +149,7 @@ namespace Kedama
         virtual ~INative() {}
     };
 
-    class PostProcessMaterial:public Material
+    class KEDAMA_API PostProcessMaterial:public Material
     {
     private:
         PostProcessMaterial();

@@ -22,7 +22,6 @@ else()
      set(LINK_LIBS ${LINK_LIBS} Kedama_GLRenderSystem)
 endif()
 
-foreach(i ${TEST_SOURCE})
-	add_executable("Kedama_test_${i}" ${i})
-	target_link_libraries("Kedama_test_${i}" ${LINK_LIBS})
-endforeach()
+add_executable("Kedama_test_init" init.cpp)
+target_link_libraries("Kedama_test_init" ${LINK_LIBS})
+

@@ -53,7 +53,7 @@ namespace Kedama {
 
             m_vertex_attribute[attr_name]=va;
 
-            glVertexArrayVertexBuffer(m_vao,location,va.VBO,0,va.Size*_type_size_table[(int)type]);
+            glVertexArrayVertexBuffer(m_vao,location,va.VBO,0,size*_type_size_table[(int)type]);
             glVertexArrayAttribFormat(m_vao,location,size,_gltype_table[(int)type],GL_FALSE,0);
             glVertexArrayAttribBinding(m_vao,location,location);
 

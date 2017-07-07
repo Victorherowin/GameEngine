@@ -80,14 +80,15 @@ int32_t main(int32_t argc,char** argv)
     obj2.SetScale(1.0,2.0,1.0);
     Camera camera("TestCamera");
     StaticMesh test_mesh(tri_vertex.size(),index.size());
+	test_mesh.SetIndices(index);
+	test_mesh.SetPositions(tri_vertex);
+
+    Material* test_material=Material::MakeDefaultMaterial();
     /*DefaultMaterial test_material;
     IShader* shader=irsf->CreateShader();
     shader->SetFragmentShaderSource(fs_shader_src);
     shader->SetVertexShaderSource(vs_shader_src);
     shader->Compile();
-
-    test_mesh.SetIndices(index);
-    test_mesh.SetPositions(tri_vertex);
 
     test_material.SetAmbient(vec3(0.0f,1.0f,1.0f));
     test_material.Update();*/
@@ -115,11 +116,12 @@ int32_t main(int32_t argc,char** argv)
       obj.Rotate(vec3(0,1,0),0.1f/glm::pi<float>());
 
       CommandBuffer cb;
-     /* cb.AddRenderCommand(&obj,test_mesh.GetMeshBuffer(),&test_material);
-      cb.AddRenderCommand(&obj2,test_mesh.GetMeshBuffer(),&test_material);*/
+      cb.AddRenderCommand(&obj,test_mesh.GetMeshBuffer(),test_material);
+      cb.AddRenderCommand(&obj2,test_mesh.GetMeshBuffer(),test_material);
       obj2.Move(vec3(sin(t++*0.05)*0.5,0,0));
       obj.Update();
 
+	  test_material->GetProperty<vec4>("color") = lerp(vec4(1.0f,0.5f,0.4f,1.0f),vec4(0.4f,1.0f,0.8f,1.0f),t*0.01f);
       rs->Clear();
       rs->Render(cb);
       rs->SwapBuffer();

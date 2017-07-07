@@ -6,17 +6,14 @@
 #define KEDAMA_PROPERTYVALUE_HPP
 
 #include "../Include.hpp"
+#include "Interface/ITexture.hpp"
 
 #define PROPERTY_VALUE_IS(b,d) (b->GetValueType()==PropertyValue<d>::ValueType)
 #define PROPERTY_VALUE_ARRAY_IS(b,d) (b->GetValueType()==PropertyValueArray<d>::ValueType)
 
 namespace Kedama
 {
-    class ITexture2D;
-    class ITexture2DArray;
-    class ITexture3D;
-    class ITextureCube;
-    class ITextureCubeArray;
+    class PropertyValueVisitor;
 
     using namespace std;
 
@@ -34,6 +31,8 @@ namespace Kedama
         virtual const void* GetValueData()const=0;
         template<typename T>
         inline const T* GetValueData()const{return (const T*)GetValueData();}
+
+        virtual void Accept(PropertyValueVisitor& ipvv)=0;
 
     protected:
         void NotifyValueChanged();
@@ -60,6 +59,8 @@ namespace Kedama
         inline operator const T()const{return m_value;}
 
         const void* GetValueData()const override{return &m_value;}
+
+        void Accept(PropertyValueVisitor& ipvv)override;
 
     private:
         T m_value;
@@ -92,7 +93,8 @@ namespace Kedama
 
             inline operator T(){return m_value;}
             inline operator const T()const{return m_value;}
-            inline T* operator &(){return &m_value;}
+            inline T* GetPointer()const{return &m_value;}
+            inline T* operator &()const{return &m_value;}
 
         private:
             int m_pos;
@@ -118,7 +120,7 @@ namespace Kedama
         };
 
     public:
-        using ElementChanged=function<void(int i,const PropertyValueArray& pva)>;
+        using ElementChanged=function<void(int position,const PropertyValueArray<T>& pva)>;
 
         static const string ValueType;
 
@@ -134,12 +136,13 @@ namespace Kedama
         inline const PropertyElementProxy operator [](int index)const
         {return PropertyElementProxy(const_cast<PropertyValueArray&>(*this),index,m_value_array[index]);}
 
-        inline size_t Size(){return m_size;}
         inline PropertyElementIterator begin(){return PropertyElementIterator(*this,0);}
         inline PropertyElementIterator end(){return PropertyElementIterator(*this,m_size);}
 
         const void* GetValueData()const override{return m_value_array;}
+        inline size_t GetSize()const{ return m_size;}
 
+        void Accept(PropertyValueVisitor& ipvv)override;
     private:
         void NotifyElementChanged(int pos);
 
