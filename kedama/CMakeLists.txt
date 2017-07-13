@@ -22,6 +22,7 @@ endif()
 
 add_subdirectory(FileSystem)
 add_subdirectory(BoneSystem)
+add_subdirectory(PhysicsSystem)
 
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL Android)

@@ -3,18 +3,15 @@
 //
 #include "FileSystem.hpp"
 
-namespace Kedama
+namespace Kedama::File
 {
-    namespace File
+    void FileSystem::Mount(const string& path, FileSystem* fs)
     {
-        void FileSystem::Mount(const string& path, FileSystem* fs)
-        {
-            throw std::runtime_error("No Implement");
-        }
+        throw std::runtime_error("No Implement");
+    }
 
-        void FileSystem::Unmount(const string& path)
-        {
-            throw std::runtime_error("No Implement");
-        }
+    void FileSystem::Unmount(const string& path)
+    {
+        throw std::runtime_error("No Implement");
     }
 }

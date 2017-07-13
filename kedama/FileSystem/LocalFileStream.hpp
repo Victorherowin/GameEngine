@@ -8,35 +8,31 @@
 #include <string>
 #include <cstdio>
 
-namespace Kedama
+namespace Kedama::File
 {
-    namespace File
+    using namespace std;
+
+    class KEDAMA_API LocalFileStream : public Stream
     {
-        using namespace std;
+    public:
+        LocalFileStream(const string& file, AccessFlag flag);
+        ~LocalFileStream();
 
-        class KEDAMA_API LocalFileStream : public Stream
-        {
-        public:
-            LocalFileStream(const string& file, AccessFlag flag);
+        const string& GetType() override;
+        bool Eof() override;
+        bool IsBad() override;
+        int Read(void* data, int size) override;
+        int Write(const void* data, int size) override;
+        void Seek(SeekMode type, int offset) override;
+        int Tell() override;
+        void Close() override;
 
-            ~LocalFileStream();
+        inline const string& GetName() { return m_name; }
 
-            const string& GetType() override;
-            bool Eof() override;
-            bool IsBad()override;
-            int Read(void* data, int size) override;
-            int Write(const void* data, int size) override;
-            void Seek(SeekMode type, int offset) override;
-            int Tell() override;
-            void Close() override;
-
-            inline const string& GetName() { return m_name; }
-
-        private:
-            string m_name;
-            FILE* m_fp;
-        };
-    }
+    private:
+        string m_name;
+        FILE* m_fp;
+    };
 }
 
 #endif
