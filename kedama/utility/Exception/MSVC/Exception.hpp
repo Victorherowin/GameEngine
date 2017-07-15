@@ -5,21 +5,26 @@
 #ifndef KEDAMA_EXCEPTION_HPP
 #define KEDAMA_EXCEPTION_HPP
 
-#include <iostream>
-#include <ostream>
 #include <sstream>
+#include <iostream>
 
 namespace Exception
 {
     class Exception
     {
-    public:
-        Exception();
-		virtual void Message() = 0;
-        void PrintStackTrace(std::ostream& o=std::cerr);
+    private:
+        Exception()noexcept;
+        Exception(const Exception& other)noexcept;
+        Exception(Exception&& other)noexcept;
+        Exception& operator=(const Exception& other)noexcept;
+        Exception& operator=(Exception&& other)noexcept;
+
+        virtual ~Exception()noexcept{}
+		virtual const char* Message()const noexcept = 0;
+        void PrintStackTrace(std::ostream& o=std::cerr)noexcept;
 
     private:
-        std::stringstream m_ss;
+        std::string m_stack_trace;
     };
 }
 

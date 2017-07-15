@@ -18,7 +18,8 @@ namespace Exception
         void* backTrace[framesToCapture]{};
         ULONG backTraceHash = 0;
 
-        m_ss << "StackTrace:" << std::endl;
+        std::stringstream ss;
+        ss << "StackTrace:" << std::endl;
         int num = CaptureStackBackTrace(0, framesToCapture, backTrace, nullptr);
         byte _symbol[sizeof(SYMBOL_INFO) + 1024]{};
         SYMBOL_INFO* symbol = (SYMBOL_INFO*) &_symbol;
@@ -32,31 +33,53 @@ namespace Exception
 			if (SymFromAddr(hProcess, (DWORD64)backTrace[i], &sym_dwDisplacement, symbol))
 			{
 				char* str=nullptr;
-				m_ss << "Address:0x" << std::hex << symbol->Address << "([" << str<<"]";
+				ss << "Address:0x" << std::hex << symbol->Address << "([" << str<<"]";
 				IMAGEHLP_LINE64 line64;
 				line64.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 				DWORD line_dwDisplacement = 0;
 				if (SymGetLineFromAddr64(hProcess, (DWORD64)backTrace[i], &line_dwDisplacement, &line64))
 				{
-					m_ss << std::dec << ":[" << line64.FileName << "]:" << line64.LineNumber;
+					ss << std::dec << ":[" << line64.FileName << "]:" << line64.LineNumber;
 				}
 				else
 				{
-					m_ss << "+0x" << sym_dwDisplacement;
+					ss << "+0x" << sym_dwDisplacement;
 				}
-				m_ss << ")" << std::endl;
+				ss << ")" << std::endl;
 			} 
 			else 
 			{
-				m_ss << "Address:0x"<< std::hex <<(DWORD64)backTrace[i]<<"(???)" << std::endl;
+				ss << "Address:0x"<< std::hex <<(DWORD64)backTrace[i]<<"(???)" << std::endl;
 			}
         }
         SymCleanup(hProcess);
+        m_stack_trace=std::move(ss.str());
     }
 
     void Exception::PrintStackTrace(std::ostream& o)
     {
-        auto str=std::move(m_ss.str());
-        o<<str<<std::endl;
+        o<<m_stack_trace<<std::endl;
+    }
+
+    Exception::Exception(const Exception& other):Exception()
+    {
+        m_stack_trace=other.m_stack_trace;
+    }
+
+    Exception& Exception::operator=(const Exception& other)
+    {
+        m_stack_trace=other.m_stack_trace;
+        return *this;
+    }
+
+    Exception::Exception(Exception&& other)
+    {
+        m_stack_trace=std::move(other.m_stack_trace);
+    }
+
+    Exception& Exception::operator=(Exception&& other)
+    {
+        m_stack_trace=std::move(other.m_stack_trace);
+        return *this;
     }
 }
