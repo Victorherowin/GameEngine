@@ -36,7 +36,7 @@ namespace Kedama {
       inline GLuint GetCameraUBO(){return m_camera_ubo;}
 
     private:
-#ifdef DEBUG
+#ifdef KEDAMA_DEBUG
       static void GLAPIENTRY DebugOutput(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
 #endif
     private:

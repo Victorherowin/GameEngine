@@ -11,7 +11,7 @@
 
 namespace Exception
 {
-    Exception::Exception()
+    Exception::Exception()noexcept
     {
         const ULONG framesToSkip = 0;
         const ULONG framesToCapture = TRACE_DEPTH;
@@ -56,28 +56,28 @@ namespace Exception
         m_stack_trace=std::move(ss.str());
     }
 
-    void Exception::PrintStackTrace(std::ostream& o)
+    void Exception::PrintStackTrace(std::ostream& o)noexcept
     {
         o<<m_stack_trace<<std::endl;
     }
 
-    Exception::Exception(const Exception& other):Exception()
+    Exception::Exception(const Exception& other)noexcept:Exception()
     {
         m_stack_trace=other.m_stack_trace;
     }
 
-    Exception& Exception::operator=(const Exception& other)
+    Exception& Exception::operator=(const Exception& other)noexcept
     {
         m_stack_trace=other.m_stack_trace;
         return *this;
     }
 
-    Exception::Exception(Exception&& other)
+    Exception::Exception(Exception&& other)noexcept:Exception()
     {
         m_stack_trace=std::move(other.m_stack_trace);
     }
 
-    Exception& Exception::operator=(Exception&& other)
+    Exception& Exception::operator=(Exception&& other)noexcept
     {
         m_stack_trace=std::move(other.m_stack_trace);
         return *this;
