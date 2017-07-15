@@ -15,7 +15,7 @@ namespace Kedama
   {
   public:
 
-    GameObject(const string& name="");
+    GameObject(const string& name="GameObject");
     virtual ~GameObject();
 
     inline const string& GetName()const

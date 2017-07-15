@@ -52,7 +52,7 @@ namespace Kedama {
       SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
       SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
       SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-#ifdef DEBUG
+#ifdef KEDAMA_DEBUG
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS,SDL_GL_CONTEXT_DEBUG_FLAG);
 #endif
 
@@ -64,7 +64,7 @@ namespace Kedama {
       glDepthFunc(GL_LESS);
       //glCullFace(GL_BACK);
 
-#ifdef DEBUG
+#ifdef KEDAMA_DEBUG
       glDebugMessageCallback(&GLControl::DebugOutput,nullptr);
       glDebugMessageControl(GL_DEBUG_SOURCE_API,GL_DEBUG_TYPE_ERROR,GL_DEBUG_SEVERITY_HIGH,0, nullptr, GL_TRUE);
 #endif
@@ -164,7 +164,7 @@ namespace Kedama {
       return m_post_processor;
     }
 
-#ifdef DEBUG
+#ifdef KEDAMA_DEBUG
     void GLControl::DebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,const void *userParam)
     {
       // 忽略一些不重要的错误/警告代码

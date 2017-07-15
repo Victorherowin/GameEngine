@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.7.2)
 project(Kedama_GLRenderSystem)
 
 set(LIBS opengl32)
@@ -11,14 +11,17 @@ if(MSVC)
   #external libs
   link_directories("${PROJECT_ROOT_DIR}/lib/msvc/glew//lib/Release/Win32"
                   "${PROJECT_ROOT_DIR}/lib/msvc/SDL2/lib/x86")
+
+  set(LIBS ${LIBS} glew32)
+  set(LIBS ${LIBS} sdl2 sdl2main)
 else()
   #Find GLEW
-  find_package(GLEW)
+  find_package(GLEW REQUIRED)
   if(GLEW_FOUND)
     set(LIBS ${LIBS} ${GLEW_LIBRARIES})
   endif(GLEW_FOUND)
 
-  find_package(SDL2)
+  find_package(SDL2 REQUIRED)
   if(SDL2_FOUND)
     set(LIBS ${LIBS} ${SDL2_LIBRARIES})
   endif(SDL2_FOUND)

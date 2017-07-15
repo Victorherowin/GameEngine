@@ -5,8 +5,9 @@
 #ifndef KEDAMA_PHYSICSSYSTEM_HPP
 #define KEDAMA_PHYSICSSYSTEM_HPP
 
-#include "bullet/btBulletDynamicsCommon.h"
 #include "../utility/Singleton.hpp"
+
+class btDiscreteDynamicsWorld;
 
 namespace Kedama::Physics{
     class PhysicsSystem:public Singleton<PhysicsSystem>

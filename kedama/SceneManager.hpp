@@ -12,12 +12,12 @@ namespace Kedama
   class KEDAMA_API SceneManager:public Singleton<SceneManager>
   {
   public:
-    SceneManager(RenderSystem* irfs);
+    SceneManager(unique_ptr<RenderSystem>& irfs);
     ~SceneManager();
     GameObject* GetRoot();
     void Update();
   private:
-    RenderSystem* m_render_system;
+    unique_ptr<RenderSystem>& m_render_system;
     GameObject* m_object_root;//场景管理树根
   };
 }

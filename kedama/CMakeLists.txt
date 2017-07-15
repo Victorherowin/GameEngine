@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.7.2)
 project(KedamaEngine)
 
 option(BUILD "is building" ON)
@@ -8,22 +8,33 @@ file(GLOB KEDAMA_SOURCE ${PROJECT_ROOT_DIR} "*.cpp" "*.hpp" "*.inl"
 				"${PROJECT_SOURCE_DIR}/RenderSystem/*.inl" "${PROJECT_SOURCE_DIR}/GameObject/*.cpp" 
 				${PROJECT_SOURCE_DIR}/GameObject/"*.hpp" "${PROJECT_SOURCE_DIR}/GameObject/*.inl")
 				
-add_library(KedamaEngine ${BUILD_TYPE} ${KEDAMA_SOURCE} RenderSystem/Interface/IMeshBuffer.hpp RenderSystem/PropertyValue.hpp RenderSystem/PropertyValue.cpp RenderSystem/PropertyValueVisitor.cpp RenderSystem/PropertyValueVisitor.hpp RenderSystem/Interface/ITexture.hpp)
+add_library(KedamaEngine ${BUILD_TYPE} ${KEDAMA_SOURCE} RenderSystem/Interface/IMeshBuffer.hpp RenderSystem/PropertyValue.hpp RenderSystem/PropertyValue.cpp RenderSystem/PropertyValueVisitor.cpp RenderSystem/PropertyValueVisitor.hpp RenderSystem/Interface/ITexture.hpp RenderSystem/Model.cpp RenderSystem/Model.hpp utility/Cloneable.hpp utility/Exception/MSVC/Exception.cpp utility/Exception/MSVC/Exception.hpp)
 
 
 if(NOT MSVC)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DKEDAMA_EXPORTS")
+    #find Assimp
+	find_package(Assimp REQUIRED)
+	if(ASSIMP_FOUND)
+		message(${ASSIMP_INCLUDE_DIRS})
+		include_directories(${ASSIMP_INCLUDE_DIRS})
+		target_link_libraries(${ASSIMP_LIBRARIES})
+	endif(ASSIMP_FOUND)
+
+	if(BUILD STREQUAL ON)
+		add_definitions(-DKEDAMA_DEBUG)
+	endif()
 else()
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DKEDAMA_EXPORTS")
     include_directories("${PROJECT_ROOT_DIR}/lib/msvc/glm")
 	if(BUILD STREQUAL ON)
-		add_definitions(/DKEDAMA_EXPORTS /DDEBUG /source-charset:utf-8)
+		add_definitions(/DKEDAMA_EXPORTS /DKEDAMA_DEBUG /source-charset:utf-8)
 	endif()
 endif()
 
 add_subdirectory(FileSystem)
 add_subdirectory(BoneSystem)
 add_subdirectory(PhysicsSystem)
-
+add_subdirectory(utility/Exception)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL Android)
     add_subdirectory(RenderSystem/GLES)

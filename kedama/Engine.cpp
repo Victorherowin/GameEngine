@@ -3,38 +3,47 @@
 
 namespace Kedama
 {
-  Engine::Engine(const string& api_name)
-  {
-    m_renderer_factory=RendererFactoryManager::GetSingletonPtr()->GetFactory(api_name);
-    m_render_system=new RenderSystem(m_renderer_factory);
-    m_asset_manager=new AssetManager();
-    m_scene_manager=new SceneManager(m_render_system);
-  }
+    Engine::Engine(const string& api_name)
+    {
+        m_renderer_factory = RendererFactoryManager::GetSingletonPtr()->GetFactory(api_name);
+        m_render_system = unique_ptr<RenderSystem>(new RenderSystem(m_renderer_factory));
+        m_asset_manager = unique_ptr<AssetManager>(new AssetManager());
+        m_scene_manager = unique_ptr<SceneManager>(new SceneManager(m_render_system));
+        m_physics_system = unique_ptr<Physics::PhysicsSystem>(new Physics::PhysicsSystem());
+        m_root_file_system = unique_ptr<File::LocalFileSystem>(new File::LocalFileSystem("."));
+    }
 
-  Engine::~Engine()
-  {
-    delete m_scene_manager;
-    delete m_render_system;
-    delete m_asset_manager;
-  }
+    Engine::~Engine()
+    {
+    }
 
-  RenderSystem* Engine::GetRenderSystem()
-  {
-    return m_render_system;
-  }
+    unique_ptr<RenderSystem>& Engine::GetRenderSystem()
+    {
+        return m_render_system;
+    }
 
-  AssetManager* Engine::GetAssetManager()
-  {
-    return m_asset_manager;
-  }
+    unique_ptr<AssetManager>& Engine::GetAssetManager()
+    {
+        return m_asset_manager;
+    }
 
-  SceneManager* Engine::GetSceneManager()
-  {
-    return m_scene_manager;
-  }
+    unique_ptr<SceneManager>& Engine::GetSceneManager()
+    {
+        return m_scene_manager;
+    }
 
-  IRendererFactory* Engine::GetRendererFactory()
-  {
-    return m_renderer_factory;
-  }
+    IRendererFactory* Engine::GetRendererFactory()
+    {
+        return m_renderer_factory;
+    }
+
+    unique_ptr<File::LocalFileSystem>& Engine::GetFileSystem()
+    {
+        return m_root_file_system;
+    }
+
+    unique_ptr<Physics::PhysicsSystem>& Engine::GetPhysicsSystem()
+    {
+        return m_physics_system;
+    }
 }

@@ -10,7 +10,7 @@
 
 namespace Kedama
 {
-  RenderSystem::RenderSystem(IRendererFactory *factory)
+  RenderSystem::RenderSystem(IRendererFactory* factory)
   {
     m_control=factory->GetControl();
   }

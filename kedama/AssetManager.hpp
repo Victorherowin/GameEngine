@@ -4,7 +4,7 @@
 #include "Include.hpp"
 #include "Define.hpp"
 
-#include "RenderSystem/Mesh.hpp"
+#include "RenderSystem/Model.hpp"
 
 namespace Kedama
 {
@@ -12,9 +12,9 @@ namespace Kedama
   class KEDAMA_API AssetManager
   {
   public:
-    StaticMesh* CreateStaticMesh(const string& name);
+    StaticModel* LoadStaticModel(const string& name);
 
-    StaticMesh* GetStaticMesh(const string& name);
+    StaticModel* GetStaticModel(const string& name);
   private:
     map<string,StaticMesh*> m_mesh_map;
   };

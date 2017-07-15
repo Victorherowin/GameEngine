@@ -3,7 +3,7 @@
 
 namespace Kedama
 {
-  SceneManager::SceneManager(RenderSystem* render_system):
+  SceneManager::SceneManager(unique_ptr<RenderSystem>& render_system):
     m_render_system(render_system),
     m_object_root(new GameObject("__root__"))
   {

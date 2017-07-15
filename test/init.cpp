@@ -15,6 +15,7 @@
 #include <GL/glew.h>
 
 #include <SDL2/SDL.h>
+#include <utility/Exception/ExceptionCommon.hpp>
 
 #undef main
 
@@ -56,9 +57,9 @@ int32_t main(int32_t argc,char** argv)
 {
     RendererFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new GLRenderSystemFactory());
     Engine engine("GLRenderSystem");
-    RenderSystem* irs = engine.GetRenderSystem();
-    SceneManager* sm=engine.GetSceneManager();
-    IRendererFactory* irsf=engine.GetRendererFactory();
+    auto& irs = engine.GetRenderSystem();
+    auto& sm=engine.GetSceneManager();
+    auto&& irsf=engine.GetRendererFactory();
 
  /*   LocalFileSystem* fs=new LocalFileSystem(R"(D:\Project-CPP\build-MSN-Live-Test-unknown-Debug)");
     IFileSystem* fs2=new LocalFileSystem(R"(D:\Project-CPP\build-FindBaseAddress-unknown-Debug)");
@@ -100,7 +101,7 @@ int32_t main(int32_t argc,char** argv)
     camera.SetPerspective(45.0f,800.0f/600.0f,0.1f,1000.0f);
     camera.LookAt(&obj);
 
-    RenderSystem* rs=Engine::GetSingletonPtr()->GetRenderSystem();
+    auto& rs=Engine::GetSingletonPtr()->GetRenderSystem();
     KEDAMALOG("Init Engine\n");
 
     bool quit=false;
