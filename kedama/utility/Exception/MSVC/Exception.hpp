@@ -19,7 +19,7 @@ namespace Exception
         Exception& operator=(Exception&& other)noexcept;
 
         virtual ~Exception()noexcept{}
-		virtual const char* Message()const noexcept = 0;
+		virtual const char* Message()const noexcept;
         void PrintStackTrace(std::ostream& o=std::cerr)noexcept;
         static void Init(const char* filename)noexcept;
         static const char* GetFileName()noexcept;

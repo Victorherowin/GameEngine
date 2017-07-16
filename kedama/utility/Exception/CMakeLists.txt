@@ -7,7 +7,7 @@ else()
     set(BASE_EXCEPTION_SRC Linux/Exception.cpp Linux/Exception.hpp)
 endif()
 
-add_library(Exception ${BUILD_TYPE} ${BASE_EXCEPTION_SRC} ExceptionCommon.hpp)
+add_library(Exception ${BUILD_TYPE} ${BASE_EXCEPTION_SRC} ExceptionCommon.hpp RuntimeException.cpp RuntimeException.hpp)
 
 if(NOT MSVC)
     target_link_libraries(Exception backtrace)

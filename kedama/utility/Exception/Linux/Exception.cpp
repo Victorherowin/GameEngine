@@ -8,31 +8,21 @@
 #include <sstream>
 #include <cxxabi.h>
 
+#include <signal.h>
+
 namespace Exception
 {
     using namespace std;
 
-    const char* Exception::program_file_name=nullptr;
-    void Exception::Init(const char* filename)noexcept
+    static void BackTrace(ostream& o,const char* filename,int skip)
     {
-        program_file_name=filename;
-    }
-
-    const char* Exception::GetFileName()noexcept
-    {
-        return program_file_name;
-    }
-
-    Exception::Exception()noexcept
-    {
-        stringstream ss;
-        backtrace_state* state = backtrace_create_state (program_file_name, BACKTRACE_SUPPORTS_THREADS,
+        backtrace_state* state = backtrace_create_state (filename, BACKTRACE_SUPPORTS_THREADS,
                                                          [](void *data, const char *msg, int errnum) {
                                                              cerr<<msg<<endl; }, nullptr);
 
-        int num = backtrace_full (state, 0, [](void *data, uintptr_t pc, const char *filename, int lineno, const char *function){
+        int num = backtrace_full (state, skip+1, [](void *data, uintptr_t pc, const char *filename, int lineno, const char *function){
             char buf[1024];
-            stringstream& ss=*((stringstream*)data);
+            ostream& ss=*((ostream*)data);
             size_t length=1024;
             int status=0;
             char* str = __cxxabiv1::__cxa_demangle(function,buf,&length,&status);
@@ -47,7 +37,30 @@ namespace Exception
             return 0;
         }, [](void *data, const char *msg, int errnum){
             cerr<<msg<<endl;
-        }, &ss);
+        }, &o);
+        free(state);
+    }
+
+    const char* Exception::program_file_name=nullptr;
+    void Exception::Init(const char* filename)noexcept
+    {
+        program_file_name=filename;
+        signal(SIGSEGV,[](int){
+            stringstream ss;
+            BackTrace(ss,Exception::GetFileName(),2);
+            abort();
+        });
+    }
+
+    const char* Exception::GetFileName()noexcept
+    {
+        return program_file_name;
+    }
+
+    Exception::Exception()noexcept
+    {
+        stringstream ss;
+        BackTrace(ss,program_file_name,0);
         m_stack_trace=std::move(ss.str());
     }
 
@@ -76,5 +89,10 @@ namespace Exception
     {
         m_stack_trace=std::move(other.m_stack_trace);
         return *this;
+    }
+
+    const char* Exception::Message() const noexcept
+    {
+        return "Execption";
     }
 }
