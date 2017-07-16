@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.7.2)
 project(Exception)
 
-
-
 if(MSVC)
     set(BASE_EXCEPTION_SRC MSVC/Exception.cpp MSVC/Exception.hpp)
 else()
@@ -10,3 +8,7 @@ else()
 endif()
 
 add_library(Exception ${BUILD_TYPE} ${BASE_EXCEPTION_SRC} ExceptionCommon.hpp)
+
+if(NOT MSVC)
+    target_link_libraries(Exception backtrace)
+endif(NOT MSVC)

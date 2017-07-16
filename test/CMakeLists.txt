@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7.2)
 project(Kedama_test)
 
 set(TEST_SOURCE Init.cpp)
-set(LINK_LIBS KedamaEngine Kedama_FileSystem)
+set(LINK_LIBS KedamaEngine Kedama_FileSystem Exception)
 set(INCLUDE_DIR "${PROJECT_ROOT_DIR}/kedama")
 
 if(MSVC)
@@ -22,6 +22,6 @@ else()
      set(LINK_LIBS ${LINK_LIBS} Kedama_GLRenderSystem)
 endif()
 
-add_executable("Kedama_test_init" init.cpp)
-target_link_libraries("Kedama_test_init" ${LINK_LIBS})
+add_executable(Kedama_test_init init.cpp)
+target_link_libraries(Kedama_test_init ${LINK_LIBS})
 

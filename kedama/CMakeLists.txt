@@ -8,7 +8,12 @@ file(GLOB KEDAMA_SOURCE ${PROJECT_ROOT_DIR} "*.cpp" "*.hpp" "*.inl"
 				"${PROJECT_SOURCE_DIR}/RenderSystem/*.inl" "${PROJECT_SOURCE_DIR}/GameObject/*.cpp" 
 				${PROJECT_SOURCE_DIR}/GameObject/"*.hpp" "${PROJECT_SOURCE_DIR}/GameObject/*.inl")
 				
-add_library(KedamaEngine ${BUILD_TYPE} ${KEDAMA_SOURCE} RenderSystem/Interface/IMeshBuffer.hpp RenderSystem/PropertyValue.hpp RenderSystem/PropertyValue.cpp RenderSystem/PropertyValueVisitor.cpp RenderSystem/PropertyValueVisitor.hpp RenderSystem/Interface/ITexture.hpp RenderSystem/Model.cpp RenderSystem/Model.hpp utility/Cloneable.hpp utility/Exception/MSVC/Exception.cpp utility/Exception/MSVC/Exception.hpp)
+add_library(KedamaEngine ${BUILD_TYPE} ${KEDAMA_SOURCE} RenderSystem/Interface/IMeshBuffer.hpp
+		RenderSystem/PropertyValue.hpp RenderSystem/PropertyValue.cpp
+		RenderSystem/PropertyValueVisitor.cpp RenderSystem/PropertyValueVisitor.hpp
+		RenderSystem/Interface/ITexture.hpp
+		RenderSystem/Model.cpp RenderSystem/Model.hpp
+		utility/Cloneable.hpp)
 
 
 if(NOT MSVC)

@@ -2,6 +2,8 @@
 // Created by moe on 2017-07-15.
 //
 
+#include <sstream>
+
 #include "Exception.hpp"
 #include <windows.h>
 #include <Dbghelp.h>
@@ -11,6 +13,17 @@
 
 namespace Exception
 {
+    const char* Exception::program_file_name=nullptr;
+    void Exception::Init(const char* filename)noexcept
+    {
+        program_file_name=filename;
+    }
+
+    const char* Exception::GetFileName()noexcept
+    {
+        return program_file_name;
+    }
+
     Exception::Exception()noexcept
     {
         const ULONG framesToSkip = 0;

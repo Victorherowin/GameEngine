@@ -55,6 +55,9 @@ vector<uint32> floor_index({0,1,2,0,3,2});
 
 int32_t main(int32_t argc,char** argv)
 {
+    Exception::Exception::Init(argv[0]);
+    Exception::Exception e;
+    e.PrintStackTrace(cerr);
     RendererFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new GLRenderSystemFactory());
     Engine engine("GLRenderSystem");
     auto& irs = engine.GetRenderSystem();
