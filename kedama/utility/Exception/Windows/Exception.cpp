@@ -103,7 +103,7 @@ namespace Exception
 						o<<function;
 					else
 						o<<str;
-					o<<"]:("<<filename<<"):"<<std::dec<<lineno;
+					o<<"]:["<<filename<<"]:"<<std::dec<<lineno<<")";
 					o<<endl;
 					return 0;
 				}, [](void *data, const char *msg, int errnum){

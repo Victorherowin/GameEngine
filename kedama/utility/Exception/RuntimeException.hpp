@@ -9,18 +9,21 @@
 
 namespace Exception
 {
-    class RuntimeException:Exception
+    class RuntimeException:public Exception
     {
     public:
-        explicit RuntimeException(const std::string& what)noexcept;
-        explicit RuntimeException(const char* what)noexcept;
+        explicit RuntimeException(const std::string& what="")noexcept;
+        explicit RuntimeException(const char* what="")noexcept;
 
-        RuntimeException(const RuntimeException& other);
-        RuntimeException(RuntimeException&& other);
-        RuntimeException& operator=(const RuntimeException& other);
-        RuntimeException& operator=(RuntimeException&& other);
+        RuntimeException(const RuntimeException& other)noexcept;
+        RuntimeException(RuntimeException&& other)noexcept;
+        RuntimeException& operator=(const RuntimeException& other)noexcept;
+        RuntimeException& operator=(RuntimeException&& other)noexcept;
 
-        virtual const char* Messgae()const noexcept ;
+        virtual const char* Message()const noexcept override;
+
+    private:
+        std::string m_what;
     };
 }
 
