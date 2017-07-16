@@ -21,7 +21,7 @@ namespace Exception
         virtual ~Exception()noexcept{}
 		virtual const char* Message()const noexcept;
         void PrintStackTrace(std::ostream& o=std::cerr)noexcept;
-        static void Init(const char* filename)noexcept;
+        static void Init(const char* filename,std::ostream& o = std::cerr)noexcept;
         static const char* GetFileName()noexcept;
 
     private:

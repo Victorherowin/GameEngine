@@ -41,13 +41,14 @@ namespace Exception
         free(state);
     }
 
+	static ostream* po;
     const char* Exception::program_file_name=nullptr;
-    void Exception::Init(const char* filename)noexcept
+    void Exception::Init(const char* filename,ostream& o)noexcept
     {
+		po = &o;
         program_file_name=filename;
         signal(SIGSEGV,[](int){
-            stringstream ss;
-            BackTrace(ss,Exception::GetFileName(),2);
+            BackTrace(*po,Exception::GetFileName(),2);
             abort();
         });
     }

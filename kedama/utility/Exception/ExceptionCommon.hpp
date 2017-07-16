@@ -5,8 +5,8 @@
 #ifndef KEDAMA_EXCEPTIONCOMMON_HPP
 #define KEDAMA_EXCEPTIONCOMMON_HPP
 
-#ifdef _MSC_VER
-    #include "MSVC/Exception.hpp"
+#ifdef _WIN32
+    #include "Windows/Exception.hpp"
 #else
     #include "Linux/Exception.hpp"
 #endif

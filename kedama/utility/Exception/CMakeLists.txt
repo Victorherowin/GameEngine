@@ -1,14 +1,21 @@
 cmake_minimum_required(VERSION 3.7.2)
 project(Exception)
 
-if(MSVC)
-    set(BASE_EXCEPTION_SRC MSVC/Exception.cpp MSVC/Exception.hpp)
+if(WIN32)
+    set(BASE_EXCEPTION_SRC Windows/Exception.cpp Windows/Exception.hpp)
 else()
     set(BASE_EXCEPTION_SRC Linux/Exception.cpp Linux/Exception.hpp)
-endif()
+endif(WIN32)
 
 add_library(Exception ${BUILD_TYPE} ${BASE_EXCEPTION_SRC} ExceptionCommon.hpp RuntimeException.cpp RuntimeException.hpp)
 
-if(NOT MSVC)
-    target_link_libraries(Exception backtrace)
-endif(NOT MSVC)
+if(WIN32)
+	if(NOT MSVC)
+		set(LIBS backtrace)
+	endif(NOT MSVC)
+	set(LIBS ${LIBS} DbgHelp)
+else()
+	set(LIBS backtrace)
+endif(WIN32)
+
+target_link_libraries(Exception ${LIBS})
