@@ -38,7 +38,7 @@ endif()
 add_subdirectory(FileSystem)
 add_subdirectory(BoneSystem)
 add_subdirectory(PhysicsSystem)
-add_subdirectory(utility/Exception)
+add_subdirectory(Exception)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL Android)
     add_subdirectory(RenderSystem/GLES)
