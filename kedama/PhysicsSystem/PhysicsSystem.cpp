@@ -3,7 +3,7 @@
 //
 
 #include "PhysicsSystem.hpp"
-//#include "bullet/btBulletDynamicsCommon.h"
+#include <btBulletDynamicsCommon.h>
 
 namespace Kedama::Physics
 {

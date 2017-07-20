@@ -8,9 +8,13 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/type_precision.hpp>
-#include <glm/mat4x4.hpp>
 #include <glm/gtc/quaternion.hpp>
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/dual_quaternion.hpp>
+#include <glm/gtx/compatibility.hpp>
 
 #endif

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7.2)
 project(KedamaEngine)
 
-option(BUILD "is building" ON)
+option(DEBUG_BUILD "is building" ON)
 
 file(GLOB KEDAMA_SOURCE ${PROJECT_ROOT_DIR} "*.cpp" "*.hpp" "*.inl"
 				"${PROJECT_SOURCE_DIR}/RenderSystem/*.cpp" "${PROJECT_SOURCE_DIR}/RenderSystem/*.hpp"
@@ -29,9 +29,11 @@ if(NOT MSVC)
 		add_definitions(-DKEDAMA_DEBUG)
 	endif()
 else()
-    include_directories("${PROJECT_ROOT_DIR}/lib/msvc/glm")
+#external libs header
+include_directories("${PROJECT_ROOT_DIR}/lib/bullet3/src"
+					"${PROJECT_ROOT_DIR}/lib/assimp/code")
 	if(DEBUG_BUILD STREQUAL ON)
-		add_definitions(/DKEDAMA_EXPORTS /DKEDAMA_DEBUG /source-charset:utf-8)
+		add_definitions(/DKEDAMA_EXPORTS /DKEDAMA_DEBUG)
 	endif()
 endif()
 
