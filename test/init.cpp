@@ -15,7 +15,7 @@
 #include <GL/glew.h>
 
 #include <SDL2/SDL.h>
-#include <utility/Exception/RuntimeException.hpp>
+#include <Exception/RuntimeException.hpp>
 
 #undef main
 
