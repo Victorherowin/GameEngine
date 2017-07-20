@@ -8,11 +8,11 @@
 
 namespace Kedama
 {
-  Log::Log(ostream* os,ostream* error_os):m_outstream(os),m_errorstream(error_os)
+	Logger::Logger(ostream* os,ostream* error_os):m_outstream(os),m_errorstream(error_os)
   {
   }
 
-  Log::~Log()
+  Logger::~Logger()
   {
     if(m_outstream==&std::cout||m_outstream==&std::cerr)return;
     if(m_errorstream==&std::cout||m_errorstream==&std::cerr)return;
@@ -20,7 +20,7 @@ namespace Kedama
     delete m_errorstream;
   }
 
-  void Log::SetTarget(ostream* os,ostream* error_os)
+  void Logger::SetTarget(ostream* os,ostream* error_os)
   {
     if(m_outstream==&std::cout||m_outstream==&std::cerr)return;
     if(m_errorstream==&std::cout||m_errorstream==&std::cerr)return;
@@ -31,7 +31,7 @@ namespace Kedama
     m_errorstream=error_os;
   }
 
-  void Log::Print(const LogInfo& info,string str)
+  void Logger::Print(const LogInfo& info,string str)
   {
     char buf[128];
     time_t timer;
@@ -55,7 +55,7 @@ namespace Kedama
     }
   }
 
-  void Log::EPrint(const LogInfo& info,string str)
+  void Logger::EPrint(const LogInfo& info,string str)
   {
     char buf[128];
     time_t timer;
@@ -79,7 +79,7 @@ namespace Kedama
     }
   }
 
-  int Log::printf(const LogInfo& info,const char* fmt,...)
+  int Logger::printf(const LogInfo& info,const char* fmt,...)
   {
     va_list va;
     va_start(va,fmt);
@@ -100,7 +100,7 @@ namespace Kedama
     return len;
   }
 
-  int Log::eprintf(const LogInfo& info,const char* fmt,...)
+  int Logger::eprintf(const LogInfo& info,const char* fmt,...)
   {
     va_list va;
     va_start(va,fmt);
@@ -121,7 +121,7 @@ namespace Kedama
     return len;
   }
 
-  void Log::SetHook(function<bool(const LogInfo& info,string&)> hook_func)
+  void Logger::SetHook(function<bool(const LogInfo& info,string&)> hook_func)
   {
     m_hook_func=hook_func;
   }

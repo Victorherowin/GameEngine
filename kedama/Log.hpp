@@ -5,8 +5,8 @@
 #include "Define.hpp"
 #include "Include.hpp"
 
-#define KEDAMALOG(fmt,...) Log::GetSingleton().printf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),fmt,##__VA_ARGS__)
-#define KEDAMALOGE(fmt,...) Log::GetSingleton().eprintf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),fmt,##__VA_ARGS__)
+#define KEDAMALOG(fmt,...) Logger::GetSingleton().printf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),fmt,##__VA_ARGS__)
+#define KEDAMALOGE(fmt,...) Logger::GetSingleton().eprintf(Kedama::LogInfo({__FUNCTION__,__LINE__,__FILE__}),fmt,##__VA_ARGS__)
 
 namespace Kedama
 {
@@ -19,11 +19,19 @@ namespace Kedama
     string file;
   };
 
-  class KEDAMA_API Log:public Singleton<Log>
+  class KEDAMA_API Logger:public Singleton<Logger>
   {
   public:
-    Log(ostream* os=&std::cout,ostream* error_os=&std::cerr);
-    ~Log();
+	  
+	  using LoggerHookFunction = function<bool(const LogInfo& info, string&)>;
+
+	  enum class Level
+	  {
+		  Info,Warning,Error, Fatal
+	  };
+
+    Logger(ostream* os=&std::cout,ostream* error_os=&std::cerr);
+    ~Logger();
     void SetTarget(ostream* os,ostream* error_os);
 
     void Print(const LogInfo& info,string str);
@@ -36,7 +44,7 @@ namespace Kedama
     ostream* m_outstream=nullptr;
     ostream* m_errorstream=nullptr;
 
-    function<bool(const LogInfo& info,string&)> m_hook_func;
+	LoggerHookFunction m_hook_func;
   };
 }
 

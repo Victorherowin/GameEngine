@@ -1,11 +1,10 @@
 #include "LocalFileSystem.hpp"
-#include "LocalFileStream.hpp"
 #include <sys/stat.h>
 
 namespace Kedama::File
 {
 
-    bool FileExist(const string& file)
+	static bool FileExist(const string& file)
     {
         FILE* fp = fopen(file.c_str(), "e");
         if (fp == nullptr)
@@ -15,7 +14,7 @@ namespace Kedama::File
     }
 
 
-    bool DirectoryExist(const string& dir)
+    static bool DirectoryExist(const string& dir)
     {
 #ifdef _WIN32
         struct _stat file_stat;
@@ -40,23 +39,58 @@ namespace Kedama::File
     {
     }
 
-    Stream* LocalFileSystem::Open(const string& file, AccessFlag flag)
+    IStream* LocalFileSystem::CreateIStream(const string& file, ios_base::openmode mode)
     {
         for (auto&& it : m_mount_mapping_table) {
             string::size_type pos = file.find(it.first);
             if (pos != string::npos) {
                 FileSystem* fs = m_mount_mapping_table[it.first];
-                Stream* s = fs->Open(file.substr(pos, string::npos), flag);
+                IStream* s = fs->CreateIStream(file.substr(pos, string::npos), mode);
                 return s;
             }
         }
 
-        return new LocalFileStream(file, flag);
+        return new ifstream(m_path+file, mode);
     }
 
-    bool LocalFileSystem::Exist(const string& path)
+	OStream* LocalFileSystem::CreateOStream(const string& file, ios_base::openmode mode)
+	{
+		for (auto&& it : m_mount_mapping_table) {
+			string::size_type pos = file.find(it.first);
+			if (pos != string::npos) {
+				FileSystem* fs = m_mount_mapping_table[it.first];
+				OStream* s = fs->CreateOStream(file.substr(pos, string::npos), mode);
+				return s;
+			}
+		}
+
+		return new ofstream(m_path+file, mode);
+	}
+
+	IOStream* LocalFileSystem::CreateIOStream(const string& file, ios_base::openmode mode)
+	{
+		for (auto&& it : m_mount_mapping_table) {
+			string::size_type pos = file.find(it.first);
+			if (pos != string::npos) {
+				FileSystem* fs = m_mount_mapping_table[it.first];
+				IOStream* s = fs->CreateIOStream(file.substr(pos, string::npos), mode);
+				return s;
+			}
+		}
+
+		return new fstream(m_path + file, mode);
+	}
+
+    bool LocalFileSystem::Exist(const string& file)
     {
-        return !LocalFileStream(path, AccessFlag::Read).IsBad();
+		for (auto&& it : m_mount_mapping_table) {
+			string::size_type pos = file.find(it.first);
+			if (pos != string::npos) {
+				FileSystem* fs = m_mount_mapping_table[it.first];
+				return fs->Exist(file.substr(pos, string::npos));
+			}
+		}
+        return !ifstream(m_path+file).bad();
     }
 
     void LocalFileSystem::Mount(const string& path, FileSystem* fs)
@@ -65,14 +99,14 @@ namespace Kedama::File
             string::size_type pos = path.find(it.first);
             if (pos != string::npos) {
                 FileSystem* mapping_fs = m_mount_mapping_table[it.first];
-                mapping_fs->Mount(path, fs);
+                mapping_fs->Mount(path.substr(pos, string::npos), fs);
                 return;
             }
         }
 
-        if (FileExist(path))
+        if (FileExist(m_path+path))
             throw runtime_error("Mount Failed: File Exist!");
-        else if (DirectoryExist(path))
+        else if (DirectoryExist(m_path+path))
             throw runtime_error("Mount Failed: Directory Exist!");
 
         m_mount_mapping_table[path] = fs;
@@ -84,14 +118,14 @@ namespace Kedama::File
             string::size_type pos = path.find(it.first);
             if (pos != string::npos) {
                 FileSystem* mapping_fs = m_mount_mapping_table[it.first];
-                mapping_fs->Unmount(path);
+                mapping_fs->Unmount(path.substr(pos, string::npos));
                 return;
             }
         }
 
-        if (FileExist(path))
+        if (FileExist(m_path+path))
             throw runtime_error("Unmount Failed: Is File.");
-        else if (DirectoryExist(path))
+        else if (DirectoryExist(m_path + path))
             throw runtime_error("Unmount Failed: Is Directory.");
 
         auto it = m_mount_mapping_table.find(path);

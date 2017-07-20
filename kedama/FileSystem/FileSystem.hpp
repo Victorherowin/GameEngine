@@ -12,17 +12,14 @@ namespace Kedama
     {
         using namespace std;
 
-        enum AccessFlag
-        {
-            Read = 1, Write = 2, Create = 4
-        };
-
         class KEDAMA_API FileSystem
         {
         public:
             virtual ~FileSystem() {}
 
-            virtual Stream* Open(const string& file, AccessFlag flag)=0;
+            virtual IStream* CreateIStream(const string& file, ios_base::openmode mode)=0;
+			virtual OStream* CreateOStream(const string& file, ios_base::openmode mode) = 0;
+			virtual IOStream* CreateIOStream(const string& file, ios_base::openmode mode) = 0;
             virtual bool Exist(const string& file)=0;
             virtual const string& GetFileSystemType()=0;
 

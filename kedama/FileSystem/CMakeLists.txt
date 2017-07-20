@@ -3,6 +3,6 @@ project(Kedama_FileSystem)
 
 aux_source_directory(. FILESYSTEM_SOURCE)
 
-add_library(Kedama_FileSystem ${BUILD_TYPE} ${FILESYSTEM_SOURCE} FileSystem.cpp Stream.cpp)
+add_library(Kedama_FileSystem ${BUILD_TYPE} ${FILESYSTEM_SOURCE} FileSystem.cpp Stream.hpp)
 
 target_link_libraries(Kedama_FileSystem)

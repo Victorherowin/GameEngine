@@ -37,7 +37,7 @@ namespace Kedama
         string GetRendererName();
 
     private:
-        Log m_logger;
+        Logger m_logger;
         unique_ptr<AssetManager> m_asset_manager = nullptr;
         unique_ptr<SceneManager> m_scene_manager = nullptr;
         unique_ptr<RenderSystem> m_render_system = nullptr;

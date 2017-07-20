@@ -15,7 +15,7 @@
 #include <GL/glew.h>
 
 #include <SDL2/SDL.h>
-#include <utility/Exception/ExceptionCommon.hpp>
+#include <utility/Exception/RuntimeException.hpp>
 
 #undef main
 
@@ -53,18 +53,12 @@ vector<uint32> index({0,1,2});
 vector<vec3> tri_vertex({vec3(0.0f,1.0f,0.0f),vec3(1.0f,-1.0f,0.0f),vec3(-1.0f,-1.0f,0.0f)});
 vector<uint32> floor_index({0,1,2,0,3,2});
 
-void func()
-{
-	int* p = nullptr;
-	*p = 0;
-}
-
 int32_t main(int32_t argc,char** argv)
 {
     Exception::Exception::Init(argv[0]);
-    Exception::Exception e;
+    Exception::RuntimeException e("a");
     e.PrintStackTrace(cerr);
-	func();
+    Exception::RuntimeException e1=e;
     RendererFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new GLRenderSystemFactory());
     Engine engine("GLRenderSystem");
     auto& irs = engine.GetRenderSystem();

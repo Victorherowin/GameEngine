@@ -19,7 +19,9 @@ namespace Kedama
 			LocalFileSystem(const string& path);
 			~LocalFileSystem();
 			
-            Stream* Open(const string& file,AccessFlag flag)override;
+			IStream* CreateIStream(const string& file, ios_base::openmode mode)override;
+			OStream* CreateOStream(const string& file, ios_base::openmode mode) override;
+			IOStream* CreateIOStream(const string& file, ios_base::openmode mode)override;
             const string& GetFileSystemType()override;
 			
 			bool Exist(const string& path)override;
