@@ -7,6 +7,7 @@
 #include "Interface/IPostProcessor.hpp"
 
 #include "CommandBuffer.hpp"
+#include "../Exception/RuntimeException.hpp"
 
 namespace Kedama
 {
@@ -45,23 +46,23 @@ namespace Kedama
     //检查
     if(m_control->GetForwardRenderer()!=nullptr)
       m_forward_renderer=m_control->GetForwardRenderer();
-    else throw runtime_error("No Window");
+    else throw Exception::RuntimeException("No Window");
 
     if(m_control->GetPostProcessor()!=nullptr)
       m_post_processor=m_control->GetPostProcessor();
-    else throw runtime_error("No Window");
+    else throw Exception::RuntimeException("No Window");
 
     if(m_control->GetDeferredRenderer()!=nullptr)
       m_deferred_renderer=m_control->GetDeferredRenderer();
 
     if(m_use_deferred_render==true&&m_deferred_renderer==nullptr)
-      throw runtime_error("No Implement Deferred Renderer");
+      throw Exception::RuntimeException("No Implement Deferred Renderer");
 
     cb.Merge();
     if(m_main_camera)
       cb.Sort(m_main_camera);
     else
-      throw runtime_error("No Camera!");
+      throw Exception::RuntimeException("No Camera!");
 
     m_control->SetCamera(m_main_camera);
     m_control->SetLights(m_lights);

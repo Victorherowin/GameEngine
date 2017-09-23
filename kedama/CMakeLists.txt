@@ -37,7 +37,7 @@ include_directories("${PROJECT_ROOT_DIR}/lib/bullet3/src"
 	endif()
 endif()
 
-add_subdirectory(FileSystem)
+add_subdirectory(IO)
 add_subdirectory(BoneSystem)
 add_subdirectory(PhysicsSystem)
 add_subdirectory(Exception)
@@ -49,6 +49,6 @@ else()
     add_subdirectory(RenderSystem/GL)
     target_link_libraries(KedamaEngine Kedama_GLRenderSystem)
 endif()
-target_link_libraries(KedamaEngine Kedama_FileSystem)
+target_link_libraries(KedamaEngine Kedama_IO)
 
 

@@ -4,7 +4,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 */
-#define CHECK_EXIST(type,map,id) if((map).find((id))==(map).end())throw std::runtime_error(#type"名已存在");
+#define CHECK_EXIST(type,map,id) if((map).find((id))==(map).end())throw Exception::RuntimeException(#type"名已存在");
 
 namespace Kedama
 {
@@ -21,6 +21,6 @@ namespace Kedama
   {
     auto it=m_mesh_map.find(name);
     if(it!=m_mesh_map.end())return it->second;
-    else throw runtime_error("Not Found");
+    else throw Exception::RuntimeException("Not Found");
   }*/
 }

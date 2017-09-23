@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7.2)
 project(Kedama_test)
 
 set(TEST_SOURCE Init.cpp)
-set(LINK_LIBS KedamaEngine Kedama_FileSystem Exception)
+set(LINK_LIBS KedamaEngine Kedama_IO Exception)
 set(INCLUDE_DIR "${PROJECT_ROOT_DIR}/kedama")
 
 if(MSVC)

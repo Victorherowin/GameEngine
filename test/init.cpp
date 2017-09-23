@@ -1,5 +1,5 @@
 #include <Engine.hpp>
-#include <FileSystem/LocalFileSystem.hpp>
+#include <IO/FileSystem/LocalFileSystem.hpp>
 #include <RenderSystem/RendererFactoryManager.hpp>
 #include <RenderSystem/GL/GLRendererFactory.hpp>
 #include <RenderSystem/Interface/IRendererFactory.hpp>
@@ -23,7 +23,7 @@ using namespace std;
 using namespace std::chrono;
 using namespace Kedama;
 using namespace Kedama::GL;
-using namespace File;
+using namespace FileSystem;
 
 string vs_shader_src=
 R"(#version 450 core
@@ -65,15 +65,16 @@ int32_t main(int32_t argc,char** argv)
     auto& sm=engine.GetSceneManager();
     auto&& irsf=engine.GetRendererFactory();
 
- /*   LocalFileSystem* fs=new LocalFileSystem(R"(D:\Project-CPP\build-MSN-Live-Test-unknown-Debug)");
-    IFileSystem* fs2=new LocalFileSystem(R"(D:\Project-CPP\build-FindBaseAddress-unknown-Debug)");
-    fs->Mount("/fs2",fs2);
-    IFile* fp=fs->Open("/fs2/CMakeFiles/test.txt",AccessFlag::Read);
-    char buf[128];
+    unique_ptr<FileSystemContext>& fsc=Engine::GetSingleton().GetFileSystem();
+
+    LocalFileSystem* fs=new LocalFileSystem(R"(D:/Project-CPP/RoomManager)");
+    fsc->Map("/fs2",fs);
+    IStream* fp=fsc->Open("/fs2/main.c");
+    uint8_t buf[128];
     memset(buf,0,128);
     fp->Read(buf,128);
     printf("%s\n",buf);
-    fs->Close(fp);*/
+    fp->Close();
 
     IWindow* win=irs->GetWindow();
     win->Create("ForwardRender",800,600);

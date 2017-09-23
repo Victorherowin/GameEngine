@@ -13,7 +13,7 @@ namespace Kedama
     virtual void Create(TextureFormat foramt,int w,int h)=0;
     virtual void CreateCompressFromPixels(TextureCompressFormat compress_format,TextureFormat format,int level,void* pixels,int w,int h)
     {
-      throw std::runtime_error("No Implement");
+      throw Exception::RuntimeException("No Implement");
     }
     virtual void CreateCompress(TextureCompressFormat compress_foramat,int level,void* data,int size,int w,int h)=0;
   };

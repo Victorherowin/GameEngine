@@ -200,13 +200,13 @@ namespace Kedama {
   {
     auto it = m_listeners.find(name);
     if (it == m_listeners.end())
-      throw runtime_error("No Found Listener!");
+      throw Exception::RuntimeException("No Found Listener!");
     m_listeners.erase(it);
   }
 
   void Transform::AddChildren(Transform *c)
   {
-    if(c==this)throw std::runtime_error("Can't add self");
+    if(c==this)throw Exception::RuntimeException("Can't add self");
     c->m_parent=this;
     m_children.push_back(c);
   }

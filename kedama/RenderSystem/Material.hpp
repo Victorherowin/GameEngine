@@ -15,6 +15,7 @@
 #include "../Define.hpp"
 #include "Interface/IShader.hpp"
 #include "PropertyValue.hpp"
+#include "../Exception/RuntimeException.hpp"
 
 namespace Kedama
 {
@@ -108,7 +109,7 @@ namespace Kedama
         {
 			auto value = m_property_value[name];
 			if (PropertyValue<T>::ValueType != value->GetValueType())
-				throw runtime_error("type error");
+				throw Exception::RuntimeException("type error");
             return *static_cast<PropertyValue<T>*>(value);
         }
 
@@ -117,7 +118,7 @@ namespace Kedama
         {
 			auto value = m_property_value[name];
 			if (PropertyValueArray<T>::ValueType != value->GetValueType())
-				throw runtime_error("type error");
+				throw Exception::RuntimeException("type error");
             return *static_cast<PropertyValueArray<T>*>(m_property_value[name]);
         }
 

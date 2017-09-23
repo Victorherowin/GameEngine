@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <GL/glew.h>
 #include "Shader/ShaderLib.hpp"
+#include "../../Exception/RuntimeException.hpp"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ namespace Kedama
           string log_str("----VertexShader----\n");
           log_str.append(log);
           delete[] log;
-          throw runtime_error(log_str);
+          throw Exception::RuntimeException(log_str);
         }
 
         tmp=FsShaderLibraryStr.c_str();
@@ -56,7 +57,7 @@ namespace Kedama
           string log_str("----FragmentShader----\n");
           log_str.append(log);
           delete[] log;
-          throw runtime_error(log_str);
+          throw Exception::RuntimeException(log_str);
         }
         ++count;
       }
@@ -96,7 +97,7 @@ namespace Kedama
         string log_str("----VertexShader----\n");
         log_str.append(log);
         delete[] log;
-        throw runtime_error(log_str);
+        throw Exception::RuntimeException(log_str);
       }
     }
 
@@ -122,7 +123,7 @@ namespace Kedama
         string log_str("----FragmentShader----\n");
         log_str.append(log);
         delete[] log;
-        throw runtime_error(log_str);
+        throw Exception::RuntimeException(log_str);
       }
     }
 
@@ -150,7 +151,7 @@ namespace Kedama
         string log_str("-----Link----\n");
         log_str.append(log);
         delete[] log;
-        throw runtime_error(log_str);
+        throw Exception::RuntimeException(log_str);
       }
 
       glDeleteShader(m_fs);

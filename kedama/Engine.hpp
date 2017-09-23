@@ -10,7 +10,7 @@
 #include "RenderSystem/RendererFactoryManager.hpp"
 #include "RenderSystem/RenderSystem.hpp"
 #include "PhysicsSystem/PhysicsSystem.hpp"
-#include "FileSystem/LocalFileSystem.hpp"
+#include "IO/FileSystem/FileSystemContext.hpp"
 #include "Log.hpp"
 
 namespace Kedama
@@ -29,7 +29,7 @@ namespace Kedama
         unique_ptr<AssetManager>& GetAssetManager();
 
         unique_ptr<SceneManager>& GetSceneManager();
-        unique_ptr<File::LocalFileSystem>& GetFileSystem();
+        unique_ptr<FileSystem::FileSystemContext>& GetFileSystem();
         unique_ptr<Physics::PhysicsSystem>& GetPhysicsSystem();
 
         IRendererFactory* GetRendererFactory();
@@ -42,7 +42,7 @@ namespace Kedama
         unique_ptr<SceneManager> m_scene_manager = nullptr;
         unique_ptr<RenderSystem> m_render_system = nullptr;
         unique_ptr<Physics::PhysicsSystem> m_physics_system = nullptr;
-        unique_ptr<File::LocalFileSystem> m_root_file_system = nullptr;
+        unique_ptr<FileSystem::FileSystemContext> m_root_file_system = nullptr;
         IRendererFactory* m_renderer_factory = nullptr;
     };
 }

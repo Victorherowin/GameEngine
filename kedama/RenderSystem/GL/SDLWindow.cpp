@@ -4,6 +4,7 @@
 
 #include "GL/glew.h"
 #include "GLControl.hpp"
+#include "../../Exception/RuntimeException.hpp"
 
 namespace Kedama
 {
@@ -19,7 +20,7 @@ namespace Kedama
   {
     m_win=m_win=SDL_CreateWindow(title.c_str(),SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,w,h,SDL_WINDOW_SHOWN|SDL_WINDOW_ALLOW_HIGHDPI|SDL_WINDOW_OPENGL);
     if(!m_win)
-      throw std::runtime_error("Create Window Failed");
+      throw Exception::RuntimeException("Create Window Failed");
     m_control->InitGL();
   }
 
@@ -27,7 +28,7 @@ namespace Kedama
   {
     m_win=m_win=SDL_CreateWindowFrom(handle);
     if(!m_win)
-      throw std::runtime_error("Create Window Failed");
+      throw Exception::RuntimeException("Create Window Failed");
     m_control->InitGL();
   }
 
