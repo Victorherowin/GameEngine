@@ -1,6 +1,3 @@
-[submodule "kedama/Exception"]
-	path = kedama/Exception
-	url = git@github.com:KedamaOvO/Exception.git
 [submodule "lib/bullet3"]
 	path = lib/bullet3
 	url = git@github.com:bulletphysics/bullet3.git
