@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <GL/glew.h>
 #include "Shader/ShaderLib.hpp"
-#include "../../Exception/RuntimeException.hpp"
+#include "../../Include.hpp"
 
 using namespace std;
 

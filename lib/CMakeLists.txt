@@ -19,3 +19,5 @@ if(MSVC)
 else()
 	add_definitions("-DGTEST_ENV_HAS_STD_TUPLE_")
 endif(MSVC)
+
+add_subdirectory(Exception)

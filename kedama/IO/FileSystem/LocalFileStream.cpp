@@ -3,13 +3,17 @@
 //
 
 #include "LocalFileStream.hpp"
-#include "../../Exception/RuntimeException.hpp"
+#include "../../Include.hpp"
 
 namespace Kedama::File
 {
     LocalFileStream::LocalFileStream(const string& file, const string& mode)
     {
         m_fp=fopen(file.c_str(),mode.c_str());
+
+        if(m_fp==nullptr)
+            throw new Exception::RuntimeException("Open Failed!");
+
         for(auto c : mode)
         {
             if(c=='w'||c=='a')

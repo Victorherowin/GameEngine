@@ -4,14 +4,14 @@
 
 #include <sys/stat.h>
 #include "FileSystemContext.hpp"
-#include "../../Exception/RuntimeException.hpp"
+#include "../../Include.hpp"
 
 namespace Kedama::FileSystem
 {
-    void FileSystemContext::Map(const std::string& path, Kedama::FileSystem::IFileSystem* fs)
+    void FileSystemContext::Map(std::string path, Kedama::FileSystem::IFileSystem* fs)
     {
-        if(FindMappedFileSystem(path,nullptr)!=nullptr)
-            throw Exception::RuntimeException("Path Exist!Cannot map");
+        if(*(path.end()-1)=='/')
+            path.pop_back();
 
         auto it = m_mapped_fs.find(path);
         if(it!=m_mapped_fs.end())
@@ -45,7 +45,7 @@ namespace Kedama::FileSystem
         return true;
     }
 
-    void FileSystemContext::Unmap(const string& path)
+    void FileSystemContext::Unmap(string path)
     {
         auto it = m_mapped_fs.find(path);
         if(it==m_mapped_fs.end())return;
@@ -76,8 +76,8 @@ namespace Kedama::FileSystem
     string FileSystemContext::Combine(string path1,string path2)
     {
         auto it =path1.end()-1;
-        if(*it!='/')
-            path1.push_back('/');
+        if(*it=='/')
+            path1.pop_back();
 
         it=path2.begin();
         if(*it!='/')
@@ -97,18 +97,26 @@ namespace Kedama::FileSystem
         return path.substr(pos+1);
     }
 
-    IFileSystem* FileSystemContext::FindMappedFileSystem(const string& file,string* out_path)
+    string FileSystemContext::GetBestMatchPath(string s1)
     {
+        string&& best="";
         for(auto pair : m_mapped_fs)
         {
-            if(string::size_type pos;(pos=file.find(pair.first))!=string::npos)
+            if(s1.find(pair.first)!=string::npos)
             {
-                if(out_path!=nullptr)
-                    *out_path=file.substr(pair.first.size());
-                return pair.second;
+                if(pair.first.size()>best.size())
+                    best=pair.first;
             }
         }
-        return nullptr;
+        return best;
+    }
+
+    IFileSystem* FileSystemContext::FindMappedFileSystem(const string& file,string* out_path)
+    {
+        string path=GetBestMatchPath(file);
+        if(out_path!=nullptr)
+            *out_path=file.substr(path.size());
+        return m_mapped_fs[path];
     }
 
     FileSystemContext::~FileSystemContext()

@@ -4,7 +4,7 @@
 
 #include "GL/glew.h"
 #include "GLControl.hpp"
-#include "../../Exception/RuntimeException.hpp"
+#include "../../Include.hpp"
 
 namespace Kedama
 {

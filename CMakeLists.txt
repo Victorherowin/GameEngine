@@ -15,6 +15,8 @@ else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++latest /MP /source-charset:utf-8")
 endif()
 
+include_directories("${PROJECT_ROOT_DIR}/lib/Exception")
+
 add_subdirectory(test)
 add_subdirectory(kedama)
 

@@ -21,8 +21,8 @@ namespace Kedama::FileSystem
         IStream* OpenWrite(const string& file);
         IStream* Open(const string& file);
 
-        void Map(const string& path,IFileSystem* fs);
-        void Unmap(const string& path);
+        void Map(string path,IFileSystem* fs);
+        void Unmap(string path);
         bool FileExist(const string& file);
         bool DirectorExist(const string& path);
 
@@ -31,7 +31,7 @@ namespace Kedama::FileSystem
         static string GetFileName(string path);
     private:
         IFileSystem* FindMappedFileSystem(const string& file,string* out_path);
-
+        string GetBestMatchPath(string path);
     private:
         map<string,IFileSystem*> m_mapped_fs;
     };

@@ -27,7 +27,7 @@
 #include <thread>
 #include <initializer_list>
 
-#include "Exception/ExceptionCommon.hpp"
-#include "Exception/RuntimeException.hpp"
+#include <ExceptionCommon.hpp>
+#include <RuntimeException.hpp>
 
 #endif
