@@ -12,8 +12,6 @@
 #include <thread>
 #include <chrono>
 
-#include <GL/glew.h>
-
 #include <SDL2/SDL.h>
 #include "RuntimeException.hpp"
 
@@ -55,17 +53,13 @@ vector<uint32> floor_index({0,1,2,0,3,2});
 
 int32_t main(int32_t argc,char** argv)
 {
-    Exception::Exception::Init(argv[0]);
-    Exception::RuntimeException e("a");
-    e.PrintStackTrace(cerr);
-    Exception::RuntimeException e1=e;
     RendererFactoryManager::GetSingleton().RegisterFactory("GLRenderSystem",new GLRenderSystemFactory());
     Engine engine("GLRenderSystem");
     auto& irs = engine.GetRenderSystem();
     auto& sm=engine.GetSceneManager();
     auto&& irsf=engine.GetRendererFactory();
 
-    unique_ptr<FileSystemContext>& fsc=Engine::GetSingleton().GetFileSystem();
+    unique_ptr<AssetManager>& fsc=Engine::GetSingleton().GetAssetManager();
 
     LocalFileSystem* fs=new LocalFileSystem(R"(D:/Project-CPP/RoomManager)");
     fsc->Map("/fs2",fs);

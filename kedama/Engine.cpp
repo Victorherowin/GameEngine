@@ -10,7 +10,6 @@ namespace Kedama
         m_asset_manager = unique_ptr<AssetManager>(new AssetManager());
         m_scene_manager = unique_ptr<SceneManager>(new SceneManager(m_render_system));
         m_physics_system = unique_ptr<Physics::PhysicsSystem>(new Physics::PhysicsSystem());
-        m_root_file_system = unique_ptr<FileSystem::FileSystemContext>(new FileSystem::FileSystemContext());
     }
 
     Engine::~Engine()
@@ -35,11 +34,6 @@ namespace Kedama
     IRendererFactory* Engine::GetRendererFactory()
     {
         return m_renderer_factory;
-    }
-
-    unique_ptr<FileSystem::FileSystemContext>& Engine::GetFileSystem()
-    {
-        return m_root_file_system;
     }
 
     unique_ptr<Physics::PhysicsSystem>& Engine::GetPhysicsSystem()

@@ -1,6 +1,6 @@
 #include "LocalFileSystem.hpp"
 #include "LocalFileStream.hpp"
-#include "FileSystemContext.hpp"
+#include "../Path.hpp"
 #include <sys/stat.h>
 
 namespace Kedama::FileSystem
@@ -17,17 +17,16 @@ namespace Kedama::FileSystem
 
     IStream* LocalFileSystem::OpenRead(const string& file)
     {
-        return new LocalFileStream(FileSystemContext::Combine(m_path,file), "r");
+        return new LocalFileStream(Path::Combine(m_path,file), "rb");
     }
 
 	IStream* LocalFileSystem::OpenWrite(const string& file)
 	{
-		return new LocalFileStream(FileSystemContext::Combine(m_path,file), "w");
+		return new LocalFileStream(Path::Combine(m_path,file), "wb");
 	}
 
 	IStream* LocalFileSystem::Open(const string& file)
-	{
-		return new LocalFileStream(FileSystemContext::Combine(m_path,file), "ra+");
+	{		return new LocalFileStream(Path::Combine(m_path,file), "rb+");
 	}
 
     const string& LocalFileSystem::GetFileSystemType()

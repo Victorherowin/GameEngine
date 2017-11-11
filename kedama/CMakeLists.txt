@@ -15,23 +15,17 @@ add_library(KedamaEngine ${BUILD_TYPE} ${KEDAMA_SOURCE} RenderSystem/Interface/I
 		RenderSystem/Model.cpp RenderSystem/Model.hpp
 		utility/Cloneable.hpp)
 
+#find Assimp
+find_package(Assimp REQUIRED)
+include_directories(KedamaEngine ${ASSIMP_INCLUDE_DIRS})
+target_link_libraries(KedamaEngine ${ASSIMP_LIBRARIES})
 
 if(NOT MSVC)
-    #find Assimp
-	find_package(Assimp REQUIRED)
-	if(ASSIMP_FOUND)
-		message(${ASSIMP_INCLUDE_DIRS})
-		include_directories(${ASSIMP_INCLUDE_DIRS})
-		target_link_libraries(${ASSIMP_LIBRARIES})
-	endif(ASSIMP_FOUND)
-
 	if(DEBUG_BUILD STREQUAL ON)
 		add_definitions(-DKEDAMA_DEBUG)
 	endif()
 else()
-#external libs header
-include_directories("${PROJECT_ROOT_DIR}/lib/bullet3/src"
-					"${PROJECT_ROOT_DIR}/lib/assimp/code")
+	#external libs header
 	if(DEBUG_BUILD STREQUAL ON)
 		add_definitions(/DKEDAMA_EXPORTS /DKEDAMA_DEBUG)
 	endif()
